@@ -1,154 +1,140 @@
-# Alex Gómez — Software Developer Portfolio
+# Alex Gomez Portfolio
 
-## Description
+Personal portfolio built to present my work as a junior software developer with a background in Multimedia Engineering, 3D and VR.
 
-A personal portfolio built with React, Vite and Tailwind CSS to showcase frontend projects, API consumption, CRUD operations, dynamic routes, cheatsheets and interactive developer tools.
-
-## Purpose
-
-This project is designed to demonstrate practical junior developer skills through small but complete technical demos. The goal is to show real application patterns: fetching data, handling errors, organizing components, validating forms, storing local state, filtering lists and building responsive UI.
-
-It also reflects a Multimedia Engineering background with experience and interest in 3D environments, real-time tools, VR, Unity, Unreal Engine, shaders and interactive experiences.
+The goal of this project is simple: show what I am learning, keep the code readable, and document small practical demos that connect frontend, data, UI and backend-ready ideas.
 
 ## Tech Stack
 
 - React
 - Vite
+- JavaScript
 - Tailwind CSS
-- React Router
 - Framer Motion
-- Recharts
 - Lucide React
+- Cloudflare-ready structure with Functions, D1-style schema and environment examples
 
-## Main Features
+## Features
 
-- Responsive landing page
-- Technical project portfolio
-- Dynamic project detail pages
-- Market API Dashboard
-- Project Manager CRUD
-- Weather Search App
-- GitHub Projects Explorer
-- Programming Cheatsheets
-- Tech Stack Explorer
-- Interview Prep Mini Tool
-- API State Playground
-- Code Snippet Library
-- Search/filter UI examples
-- localStorage persistence
-- Data-driven components
-- Dark UI
-- Downloadable CV
-- 404 page
+- Responsive portfolio layout
+- Light and dark mode
+- Project pages with demo-focused explanations
+- Educational frontend demos
+- Programming cheatsheets
+- CV download options
+- Contact page prepared for a future backend
+- Documentation for backend and deployment preparation
 
-## Project Structure
+## Educational Demos
 
-```text
-src/components
+This portfolio includes small demos built for practice and learning. They are designed to show frontend logic, state management, data handling and UI decisions in a clear way.
+
+Some demos are fully frontend-based. Others are prepared to connect with a backend later, but they are still safe to run as portfolio examples.
+
+## Backend-Ready Structure
+
+The project includes a backend-ready structure with:
+
+- `functions/` for Cloudflare Pages Functions
+- `db/` for database schema files
+- `docs/` for backend, security and deployment notes
+- `src/services/` for API and backend service helpers
+- `.env.example` as a safe reference for local environment variables
+
+No production secrets are included in the repository.
+
+## Cloudflare-Ready Deployment
+
+The project is prepared to be deployed with Cloudflare Pages. The frontend can be built with Vite, and the backend folder structure is ready for future Cloudflare Functions usage.
+
+For a normal static deployment, the build output is generated in:
+
+```bash
+dist
 ```
 
-Reusable UI components, layout pieces and technical demos.
+## Run Locally
 
-```text
-src/pages
-```
-
-Routed pages such as Home, Portfolio, Project Detail, About, Contact, Cheatsheets and NotFound.
-
-```text
-src/data
-```
-
-Structured content such as projects, skills, cheatsheets, tech stack groups, snippets and interview questions.
-
-```text
-src/services
-```
-
-API logic separated from components, including CoinGecko, OpenWeatherMap-ready weather data and GitHub repositories.
-
-```text
-public
-```
-
-Public assets served from the site root. The downloadable CV should be placed here as `Alex_Gomez_CV.pdf`.
-
-```text
-docs
-```
-
-Project documentation, code guide and deployment checklist.
-
-## Documentation
-
-- `docs/CODE_GUIDE.md` explains the architecture, routing, components, data files, services and common React concepts.
-- `docs/DEPLOY_CHECKLIST.md` lists checks for local testing and deployment.
-- `docs/MANUAL_QA.md` gives a route-by-route checklist for visual and functional review.
-
-## How to Run Locally
+Install dependencies:
 
 ```bash
 npm install
+```
+
+Start the development server:
+
+```bash
 npm run dev
 ```
 
-## Build
+Build the project:
 
 ```bash
 npm run build
 ```
 
-## Deployment
+Preview the production build locally:
 
-Prepared for Vercel, Netlify or GitHub Pages.
+```bash
+npm run preview
+```
 
 ## Environment Variables
 
+Use `.env.example` as a reference and create a local `.env` file only when needed.
+
+Do not commit real tokens, API keys, passwords or production secrets.
+
+Example variables may include:
+
 ```bash
-VITE_OPENWEATHER_API_KEY=
+VITE_API_BASE_URL=
+VITE_ENABLE_BACKEND=false
+ADMIN_API_TOKEN=
 ```
 
-The Weather Search App can work with fallback data if no API key is configured. Add an OpenWeatherMap key only if you want live weather results. Without an API key, it uses a local city list for suggestions and demo weather data. If a city is not found, the UI shows a clear error instead of displaying fake weather.
+Values in `.env.example` should stay empty or clearly fake.
 
-## CV
+## CV Downloads
 
-The downloadable CV file should be placed at:
+The site includes two CV download options:
+
+- ATS CV: `/Alex_Gomez_CV_ATS.pdf`
+- Visual CV: `/Alex_Gomez_CV_Visual.pdf`
+
+The PDFs live in `public/` and are served as downloadable files. Their content is not copied into the website.
+
+## Demo Disclaimer
+
+The demos in this portfolio are educational and portfolio-focused. They are not production systems.
+
+Security-related demos are meant to explain concepts and show structure, not to replace a real production security review.
+
+## Repository Notes
+
+This repository does not include private environment variables or production secrets.
+Use `.env.example` as a reference and create a local `.env` file only when needed.
+
+## Project Structure
 
 ```text
-public/Alex_Gomez_CV.pdf
+src/
+  components/
+  config/
+  data/
+  hooks/
+  pages/
+  services/
+
+public/
+  Alex_Gomez_CV_ATS.pdf
+  Alex_Gomez_CV_Visual.pdf
+
+docs/
+db/
+functions/
 ```
 
-The UI links point to:
+## About
 
-```text
-/Alex_Gomez_CV.pdf
-```
-
-## What This Project Demonstrates
-
-- React component architecture
-- State management
-- API services
-- Loading and error states
-- Forms and validation
-- Filtering and sorting
-- Routing and dynamic routes
-- Reusable UI
-- Responsive design
-- Data-driven pages
-- localStorage persistence
-- Public API fallback strategies
-- Documentation and deployment preparation
-
-## Future Improvements
-
-- Backend API
-- Authentication
-- Real database
-- Testing
-- More project case studies
-- Downloadable cheatsheets
-- Real contact form endpoint
-- Screenshots for project detail pages
-- Personal domain and analytics
-- More examples connected to real databases
+I built this project as a junior developer portfolio: something practical, personal and easy to explain. It is a place to collect what I am learning and keep improving it step by step.

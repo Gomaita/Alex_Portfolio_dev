@@ -12,7 +12,8 @@
 - Review environment variables.
 - Review README.
 - Confirm there are no API keys or private tokens in the code.
-- Confirm `public/Alex_Gomez_CV.pdf` exists.
+- Confirm `public/Alex_Gomez_CV_ATS.pdf` exists.
+- Confirm `public/Alex_Gomez_CV_Visual.pdf` exists.
 
 ## Vercel
 
@@ -42,5 +43,5 @@
 - Test Project Manager localStorage behavior.
 - Test mobile navigation.
 - Test external links.
-- Test CV download.
+- Test ATS CV and Visual CV downloads.
 - Test 404 page.

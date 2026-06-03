@@ -378,12 +378,12 @@ export const cheatsheets = [
         ],
       },
       {
-        title: 'Responsive & Positioning',
+        title: 'Responsive design',
         items: [
-          i('@media (max-width: 768px) { }', 'Responsive breakpoint'),
-          i('position: relative;', 'Position relative to normal flow'),
-          i('position: absolute;', 'Position relative to parent'),
-          i('inset: 0;', 'Set all offsets to zero'),
+          i('@media (max-width: 768px) { }', 'Adjust layout for smaller screens'),
+          i('grid-template-columns: 1fr;', 'Stack cards naturally on mobile'),
+          i('overflow-x: auto;', 'Keep code blocks from breaking the page'),
+          i('min-height: 44px;', 'Keep buttons comfortable to tap'),
         ],
       },
       {

@@ -1,139 +1,169 @@
-import { ArrowRight, Download } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import ApiStatePlayground from '../components/ApiStatePlayground'
-import CodeSnippetLibrary from '../components/CodeSnippetLibrary'
-import Hero from '../components/Hero'
-import InterviewPrepTool from '../components/InterviewPrepTool'
-import ProjectCard from '../components/ProjectCard'
-import SectionTitle from '../components/SectionTitle'
-import SkillCard from '../components/SkillCard'
-import TechStackExplorer from '../components/TechStackExplorer'
+import { ArrowRight } from 'lucide-react'
+import Button from '../components/ui/Button'
+import Card from '../components/ui/Card'
+import Badge from '../components/ui/Badge'
+import PageHeader from '../components/ui/PageHeader'
+import Section from '../components/ui/Section'
+import CVDownloads from '../components/ui/CVDownloads'
+import ProjectCard from '../components/project/ProjectCard'
 import { projects } from '../data/projects'
-import { skills } from '../data/skills'
 
-const buildingCards = [
+const buildCards = [
   {
     title: 'API-driven interfaces',
-    text: 'Small tools that fetch data, handle errors and present information clearly.',
+    text: 'Small dashboards and tools that fetch, format and display external data.',
   },
   {
-    title: 'CRUD & state management',
-    text: 'Interfaces with forms, filters, editable data and local persistence.',
+    title: 'CRUD and state-based tools',
+    text: 'Interactive demos with forms, filters, localStorage and predictable UI states.',
   },
   {
-    title: 'Developer learning tools',
-    text: 'Cheatsheets, interview practice and references that help me learn by building.',
+    title: 'Developer learning resources',
+    text: 'Cheatsheets and small utilities designed to reinforce programming concepts.',
+  },
+]
+
+const focusGroups = [
+  {
+    title: 'Frontend',
+    items: ['React', 'JavaScript', 'TypeScript', 'HTML', 'CSS', 'Tailwind'],
+  },
+  {
+    title: 'Data / backend basics',
+    items: ['SQL', 'Java', 'REST APIs', 'Data handling'],
+  },
+  {
+    title: 'Tools',
+    items: ['Git', 'Vite', 'npm', 'VS Code'],
+  },
+  {
+    title: 'Creative technical background',
+    items: ['Unity', 'Unreal Engine', 'VR', 'Shaders', 'Real-time environments'],
   },
 ]
 
 function Home() {
-  const featuredProjects = projects.slice(0, 4)
+  const selectedProjectSlugs = [
+    'market-api-dashboard',
+    'sql-query-playground',
+    'secure-users-roles-demo',
+    'programming-cheatsheets',
+  ]
+  const selectedProjects = selectedProjectSlugs
+    .map((slug) => projects.find((project) => project.slug === slug))
+    .filter(Boolean)
 
   return (
     <>
-      <Hero />
-
-      <section className="border-t border-white/10 bg-slate-950 px-5 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <SectionTitle
-            eyebrow="What I'm Building"
-            title="Small projects with real application patterns"
-            description="I like building compact but complete features: request data, organize components, store state, validate forms and make the UI feel clear."
-          />
-          <div className="grid gap-5 md:grid-cols-3">
-            {buildingCards.map((card) => (
-              <article
-                key={card.title}
-                className="rounded-md border border-white/10 bg-white/[0.04] p-6 transition hover:border-cyan-300/40 hover:bg-white/[0.07]"
-              >
-                <h3 className="text-xl font-bold text-white">{card.title}</h3>
-                <p className="mt-3 leading-7 text-slate-300">{card.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="border-t border-white/10 bg-slate-950 px-5 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <SectionTitle
-            eyebrow="Skills"
-            title="A practical toolkit for web and interactive software"
-            description="Core technologies for building frontends, connecting APIs, structuring data and creating interactive experiences."
-          />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {skills.map((skill, index) => (
-              <SkillCard key={skill} name={skill} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <TechStackExplorer />
-
-      <section className="border-t border-white/10 bg-[linear-gradient(180deg,#020617_0%,#07111f_100%)] px-5 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <SectionTitle
-            eyebrow="Featured Projects"
-            title="Technical demos for interviews and practice"
-            description="A few focused projects that demonstrate APIs, forms, state, routing and data-driven UI."
-          />
-          <div className="grid gap-6 md:grid-cols-2">
-            {featuredProjects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <InterviewPrepTool />
-      <ApiStatePlayground />
-      <CodeSnippetLibrary />
-
-      <section className="border-t border-white/10 bg-[linear-gradient(180deg,#020617_0%,#07111f_100%)] px-5 py-16 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-5 lg:grid-cols-2">
-            <div className="rounded-md border border-cyan-300/15 bg-white/[0.04] p-6 shadow-2xl shadow-slate-950/30 sm:p-8">
-              <p className="text-sm font-semibold uppercase tracking-widest text-cyan-300">
-                Pocket Reference
-              </p>
-              <h2 className="mt-2 text-3xl font-bold tracking-normal text-white">
-                Developer Cheatsheets
-              </h2>
-              <p className="mt-3 leading-7 text-slate-300">
-                Quick syntax references for programming languages, web
-                technologies and developer tools.
-              </p>
-              <Link
-                to="/cheatsheets"
-                className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-cyan-300 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
-              >
-                Explore Cheatsheets <ArrowRight size={18} />
-              </Link>
+      <section className="bg-[#F6F8FB] px-5 py-16 sm:px-6 lg:px-8 dark:bg-slate-950">
+        <div className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl items-center py-8">
+          <div className="max-w-5xl">
+            <Badge tone="blue">
+              Junior Software Developer · Multimedia Engineering background
+            </Badge>
+            <h1 className="mt-7 max-w-5xl text-6xl font-bold tracking-normal text-slate-950 sm:text-7xl lg:text-8xl dark:text-white">
+              Learning software by building things that actually work.
+            </h1>
+            <p className="mt-8 max-w-4xl text-xl leading-9 text-slate-600 sm:text-2xl sm:leading-10 dark:text-slate-300">
+              I am Alex Gómez, a junior software developer with a Multimedia
+              Engineering background. I am focused on React, APIs, SQL and
+              interactive interfaces, building small projects that help me
+              understand how real applications are structured.
+            </p>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-500 dark:text-slate-400">
+              Before focusing on software, I worked around 3D environments, VR
+              and real-time tools. That background helps me care about visual
+              clarity, structure and how people interact with what I build.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button to="/portfolio" variant="primary">
+                View projects <ArrowRight size={17} />
+              </Button>
+              <Button to="/cheatsheets">Explore cheatsheets</Button>
             </div>
-
-            <div className="rounded-md border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-slate-950/30 sm:p-8">
-              <p className="text-sm font-semibold uppercase tracking-widest text-cyan-300">
-                CV
-              </p>
-              <h2 className="mt-2 text-3xl font-bold tracking-normal text-white">
-                Want the classic CV version?
-              </h2>
-              <p className="mt-3 leading-7 text-slate-300">
-                Download the PDF version for a more traditional overview of my
-                education, tools and experience.
-              </p>
-              <a
-                href="/Alex_Gomez_CV.pdf"
-                download
-                className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-cyan-300/25 px-5 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
-              >
-                Download CV <Download size={18} />
-              </a>
-            </div>
+            <CVDownloads layout="inline" className="mt-5" />
           </div>
         </div>
       </section>
+
+      <Section>
+        <PageHeader
+          eyebrow="What I build"
+          title="Small projects with complete flows"
+          description="I use focused projects to practice the parts of frontend work that matter in real applications."
+        />
+        <div className="grid gap-5 md:grid-cols-3">
+          {buildCards.map((card) => (
+            <Card key={card.title} className="p-6" variant="interactive">
+              <h2 className="text-xl font-bold text-slate-950 dark:text-white">{card.title}</h2>
+              <p className="mt-3 leading-7 text-slate-600 dark:text-slate-300">{card.text}</p>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      <Section className="bg-white dark:bg-slate-900">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <PageHeader
+            eyebrow="Selected projects"
+            title="A few practical demos"
+            description="No full demos on the home page. Just a quick path into the project pages."
+          />
+          <Button to="/portfolio" className="mb-10 w-fit">
+            Browse portfolio <ArrowRight size={17} />
+          </Button>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {selectedProjects.map((project, index) => (
+            <ProjectCard key={project.id} project={project} index={index} />
+          ))}
+        </div>
+      </Section>
+
+      <Section>
+        <PageHeader
+          eyebrow="Technical focus"
+          title="The areas I am practicing"
+          description="A mix of frontend fundamentals, data handling and the creative technical background I bring from 3D and VR."
+        />
+        <div className="grid gap-5 md:grid-cols-2">
+          {focusGroups.map((group) => (
+            <Card key={group.title} className="p-6" variant="interactive">
+              <h2 className="text-lg font-bold text-slate-950 dark:text-white">{group.title}</h2>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {group.items.map((item) => (
+                  <Badge key={item} tone="neutral">
+                    {item}
+                  </Badge>
+                ))}
+              </div>
+            </Card>
+          ))}
+        </div>
+      </Section>
+
+      <Section className="bg-white dark:bg-slate-900">
+        <Card className="p-6 sm:p-8">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-slate-950 dark:text-white">
+                Want to see how it works?
+              </h2>
+              <p className="mt-3 max-w-2xl leading-7 text-slate-600 dark:text-slate-300">
+                The portfolio includes small, complete demos focused on real
+                frontend problems: fetching data, handling errors, forms,
+                routing and reusable components.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button to="/portfolio" variant="primary">
+                Browse portfolio
+              </Button>
+              <Button to="/contact">Contact me</Button>
+            </div>
+          </div>
+        </Card>
+      </Section>
     </>
   )
 }

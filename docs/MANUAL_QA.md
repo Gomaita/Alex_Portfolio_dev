@@ -22,7 +22,7 @@ Use this checklist after running the project locally.
 ## Home
 
 - Hero text feels personal and readable.
-- CTA buttons go to Portfolio, Cheatsheets, Contact and CV.
+- CTA buttons go to Portfolio and Cheatsheets, and CV links show ATS and Visual versions.
 - Featured project cards link to project details.
 - Tech Stack Explorer filters work.
 - Interview Prep buttons work.
@@ -53,7 +53,8 @@ Use this checklist after running the project locally.
 
 - Email links open a mail client.
 - GitHub and LinkedIn links go to the correct profiles.
-- `/Alex_Gomez_CV.pdf` downloads or opens the CV.
+- `/Alex_Gomez_CV_ATS.pdf` downloads or opens the ATS CV.
+- `/Alex_Gomez_CV_Visual.pdf` downloads or opens the Visual CV.
 - Contact form is clearly presented as a UI demo.
 
 ## Responsive

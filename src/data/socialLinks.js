@@ -1,5 +1,7 @@
+import { appConfig } from '../config/appConfig'
+
 export const contact = {
-  email: 'alexgl.dvp@gmail.com',
+  email: appConfig.contactEmail,
   github: 'https://github.com/Gomaita',
   linkedin: 'https://www.linkedin.com/',
 }

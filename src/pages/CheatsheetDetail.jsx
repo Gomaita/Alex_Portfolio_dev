@@ -1,45 +1,16 @@
-import { motion } from 'framer-motion'
-import { ArrowLeft, Copy } from 'lucide-react'
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import CodeSnippet from '../components/cheatsheets/CodeSnippet'
+import Section from '../components/ui/Section'
+import Badge from '../components/ui/Badge'
+import Button from '../components/ui/Button'
+import Card from '../components/ui/Card'
 import { getCheatsheetBySlug } from '../data/cheatsheets'
 
-function SnippetCard({ item }) {
-  const [copied, setCopied] = useState(false)
+const slugify = (value) => value.toLowerCase().replaceAll(' ', '-')
 
-  async function handleCopy() {
-    if (!navigator.clipboard) {
-      return
-    }
-
-    try {
-      await navigator.clipboard.writeText(item.code)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1400)
-    } catch {
-      setCopied(false)
-    }
-  }
-
-  return (
-    <div className="rounded-md border border-white/10 bg-slate-950/70 p-3">
-      <div className="flex items-start justify-between gap-3">
-        <pre className="min-w-0 flex-1 overflow-x-auto whitespace-pre-wrap break-words font-mono text-sm leading-6 text-cyan-100">
-          <code>{item.code}</code>
-        </pre>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="inline-flex min-h-8 shrink-0 items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-xs font-semibold text-slate-200 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
-        >
-          <Copy size={13} />
-          {copied ? 'Copied!' : 'Copy'}
-        </button>
-      </div>
-      <p className="mt-2 text-xs leading-5 text-slate-400">{item.note}</p>
-    </div>
-  )
-}
+const sectionLinkClass =
+  'rounded-full border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-700 dark:text-slate-200 dark:hover:border-sky-700 dark:hover:bg-sky-950/50 dark:hover:text-sky-200 dark:focus:ring-sky-400 dark:focus:ring-offset-slate-950'
 
 function CheatsheetDetail() {
   const { slug } = useParams()
@@ -47,67 +18,56 @@ function CheatsheetDetail() {
 
   if (!cheatsheet) {
     return (
-      <section className="min-h-[calc(100svh-5rem)] bg-slate-950 px-5 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl rounded-md border border-white/10 bg-white/[0.04] p-8 text-center">
-          <h1 className="text-3xl font-bold text-white">Cheatsheet not found</h1>
-          <p className="mt-3 text-slate-300">
+      <Section className="min-h-[calc(100svh-4rem)] pt-16">
+        <Card className="mx-auto max-w-3xl p-8 text-center">
+          <h1 className="text-3xl font-bold text-slate-950 dark:text-white">Cheatsheet not found</h1>
+          <p className="mt-3 text-slate-600 dark:text-slate-300">
             The requested reference page does not exist.
           </p>
-          <Link
-            to="/cheatsheets"
-            className="mt-6 inline-flex min-h-10 items-center justify-center rounded-md bg-cyan-300 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
-          >
-            Back to Cheatsheets
-          </Link>
-        </div>
-      </section>
+          <Button to="/cheatsheets" variant="primary" className="mt-6">
+            Back to cheatsheets
+          </Button>
+        </Card>
+      </Section>
     )
   }
 
   return (
-    <section className="min-h-[calc(100svh-5rem)] bg-[linear-gradient(180deg,#020617_0%,#07111f_100%)] px-5 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <Link
-          to="/cheatsheets"
-          className="mb-8 inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
-        >
+    <main className="min-h-[calc(100svh-4rem)] bg-[#F6F8FB] dark:bg-slate-950">
+      <Section className="pt-16">
+        <Button to="/cheatsheets" size="small" className="mb-8">
           <ArrowLeft size={16} />
-          Back to Cheatsheets
-        </Link>
+          Back to cheatsheets
+        </Button>
 
-        <motion.header
-          className="mb-8 rounded-md border border-cyan-300/15 bg-slate-950/70 p-6 shadow-2xl shadow-slate-950/40 sm:p-8"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <p className="text-sm font-semibold uppercase tracking-widest text-cyan-300">
-            {cheatsheet.category}
-          </p>
-          <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center">
-            <div className="inline-flex h-16 w-16 items-center justify-center rounded-md border border-cyan-300/25 bg-cyan-300/10 text-2xl font-bold text-cyan-100">
+        <Card className="p-6 sm:p-8">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+            <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl border border-blue-100 bg-blue-50 text-2xl font-bold text-blue-700 dark:border-sky-800 dark:bg-sky-950/60 dark:text-sky-200">
               {cheatsheet.iconText}
             </div>
             <div>
-              <h1 className="text-4xl font-bold tracking-normal text-white sm:text-5xl">
+              <Badge tone="neutral">{cheatsheet.category}</Badge>
+              <h1 className="mt-3 text-4xl font-bold tracking-normal text-slate-950 sm:text-5xl dark:text-white">
                 {cheatsheet.title} Cheatsheet
               </h1>
-              <p className="mt-3 max-w-3xl leading-7 text-slate-300">
+              <p className="mt-3 max-w-3xl leading-7 text-slate-600 dark:text-slate-300">
                 {cheatsheet.description}
               </p>
             </div>
           </div>
-        </motion.header>
+        </Card>
+      </Section>
 
+      <Section>
         <nav
-          className="mb-8 flex flex-wrap gap-2 rounded-md border border-white/10 bg-slate-950/60 p-4"
+          className="mb-8 flex flex-wrap gap-2 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
           aria-label="Cheatsheet sections"
         >
           {cheatsheet.sections.map((section) => (
             <a
               key={section.title}
-              href={`#${section.title.toLowerCase().replaceAll(' ', '-')}`}
-              className="rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/10 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:ring-offset-2 focus:ring-offset-slate-950"
+              href={`#${slugify(section.title)}`}
+              className={sectionLinkClass}
             >
               {section.title}
             </a>
@@ -115,28 +75,19 @@ function CheatsheetDetail() {
         </nav>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {cheatsheet.sections.map((section, index) => (
-            <motion.article
-              key={section.title}
-              id={section.title.toLowerCase().replaceAll(' ', '-')}
-              className="rounded-md border border-white/10 bg-white/[0.04] p-4 shadow-xl shadow-slate-950/20"
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, delay: index * 0.035 }}
-            >
-              <h2 className="rounded-md border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-base font-bold text-cyan-100">
-                {section.title}
-              </h2>
+          {cheatsheet.sections.map((section) => (
+            <Card key={section.title} id={slugify(section.title)} className="p-4">
+              <h2 className="text-lg font-bold text-slate-950 dark:text-white">{section.title}</h2>
               <div className="mt-4 space-y-3">
                 {section.items.map((item) => (
-                  <SnippetCard key={`${section.title}-${item.code}`} item={item} />
+                  <CodeSnippet key={`${section.title}-${item.code}`} item={item} />
                 ))}
               </div>
-            </motion.article>
+            </Card>
           ))}
         </div>
-      </div>
-    </section>
+      </Section>
+    </main>
   )
 }
 

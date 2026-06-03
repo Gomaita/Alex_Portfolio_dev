@@ -1,213 +1,207 @@
 # Code Guide
 
-## 1. Overview
+## Overview
 
-This portfolio is a React application for Alex Gómez, a Junior Software Developer with a Multimedia Engineering and 3D/interactive background. The site presents a landing page, technical demos, project case studies, cheatsheets, contact information and documentation.
+This portfolio is a React + Vite app with a clean light design and an optional dark mode. The goal is to keep the site readable, personal and practical:
 
-The project is organized around a simple idea: pages handle routes, components render reusable UI, data files store structured content, and services handle external API logic.
+- Home introduces Alex and the projects he is building.
+- Portfolio is an index, not a wall of demos.
+- Project detail pages contain the full demos.
+- Cheatsheets are readable reference pages with copyable snippets.
+- The theme toggle stores the visitor preference in `localStorage`.
 
-## 2. Entry Point
+## Visual System
 
-`src/main.jsx` mounts the React application into the HTML root element and wraps the app with `BrowserRouter`.
+The base visual language is centralized in `src/components/ui`:
 
-`src/App.jsx` defines the main layout with `Navbar`, routed page content and `Footer`.
+- `Button`
+- `Card`
+- `Badge`
+- `Section`
+- `PageHeader`
+- `EmptyState`
+- `DemoNote`
 
-React Router controls which page renders for each URL.
+Light mode is the default. Dark mode uses slate surfaces, light text and restrained blue/teal accents.
 
-## 3. Folder Structure
+Shared repeated styles should stay in UI components or in the small semantic classes in `src/index.css`, such as `muted-text`, `subtle-text` and `lab-panel`.
 
-`src/components` contains reusable UI components and technical demos.
+## Routing
 
-`src/pages` contains route-level pages such as Home, Portfolio, About, Contact, Cheatsheets and ProjectDetail.
+`src/App.jsx` defines:
 
-`src/data` contains structured content used by the UI: projects, cheatsheets, skills, tech stack and interview questions.
+- `/`
+- `/portfolio`
+- `/portfolio/:slug`
+- `/about`
+- `/contact`
+- `/cheatsheets`
+- `/cheatsheets/:slug`
 
-`src/services` contains API logic. Keeping API code here avoids mixing fetch logic directly into UI components.
+Important project routes include:
 
-`public` contains public files served from the root URL, such as the downloadable CV.
+- `/portfolio/market-api-dashboard`
+- `/portfolio/project-manager-crud`
+- `/portfolio/weather-search-app`
+- `/portfolio/github-projects-explorer`
+- `/portfolio/programming-cheatsheets`
+- `/portfolio/sql-query-playground`
+- `/portfolio/secure-users-roles-demo`
 
-`docs` contains documentation for understanding and deploying the project.
+## Project Flow
 
-## 4. Routing
+`/portfolio` renders filters and project cards only.
 
-`/` renders the Home page.
+`/portfolio/:slug` reads the slug, finds the project in `src/data/projects.js`, renders the project content and loads the demo through `ProjectDemo`.
 
-`/portfolio` renders the Portfolio page with technical demos and project cards.
+Supported demo keys:
 
-`/portfolio/:slug` renders a dynamic project detail page.
+- `market`
+- `crud`
+- `weather`
+- `github`
+- `cheatsheets`
+- `sql`
+- `secure-users`
 
-`/about` renders the About page.
+## Backend-Ready Architecture
 
-`/contact` renders the Contact page.
+`src/config/appConfig.js` centralizes public app configuration:
 
-`/cheatsheets` renders the cheatsheet index.
+- app name
+- owner name
+- CV links
+- contact email
+- API base URL
+- backend enabled flag
+- demo mode flag
 
-`/cheatsheets/:slug` renders one cheatsheet detail page.
+`src/services/apiClient.js` is a prepared fetch client for future backend routes. It uses `appConfig.apiBaseUrl`, checks whether backend mode is enabled, handles HTTP errors, handles invalid JSON and applies a simple timeout.
 
-`*` renders the NotFound page for missing routes.
+`src/services/backend/` contains placeholders for future Cloudflare Functions/Workers services:
 
-## 5. Components
+- `projectSubmissionsService.js`
+- `contactMessagesService.js`
+- `adminModerationService.js`
 
-`Navbar` renders desktop and mobile navigation with active route styles.
+These services are intentionally not wired into the current demos yet. Project Manager CRUD, Secure Users & Roles Demo and SQL Query Playground remain local educational demos unless they are intentionally connected to a protected backend.
 
-`Footer` renders a simple footer with ownership and stack information.
+User-generated content needs moderation because visitor input can contain spam, offensive content or unsafe data. A future backend should store public submissions as pending/private first, then expose only approved records.
 
-`Hero` renders the main landing section with profile copy, CTA links and CV download.
+The future D1/SQLite schema lives in `db/schema.sql`.
 
-`ProjectCard` renders one project preview and links to `/portfolio/:slug`.
+## Project Manager CRUD
 
-`MarketDashboard` fetches crypto prices from CoinGecko and displays loading, error and data states.
+`src/components/ProjectManagerDemo.jsx` renders the Client / Admin Project Board.
 
-`ProjectManagerDemo` demonstrates local CRUD, controlled forms, filters and localStorage.
+The demo keeps one shared project list in `localStorage` with the key `alex-portfolio-project-manager`. It normalizes saved records on load, so older project entries that only had title, description, technologies and status still receive the newer fields:
 
-`WeatherSearchDemo` demonstrates a weather lookup UI with validation, service separation, fallback data and conditional rendering.
+- `clientName`
+- `clientEmail`
+- `approvalStatus`
+- `visibility`
+- `priority`
+- `category`
+- `adminNotes`
+- `estimatedHours`
+- `budgetRange`
 
-`GitHubProjectsExplorer` demonstrates public API consumption, dynamic lists, filtering and sorting.
+Client View is the public-facing side. It lets a user submit a project proposal and only shows projects that are both `Approved` and `Public`.
 
-`TechStackExplorer` groups skills by category and allows category filtering.
+Admin View is the internal side. It can see every project, search by title/client/email, filter by approval/status/category/priority, approve or reject proposals, change visibility, change status, edit internal notes, edit estimated hours and delete demo projects.
 
-`InterviewPrepTool` provides a small study tool with categories, answers and progress.
+The approval workflow is:
 
-`ApiStatePlayground` demonstrates idle, loading, success, error and empty UI states.
+- Client submission starts as `Pending Review`, `Private` and `Planned`.
+- Admin approval changes it to `Approved`, sets visibility to `Public` and stores `approvedAt`.
+- Admin rejection changes it to `Rejected`, keeps visibility `Private` and adds a default note if none exists.
+- Admin edits update `updatedAt`.
 
-`CodeSnippetLibrary` renders searchable, copyable snippets for practical development patterns.
+This is a frontend CRUD demo, not a real project management backend. Future work would include authentication, backend API, database persistence, user accounts, email notifications and audit history.
 
-`LearningRoadmap` explains the current learning focus and connects web development with the 3D/interactive background.
+## SQL Query Playground
 
-`Cheatsheets` renders the searchable cheatsheet index.
+`src/components/demos/SQLQueryPlayground.jsx` renders the database practice demo.
 
-`CheatsheetDetail` renders a dynamic pocket-reference page with copyable snippets.
+`src/data/sqlPlaygroundData.js` contains static tables and predefined query results. The demo does not execute SQL for real; it explains database concepts visually before connecting to a real backend.
 
-## 6. Data Files
+It covers:
 
-`projects.js` contains project metadata and case-study content.
+- SELECT
+- WHERE
+- ORDER BY
+- GROUP BY
+- JOIN
 
-`cheatsheets.js` contains all cheatsheet pages and snippets.
+Possible future work: connect SQLite or PostgreSQL, add a real SQL editor, validate custom queries, add schema diagrams and expose a backend API.
 
-`skills.js` contains simple skill names for the Home grid.
+## Secure Users & Roles Demo
 
-`techStack.js` groups technologies by category and level.
+`src/components/demos/SecureUsersRolesDemo.jsx` renders the educational user management demo.
 
-`interviewQuestions.js` contains questions for the interview prep mini tool.
+`src/data/secureUsersDemoData.js` contains the initial demo users, available roles, statuses, suggested skills and security note copy.
 
-`codeSnippets.js` contains small reusable snippets for the snippet library.
+`src/services/cryptoService.js` contains the browser-side password record helpers:
 
-`learningRoadmap.js` contains the roadmap cards used on the About page.
+- `generateSalt()`
+- `hashPassword()`
+- `createPasswordRecord()`
+- `maskHash()`
+- `generateDemoPasswordHashIfNeeded()`
 
-`socialLinks.js` contains public contact links.
+The preferred path uses Web Crypto API with PBKDF2 + SHA-256 and a unique salt per user. If Web Crypto is not available, the demo marks the result as a fallback and still avoids storing the original password.
 
-## 7. Services
+The demo has two views:
 
-`marketApi.js` fetches prices from CoinGecko.
+- Client View shows public profile data only: name, role, location, skills, status and registration date. It does not show email, hash, salt or internal notes.
+- Moderator View shows the internal educational record: email, status controls, role controls, salt, masked hash, algorithm and internal note.
 
-`weatherApi.js` prepares OpenWeatherMap integration with `VITE_OPENWEATHER_API_KEY` and falls back to mock data when no key exists.
+This is not real production authentication. Real applications should handle authentication, password hashing and permissions on the backend with a real database, server-side session handling and algorithms such as Argon2id, bcrypt or PBKDF2 with proper parameters.
 
-`githubApi.js` fetches public GitHub repositories and returns fallback data if the request fails or is rate-limited.
+## Add A Project
 
-Services keep external data logic separate from UI rendering.
+1. Add an object in `src/data/projects.js`.
+2. Include a clear `summary`, practical `skillsDemonstrated`, `technicalNotes` and `improvements`.
+3. Set `category` for the portfolio filter.
+4. Set `demoComponentKey` if the project has a demo.
 
-## 8. State Management
+## Add A Demo
 
-The project uses React `useState` for local component state.
+1. Create the demo component.
+2. Import it in `src/components/demos/ProjectDemo.jsx`.
+3. Add it to the demo map.
+4. Use the same key in `projects.js`.
 
-`useEffect` is used for side effects such as fetching data or syncing localStorage.
+## Responsive Design Notes
 
-Forms are controlled by React state, meaning input values are stored in state and updated through `onChange`.
+The site should stay readable on mobile, tablet and desktop.
 
-Search, filters and sorting are handled with state plus derived arrays.
+- Cards stack naturally on smaller screens.
+- Navigation stays simple and accessible.
+- Forms keep readable spacing on mobile.
+- Code snippets avoid overflowing the page.
+- Buttons remain easy to tap.
 
-Project Manager stores data in `localStorage` so changes remain after refresh.
+Do not expose internal class names or design-token language in visible UI copy.
 
-## 9. API Handling
+## Manual Checks
 
-API demos use `async/await` and `try/catch`.
+Check these routes:
 
-Loading state shows skeletons or temporary UI.
+- `/`
+- `/portfolio`
+- `/portfolio/market-api-dashboard`
+- `/portfolio/project-manager-crud`
+- `/portfolio/weather-search-app`
+- `/portfolio/github-projects-explorer`
+- `/portfolio/programming-cheatsheets`
+- `/portfolio/sql-query-playground`
+- `/portfolio/secure-users-roles-demo`
+- `/cheatsheets`
+- `/cheatsheets/python`
+- `/cheatsheets/javascript`
+- `/cheatsheets/react`
+- `/about`
+- `/contact`
 
-Error state shows readable messages instead of crashing.
-
-Fallback data keeps demos usable even when public APIs fail or keys are missing.
-
-## 10. Styling
-
-The project uses Tailwind CSS utility classes.
-
-The visual style is dark with cyan, blue and violet accents.
-
-Most UI is built from cards, badges, buttons and responsive grids.
-
-Hover and focus states are included to make navigation feel clearer.
-
-## 11. CV Download
-
-The PDF should be placed at:
-
-```text
-public/Alex_Gomez_CV.pdf
-```
-
-Links in the app point to:
-
-```text
-/Alex_Gomez_CV.pdf
-```
-
-Avoid exposing unnecessary private information in the UI.
-
-## 12. How To Add A New Project
-
-1. Add a new object in `src/data/projects.js`.
-2. Include `slug`, `title`, `description`, `technologies`, `features`, `technicalHighlights`, `challenges` and `improvements`.
-3. The Project Gallery will render the card automatically.
-4. The detail page will work at `/portfolio/your-slug`.
-5. If there is a demo section, add a `demoRoute` hash link.
-
-## 13. How To Add A New Cheatsheet
-
-1. Add a new object in `src/data/cheatsheets.js`.
-2. Give it a unique `slug`.
-3. Add `sections`, each with `items`.
-4. Each item needs `code` and `note`.
-5. Visit `/cheatsheets/your-slug`.
-
-## 14. How To Add A New API Demo
-
-1. Create a service in `src/services`.
-2. Create a component in `src/components`.
-3. Add loading, error, empty and success states.
-4. Normalize external data before rendering it.
-5. Integrate the component in Portfolio.
-6. Add a project entry in `projects.js`.
-
-## 15. Common Beginner Explanations
-
-A component is a reusable piece of UI.
-
-Props are values passed from a parent component to a child component.
-
-State is data that changes over time and causes the UI to update.
-
-A service is a helper file for API or integration logic.
-
-A dynamic route is a URL with a variable part, such as `/portfolio/:slug`.
-
-localStorage is browser storage that persists after refresh.
-
-A variable of environment is configuration that should not be hard-coded.
-
-The public folder contains files served directly from the site root.
-
-## 16. Manual Testing Checklist
-
-- Visit `/`, `/portfolio`, `/about`, `/contact`, `/cheatsheets`.
-- Open project detail pages.
-- Open cheatsheet detail pages.
-- Test navbar desktop and mobile.
-- Test Market API loading/error behavior.
-- Test Project Manager create, edit, delete, filters and reset.
-- Test Weather Search empty, loading, fallback and clear states.
-- Test GitHub Explorer search, filter and sorting.
-- Test cheatsheet search, filters and copy buttons.
-- Test CV download link.
-- Test responsive layout on mobile.
-- Run a production build locally before deployment.
+Also check the theme toggle, mobile navigation, CV download, cheatsheet copy buttons and demo interactions.
