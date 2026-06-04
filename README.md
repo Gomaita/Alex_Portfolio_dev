@@ -84,6 +84,8 @@ When the backend is disabled, the UI shows a friendly message and keeps the emai
 
 If Resend is configured in Cloudflare Pages, the Function also sends an email notification when a new message arrives. The form still works if email notifications are not configured or if the email request fails after the message has been saved.
 
+Contact email notifications are sent with a structured HTML email including sender information, message content and technical details.
+
 Required backend variables:
 
 ```text

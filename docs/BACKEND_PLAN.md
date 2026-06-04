@@ -92,6 +92,8 @@ They are never exposed through a public endpoint.
 
 `POST /api/contact` stores messages in D1 first. After the message is stored, the Function can send an email notification through Resend.
 
+Contact email notifications are sent with a structured HTML email including sender information, message content and technical details.
+
 Required Cloudflare Pages backend variables:
 
 ```text
