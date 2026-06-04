@@ -3,6 +3,7 @@ export const projectCategories = [
   'API',
   'CRUD',
   'Frontend',
+  'Backend',
   'Tools',
   'Learning',
   'Database',
@@ -10,6 +11,74 @@ export const projectCategories = [
 ]
 
 export const projects = [
+  {
+    id: 'api-health-monitor',
+    slug: 'api-health-monitor',
+    title: 'API Health Monitor',
+    subtitle: 'Backend readiness checks without exposing private records.',
+    summary:
+      'A backend monitoring dashboard that checks API readiness, D1 connectivity and response times without exposing private records.',
+    description:
+      'I built this to practice safe backend monitoring. The demo checks whether D1 is reachable, whether important tables can be queried and whether public project queries are ready, while returning only service status and response times.',
+    type: 'Backend Demo',
+    status: 'Completed',
+    technologies: ['React', 'Cloudflare Functions', 'D1', 'API Monitoring', 'Recharts', 'Error Handling'],
+    featured: true,
+    category: 'Backend',
+    skillsDemonstrated: [
+      'Backend health checks',
+      'D1 connectivity checks',
+      'API status handling',
+      'Safe monitoring responses',
+      'Dashboard UI',
+      'Local history storage',
+    ],
+    technicalNotes:
+      'The `/api/health` endpoint checks backend readiness without returning emails, messages, admin notes or private records. The UI stores the last five checks locally so the monitor feels useful without needing another database table.',
+    improvements: [
+      'Scheduled checks',
+      'Alerts',
+      'Persistent monitoring logs',
+      'Error reporting',
+      'Uptime history',
+    ],
+    demoComponentKey: 'api-health',
+    githubUrl: '',
+  },
+  {
+    id: 'd1-database-metrics',
+    slug: 'd1-database-metrics',
+    title: 'D1 Database Metrics',
+    subtitle: 'Privacy-safe aggregated metrics from Cloudflare D1.',
+    summary:
+      'A privacy-safe metrics dashboard that reads aggregated data from Cloudflare D1 without exposing private messages or user details.',
+    description:
+      'This is a backend-focused demo built to practice SQL aggregation and privacy-safe dashboards. It reads counts from D1 for contact messages and project submissions, then visualizes those counts without exposing personal data.',
+    type: 'Database Dashboard',
+    status: 'Completed',
+    technologies: ['React', 'Cloudflare D1', 'SQL', 'Metrics', 'Recharts', 'Privacy-safe Data'],
+    featured: true,
+    category: 'Database',
+    skillsDemonstrated: [
+      'SQL aggregation',
+      'Cloudflare D1',
+      'Backend metrics',
+      'Privacy-safe dashboards',
+      'Data visualization',
+      'Backend/frontend separation',
+    ],
+    technicalNotes:
+      'The `/api/metrics` endpoint returns only aggregate counts and timestamps. It never returns names, emails, messages, admin notes, tokens or individual record IDs.',
+    improvements: [
+      'Admin-only analytics',
+      'Date filters',
+      'Export CSV',
+      'Scheduled reports',
+      'Protected dashboard with Cloudflare Access',
+    ],
+    demoComponentKey: 'd1-metrics',
+    githubUrl: '',
+  },
   {
     id: 'market-api-dashboard',
     slug: 'market-api-dashboard',

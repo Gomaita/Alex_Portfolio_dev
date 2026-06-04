@@ -44,10 +44,10 @@ const focusGroups = [
 
 function Home() {
   const selectedProjectSlugs = [
-    'market-api-dashboard',
-    'sql-query-playground',
+    'api-health-monitor',
+    'd1-database-metrics',
     'secure-users-roles-demo',
-    'programming-cheatsheets',
+    'sql-query-playground',
   ]
   const selectedProjects = selectedProjectSlugs
     .map((slug) => projects.find((project) => project.slug === slug))

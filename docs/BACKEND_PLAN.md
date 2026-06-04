@@ -47,6 +47,8 @@ Public endpoints:
 - `POST /api/contact`
 - `POST /api/project-submissions`
 - `GET /api/projects/public`
+- `GET /api/health`
+- `GET /api/metrics`
 
 Admin endpoints:
 
@@ -87,6 +89,14 @@ status = new
 ```
 
 They are never exposed through a public endpoint.
+
+## Health And Metrics
+
+`GET /api/health` checks backend readiness without exposing private records. It reports D1 availability, table reachability, public query readiness, metrics query readiness and response times.
+
+`GET /api/metrics` returns only aggregated D1 metrics for contact messages and project submissions.
+
+Metrics expose only aggregate counts and timestamps. They must not return names, emails, messages, admin notes, tokens or individual record IDs.
 
 ## Email Notifications
 

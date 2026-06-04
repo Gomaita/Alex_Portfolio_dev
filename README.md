@@ -28,6 +28,8 @@ The goal of this project is simple: show what I am learning, keep the code reada
 - CV download options.
 - Contact page with optional backend submission.
 - Backend-ready structure for moderated public submissions.
+- API Health Monitor.
+- D1 Database Metrics Dashboard.
 - Documentation for backend, security and deployment preparation.
 
 ## Educational Demos
@@ -39,6 +41,10 @@ The demos remain educational and local by default. The backend is prepared for c
 Weather Search App now includes city autocomplete, external weather/geocoding API integration, backend proxy endpoints and improved error handling.
 
 Market API Dashboard now includes multiple crypto assets, historical chart ranges, a selected coin view, public API data normalization and a live session chart.
+
+API Health Monitor checks backend readiness, D1 connectivity and response times without exposing private records.
+
+D1 Database Metrics Dashboard reads aggregated counts from Cloudflare D1 and visualizes them without exposing messages, emails or user details.
 
 ## Backend-Ready Cloudflare Structure
 

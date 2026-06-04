@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import GitHubProjectsExplorer from '../GitHubProjectsExplorer'
 import MarketDashboard from '../MarketDashboard'
 import ProjectManagerDemo from '../ProjectManagerDemo'
+import APIHealthMonitor from './APIHealthMonitor'
+import D1DatabaseMetrics from './D1DatabaseMetrics'
 import SecureUsersRolesDemo from './SecureUsersRolesDemo'
 import SQLQueryPlayground from './SQLQueryPlayground'
 import WeatherSearchDemo from '../WeatherSearchDemo'
@@ -14,6 +16,8 @@ const demos = {
   github: <GitHubProjectsExplorer />,
   sql: <SQLQueryPlayground />,
   'secure-users': <SecureUsersRolesDemo />,
+  'api-health': <APIHealthMonitor />,
+  'd1-metrics': <D1DatabaseMetrics />,
 }
 
 function ProjectDemo({ project }) {

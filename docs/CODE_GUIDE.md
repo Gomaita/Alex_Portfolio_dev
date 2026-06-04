@@ -63,6 +63,8 @@ Supported demo keys:
 - `cheatsheets`
 - `sql`
 - `secure-users`
+- `api-health`
+- `d1-metrics`
 
 ## Backend-Ready Architecture
 
@@ -111,6 +113,20 @@ The demo includes city autocomplete, Open-Meteo geocoding, normalized weather re
 - `/api/crypto/history`
 
 The dashboard includes multiple crypto assets, search/filter, selected coin summary, historical ranges, a Recharts line chart and a live session chart. Live mode collects points while the page is open instead of pretending to be real historical minute data.
+
+## API Health Monitor
+
+`src/components/demos/APIHealthMonitor.jsx` renders the backend monitoring demo.
+
+It calls `/api/health`, displays service status cards, response times, a small Recharts bar chart and the last five checks stored in `localStorage`.
+
+The endpoint checks D1 readiness and table/query availability without returning private records.
+
+## D1 Database Metrics
+
+`src/components/demos/D1DatabaseMetrics.jsx` renders the aggregated metrics dashboard.
+
+It calls `/api/metrics` and shows contact/project counts, charts and a metric details table. The endpoint returns only aggregate values and timestamps, never emails, messages, admin notes or record IDs.
 
 ## Project Manager CRUD
 

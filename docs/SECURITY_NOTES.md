@@ -64,6 +64,14 @@ The demos in this portfolio are educational. They are not production systems.
 
 This backend prepares real storage and moderation, but real authentication, role management, abuse prevention and admin tooling are future work.
 
+## Health And Metrics Safety
+
+Metrics endpoints must not expose private records. They should return aggregate counts and high-level timestamps only.
+
+Health checks must not expose stack traces, SQL details, tokens, emails, messages or internal private data.
+
+Admin tokens must never be available in frontend code.
+
 ## Before Accepting Public Submissions At Scale
 
 Add additional protections before relying on this for high-volume public submissions:
