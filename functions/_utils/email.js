@@ -72,7 +72,8 @@ export async function sendContactNotification(env, contactMessage) {
     return {
       ok: false,
       skipped: false,
-      reason: `Resend returned status ${response.status}.`,
+      status: response.status,
+      message: 'Resend email request failed.',
     }
   }
 

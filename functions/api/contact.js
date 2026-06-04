@@ -58,15 +58,16 @@ export async function onRequestPost(context) {
     const emailResult = await sendContactNotification(env, savedMessage)
 
     if (!emailResult.ok && !emailResult.skipped) {
-      console.warn('Contact notification email failed after message was stored.', {
+      console.warn('Contact notification email failed', {
         messageId: savedMessage.id,
-        reason: emailResult.reason,
+        status: emailResult.status,
+        message: emailResult.message,
       })
     }
   } catch (error) {
-    console.warn('Contact notification email failed after message was stored.', {
+    console.warn('Contact notification email failed', {
       messageId: savedMessage.id,
-      reason: error?.message || 'Unknown email error.',
+      message: error?.message || 'Unknown email error.',
     })
   }
 
