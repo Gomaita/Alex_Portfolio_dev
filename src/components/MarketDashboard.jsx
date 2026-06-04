@@ -23,12 +23,6 @@ const ranges = [
 const quickCoins = ['bitcoin', 'ethereum', 'solana', 'ripple']
 const skillBadges = ['CoinGecko API', 'Recharts', 'Range selector', 'Data normalization', 'Live session']
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'EUR',
-  maximumFractionDigits: 2,
-})
-
 const compactCurrencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'EUR',
@@ -40,6 +34,43 @@ const percentFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 2,
   minimumFractionDigits: 2,
 })
+
+function formatCurrency(value) {
+  const numericValue = Number(value)
+  if (!Number.isFinite(numericValue)) return 'Not available'
+
+  let maximumFractionDigits = 2
+  if (Math.abs(numericValue) < 0.01) {
+    maximumFractionDigits = 8
+  } else if (Math.abs(numericValue) < 1) {
+    maximumFractionDigits = 6
+  } else if (Math.abs(numericValue) < 1000) {
+    maximumFractionDigits = 4
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: numericValue >= 1000 ? 2 : 0,
+    maximumFractionDigits,
+  }).format(numericValue)
+}
+
+function formatCompactCurrency(value) {
+  const numericValue = Number(value)
+  return Number.isFinite(numericValue) ? compactCurrencyFormatter.format(numericValue) : 'Not available'
+}
+
+function getPriceDomain(data) {
+  const prices = data.map((point) => Number(point.price)).filter(Number.isFinite)
+  if (prices.length === 0) return ['auto', 'auto']
+
+  const min = Math.min(...prices)
+  const max = Math.max(...prices)
+  const padding = min === max ? Math.abs(min) * 0.01 || 1 : (max - min) * 0.1
+
+  return [Math.max(0, min - padding), max + padding]
+}
 
 function formatDateLabel(timestamp, range) {
   const date = new Date(timestamp)
@@ -75,11 +106,11 @@ function MarketCard({ coin, active, onSelect }) {
         </span>
       </div>
       <p className="mt-4 text-2xl font-bold tracking-normal text-slate-950 dark:text-white">
-        {currencyFormatter.format(coin.price)}
+        {formatCurrency(coin.price)}
       </p>
       <div className="mt-4 grid gap-2 text-xs text-slate-500 dark:text-slate-400">
-        <p>Market cap: {coin.marketCap ? compactCurrencyFormatter.format(coin.marketCap) : 'Not available'}</p>
-        <p>Volume: {coin.volume ? compactCurrencyFormatter.format(coin.volume) : 'Not available'}</p>
+        <p>Market cap: {formatCompactCurrency(coin.marketCap)}</p>
+        <p>Volume: {formatCompactCurrency(coin.volume)}</p>
       </div>
     </button>
   )
@@ -109,9 +140,9 @@ function MarketDashboard() {
       setCoins(nextCoins)
       setUpdatedAt(new Date())
 
-      if (!nextCoins.some((coin) => coin.id === selectedCoinId) && nextCoins[0]) {
-        setSelectedCoinId(nextCoins[0].id)
-      }
+      setSelectedCoinId((currentCoinId) =>
+        nextCoins.some((coin) => coin.id === currentCoinId) ? currentCoinId : nextCoins[0]?.id || currentCoinId,
+      )
     } catch (requestError) {
       if (requestError.name !== 'AbortError') {
         setError(requestError.message || 'Market data is not available right now.')
@@ -119,13 +150,14 @@ function MarketDashboard() {
     } finally {
       if (!signal?.aborted) setIsLoadingMarkets(false)
     }
-  }, [selectedCoinId])
+  }, [])
 
   const loadHistory = useCallback(async (coinId, selectedRange, signal) => {
     if (!coinId || selectedRange === 'live') return
 
     setIsLoadingHistory(true)
     setHistoryError('')
+    setHistory([])
 
     try {
       const result = await fetchCryptoHistory(coinId, selectedRange, { signal })
@@ -148,17 +180,31 @@ function MarketDashboard() {
 
   useEffect(() => {
     const controller = new AbortController()
-    loadHistory(selectedCoinId, range, controller.signal)
+    if (range === 'live') {
+      setHistory([])
+      setHistoryError('')
+    } else {
+      loadHistory(selectedCoinId, range, controller.signal)
+    }
     return () => controller.abort()
   }, [loadHistory, range, selectedCoinId])
 
   useEffect(() => {
+    setLiveSession([])
+    setHistory([])
+    setHistoryError('')
+  }, [selectedCoinId])
+
+  useEffect(() => {
     if (range !== 'live' || !selectedCoin) return undefined
 
-    setLiveSession((current) => [
-      ...current.slice(-29),
-      { timestamp: Date.now(), price: selectedCoin.price },
-    ])
+    setLiveSession((current) => {
+      const currentCoinPoints = current.filter((point) => point.coinId === selectedCoin.id)
+      return [
+        ...currentCoinPoints.slice(-29),
+        { coinId: selectedCoin.id, timestamp: Date.now(), price: selectedCoin.price },
+      ]
+    })
 
     const intervalId = window.setInterval(() => {
       loadMarkets()
@@ -176,12 +222,18 @@ function MarketDashboard() {
   }, [coins, searchQuery])
 
   const chartData = useMemo(() => {
-    const source = range === 'live' ? liveSession : history
+    const source = range === 'live'
+      ? liveSession.filter((point) => point.coinId === selectedCoinId)
+      : history
+
     return source.map((point) => ({
       label: formatDateLabel(point.timestamp, range),
+      timestamp: point.timestamp,
       price: point.price,
     }))
-  }, [history, liveSession, range])
+  }, [history, liveSession, range, selectedCoinId])
+
+  const priceDomain = useMemo(() => getPriceDomain(chartData), [chartData])
 
   const topMovers = useMemo(() => {
     const sorted = [...coins].sort((a, b) => b.change24h - a.change24h)
@@ -194,6 +246,20 @@ function MarketDashboard() {
   function refreshData() {
     loadMarkets()
     if (range !== 'live') loadHistory(selectedCoinId, range)
+  }
+
+  function handleSelectCoin(coinId) {
+    setSelectedCoinId(coinId)
+    setHistoryError('')
+    setHistory([])
+    setLiveSession([])
+  }
+
+  function handleRangeChange(nextRange) {
+    setRange(nextRange)
+    setHistoryError('')
+    setHistory([])
+    if (nextRange === 'live') setLiveSession([])
   }
 
   return (
@@ -217,7 +283,7 @@ function MarketDashboard() {
               Market API Dashboard
             </h3>
             <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg dark:text-slate-300">
-              Crypto market dashboard with multiple assets, historical chart ranges, selected coin view and public API data normalization.
+              Crypto market dashboard with multiple assets, adaptive chart scaling, historical ranges and clearer public API error handling.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {skillBadges.map((badge) => (
@@ -275,7 +341,7 @@ function MarketDashboard() {
                 <button
                   key={coinId}
                   type="button"
-                  onClick={() => setSelectedCoinId(coinId)}
+                  onClick={() => handleSelectCoin(coinId)}
                   className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   {coin?.symbol || coinId}
@@ -300,7 +366,7 @@ function MarketDashboard() {
                 key={coin.id}
                 coin={coin}
                 active={coin.id === selectedCoinId}
-                onSelect={setSelectedCoinId}
+                onSelect={handleSelectCoin}
               />
             ))
           )}
@@ -313,7 +379,7 @@ function MarketDashboard() {
               <>
                 <h4 className="mt-3 text-2xl font-bold text-slate-950 dark:text-white">{selectedCoin.name}</h4>
                 <p className="mt-1 text-sm font-semibold uppercase text-slate-500 dark:text-slate-400">{selectedCoin.symbol}</p>
-                <p className="mt-5 text-3xl font-bold text-slate-950 dark:text-white">{currencyFormatter.format(selectedCoin.price)}</p>
+                <p className="mt-5 text-3xl font-bold text-slate-950 dark:text-white">{formatCurrency(selectedCoin.price)}</p>
                 <p className={`mt-2 text-sm font-semibold ${selectedCoin.change24h >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-red-600 dark:text-red-300'}`}>
                   {selectedCoin.change24h >= 0 ? '+' : ''}{percentFormatter.format(selectedCoin.change24h)}% in 24h
                 </p>
@@ -331,8 +397,13 @@ function MarketDashboard() {
             <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h4 className="text-lg font-semibold text-slate-950 dark:text-white">
-                  {selectedCoin?.name || 'Coin'} chart
+                  {selectedCoin?.name || 'Coin'} chart - {ranges.find((item) => item.id === range)?.label}
                 </h4>
+                {selectedCoin && (
+                  <p className={`mt-1 text-sm font-semibold ${selectedCoin.change24h >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-red-600 dark:text-red-300'}`}>
+                    {formatCurrency(selectedCoin.price)} - {selectedCoin.change24h >= 0 ? '+' : ''}{percentFormatter.format(selectedCoin.change24h)}% 24h
+                  </p>
+                )}
                 <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
                   {range === 'live'
                     ? 'Live chart shows session data collected while this page is open.'
@@ -344,10 +415,7 @@ function MarketDashboard() {
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => {
-                      setRange(item.id)
-                      setHistoryError('')
-                    }}
+                    onClick={() => handleRangeChange(item.id)}
                     className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
                       range === item.id
                         ? 'bg-blue-600 text-white dark:bg-sky-500 dark:text-slate-950'
@@ -361,9 +429,16 @@ function MarketDashboard() {
             </div>
 
             {historyError && (
-              <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
-                {historyError}
-              </p>
+              <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200" role="alert">
+                <p>{historyError}</p>
+                <button
+                  type="button"
+                  onClick={() => loadHistory(selectedCoinId, range)}
+                  className="mt-3 rounded-md bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 transition hover:bg-amber-200 dark:bg-amber-900/60 dark:text-amber-100 dark:hover:bg-amber-900"
+                >
+                  Retry chart
+                </button>
+              </div>
             )}
 
             <div className="h-72 min-h-72 sm:h-80">
@@ -375,25 +450,54 @@ function MarketDashboard() {
                 </div>
               ) : chartData.length === 0 ? (
                 <div className="flex h-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-sm leading-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
-                  {range === 'live'
-                    ? 'Refresh data to collect live session points.'
-                    : 'Historical chart will appear after a successful API response.'}
+                  {historyError
+                    ? 'Historical data is not available right now. Try another coin or range.'
+                    : range === 'live'
+                      ? 'Live session will add more points as data refreshes.'
+                      : 'Historical chart will appear after a successful API response.'}
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData} margin={{ top: 12, right: 12, bottom: 0, left: 0 }}>
-                    <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" />
-                    <XAxis dataKey="label" stroke="#64748b" tickLine={false} minTickGap={24} />
-                    <YAxis stroke="#64748b" tickLine={false} tickFormatter={(value) => `EUR ${value}`} width={78} />
-                    <Tooltip
-                      formatter={(value) => currencyFormatter.format(value)}
-                      contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', color: '#0f172a' }}
-                    />
-                    <Line type="monotone" dataKey="price" stroke="#2563eb" strokeWidth={3} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
+                <div className="h-full">
+                  {range === 'live' && chartData.length < 2 && (
+                    <p className="mb-3 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700 dark:border-sky-900 dark:bg-sky-950/40 dark:text-sky-200">
+                      Live session will add more points as data refreshes.
+                    </p>
+                  )}
+                  <div className={range === 'live' && chartData.length < 2 ? 'h-[calc(100%-44px)]' : 'h-full'}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={chartData} margin={{ top: 12, right: 12, bottom: 0, left: 4 }}>
+                        <CartesianGrid stroke="#e2e8f0" strokeDasharray="3 3" />
+                        <XAxis dataKey="label" stroke="#64748b" tickLine={false} minTickGap={24} />
+                        <YAxis
+                          stroke="#64748b"
+                          tickLine={false}
+                          domain={priceDomain}
+                          tickFormatter={formatCurrency}
+                          width={92}
+                        />
+                        <Tooltip
+                          formatter={(value) => [formatCurrency(value), 'Price']}
+                          labelFormatter={(label) => `${label}`}
+                          contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', color: '#0f172a' }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="price"
+                          stroke="#2563eb"
+                          strokeWidth={3}
+                          dot={chartData.length < 2}
+                          isAnimationActive={false}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
               )}
             </div>
+
+            <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
+              Data source: CoinGecko public API. Historical ranges depend on API availability and rate limits.
+            </p>
           </div>
         </div>
       </div>

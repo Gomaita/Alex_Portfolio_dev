@@ -103,7 +103,7 @@ The future D1/SQLite schema lives in `db/schema.sql`.
 - `/api/weather/search`
 - `/api/weather/current`
 
-The demo includes city autocomplete, Open-Meteo geocoding, normalized weather responses, quick cities, debounce, clear city-not-found errors and a controlled fallback for service failures.
+The demo includes city autocomplete, Open-Meteo geocoding, normalized weather responses with daily max/min temperatures, quick cities, debounce, clear city-not-found errors and a controlled fallback for service failures.
 
 ## Market API Dashboard
 
@@ -114,7 +114,7 @@ The demo includes city autocomplete, Open-Meteo geocoding, normalized weather re
 - `/api/crypto/markets`
 - `/api/crypto/history`
 
-The dashboard includes multiple crypto assets, search/filter, selected coin summary, historical ranges, a Recharts line chart and a live session chart. Live mode collects points while the page is open instead of pretending to be real historical minute data.
+The dashboard includes multiple crypto assets, search/filter, selected coin summary, historical ranges, adaptive chart scaling, a Recharts line chart and a live session chart. Live mode collects points while the page is open instead of pretending to be real historical minute data. Historical ranges depend on the public CoinGecko API and may be rate limited.
 
 ## API Health Monitor
 

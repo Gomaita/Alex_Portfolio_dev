@@ -315,6 +315,8 @@ function WeatherSearchDemo() {
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <WeatherMetric label="Day max" value={formatMetric(weather.dailyMaxTemperature, '°C')} />
+                <WeatherMetric label="Day min" value={formatMetric(weather.dailyMinTemperature, '°C')} />
                 <WeatherMetric label="Feels like" value={formatMetric(weather.feelsLike, '°C')} />
                 <WeatherMetric label="Humidity" value={formatMetric(weather.humidity, '%')} />
                 <WeatherMetric label="Wind" value={formatMetric(weather.windSpeed, ' km/h')} />

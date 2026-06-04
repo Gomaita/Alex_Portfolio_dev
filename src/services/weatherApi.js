@@ -6,10 +6,10 @@ const fallbackCities = [
 ]
 
 const fallbackWeather = {
-  Alicante: { temperature: 24, feelsLike: 25, humidity: 58, windSpeed: 12, weatherCode: 0, description: 'Clear sky' },
-  Madrid: { temperature: 19, feelsLike: 18, humidity: 44, windSpeed: 10, weatherCode: 2, description: 'Partly cloudy' },
-  London: { temperature: 13, feelsLike: 12, humidity: 76, windSpeed: 16, weatherCode: 61, description: 'Slight rain' },
-  Tokyo: { temperature: 21, feelsLike: 22, humidity: 68, windSpeed: 9, weatherCode: 2, description: 'Partly cloudy' },
+  Alicante: { temperature: 24, feelsLike: 25, humidity: 58, windSpeed: 12, weatherCode: 0, description: 'Clear sky', dailyMaxTemperature: null, dailyMinTemperature: null },
+  Madrid: { temperature: 19, feelsLike: 18, humidity: 44, windSpeed: 10, weatherCode: 2, description: 'Partly cloudy', dailyMaxTemperature: null, dailyMinTemperature: null },
+  London: { temperature: 13, feelsLike: 12, humidity: 76, windSpeed: 16, weatherCode: 61, description: 'Slight rain', dailyMaxTemperature: null, dailyMinTemperature: null },
+  Tokyo: { temperature: 21, feelsLike: 22, humidity: 68, windSpeed: 9, weatherCode: 2, description: 'Partly cloudy', dailyMaxTemperature: null, dailyMinTemperature: null },
 }
 
 function normalizeQuery(query) {
@@ -40,6 +40,8 @@ function normalizeWeather(weather, city) {
     windSpeed: weather.windSpeed ?? 'Not available',
     weatherCode: weather.weatherCode ?? 'Not available',
     description: weather.description || 'Weather data available',
+    dailyMaxTemperature: weather.dailyMaxTemperature ?? null,
+    dailyMinTemperature: weather.dailyMinTemperature ?? null,
     updatedAt: weather.updatedAt || new Date().toISOString(),
     latitude: weather.latitude ?? city?.latitude,
     longitude: weather.longitude ?? city?.longitude,

@@ -32,30 +32,65 @@ export async function onRequestGet(context) {
     })
   }
 
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(
-      coinId,
-    )}/market_chart?vs_currency=eur&days=${rangeToDays[range]}`,
-    {
-      headers: {
-        Accept: 'application/json',
-        'User-Agent': 'alexgl.dev portfolio demo',
+  try {
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/coins/${encodeURIComponent(
+        coinId,
+      )}/market_chart?vs_currency=eur&days=${rangeToDays[range]}`,
+      {
+        headers: {
+          Accept: 'application/json',
+          'User-Agent': 'alexgl.dev portfolio demo',
+        },
       },
-    },
-  )
+    )
 
-  if (!response.ok) {
-    return errorResponse('Crypto history data is not available right now.', 502)
+    if (!response.ok) {
+      try {
+        await response.text()
+      } catch {
+        // Keep external details out of the public response.
+      }
+
+      if (response.status === 429) {
+        return errorResponse('Market history is rate limited right now. Try again later.', 429)
+      }
+
+      if (response.status === 404) {
+        return errorResponse('Market history was not found for this coin.', 404)
+      }
+
+      return errorResponse('Market history is not available right now.', 502)
+    }
+
+    let data
+    try {
+      data = await response.json()
+    } catch {
+      return errorResponse('Market history is not available right now.', 502)
+    }
+
+    if (!Array.isArray(data.prices)) {
+      return errorResponse('Market history is not available right now.', 502)
+    }
+
+    const prices = data.prices
+      .map(([timestamp, price]) => {
+        const normalizedTimestamp = Number(timestamp)
+        return {
+          timestamp: normalizedTimestamp,
+          date: Number.isFinite(normalizedTimestamp) ? new Date(normalizedTimestamp).toISOString() : '',
+          price: Number(price),
+        }
+      })
+      .filter((point) => Number.isFinite(point.timestamp) && Number.isFinite(point.price))
+
+    if (prices.length === 0) {
+      return errorResponse('Market history is not available right now.', 502)
+    }
+
+    return jsonResponse({ ok: true, coinId, range, prices })
+  } catch {
+    return errorResponse('Market history is not available right now.', 502)
   }
-
-  const data = await response.json()
-  const prices = Array.isArray(data.prices)
-    ? data.prices.map(([timestamp, price]) => ({
-        timestamp,
-        date: new Date(timestamp).toISOString(),
-        price,
-      }))
-    : []
-
-  return jsonResponse({ ok: true, range, prices })
 }

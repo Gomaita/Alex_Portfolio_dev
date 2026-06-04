@@ -1,46 +1,69 @@
-const fallbackCoins = [
-  { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', current_price: 64000, market_cap: 1260000000000, total_volume: 32000000000, price_change_percentage_24h: 1.8, last_updated: new Date().toISOString() },
-  { id: 'ethereum', symbol: 'eth', name: 'Ethereum', current_price: 3100, market_cap: 374000000000, total_volume: 18000000000, price_change_percentage_24h: -0.7, last_updated: new Date().toISOString() },
-  { id: 'solana', symbol: 'sol', name: 'Solana', current_price: 145, market_cap: 67000000000, total_volume: 3900000000, price_change_percentage_24h: 2.4, last_updated: new Date().toISOString() },
-  { id: 'ripple', symbol: 'xrp', name: 'XRP', current_price: 0.48, market_cap: 27000000000, total_volume: 1200000000, price_change_percentage_24h: 0.6, last_updated: new Date().toISOString() },
-]
-
 export function normalizeMarketData(coins) {
-  return (Array.isArray(coins) ? coins : []).map((coin) => ({
-    id: coin.id,
-    symbol: String(coin.symbol || '').toUpperCase(),
-    name: coin.name,
-    image: coin.image || '',
-    price: Number(coin.current_price ?? coin.price ?? 0),
-    marketCap: coin.market_cap ?? coin.marketCap ?? null,
-    volume: coin.total_volume ?? coin.volume ?? null,
-    change24h: Number(coin.price_change_percentage_24h ?? coin.change24h ?? 0),
-    lastUpdated: coin.last_updated || coin.lastUpdated || new Date().toISOString(),
-    isFallback: Boolean(coin.isFallback),
-  }))
+  return (Array.isArray(coins) ? coins : [])
+    .map((coin) => ({
+      id: coin.id,
+      symbol: String(coin.symbol || '').toUpperCase(),
+      name: coin.name,
+      image: coin.image || '',
+      price: Number(coin.current_price ?? coin.price),
+      marketCap: coin.market_cap ?? coin.marketCap ?? null,
+      volume: coin.total_volume ?? coin.volume ?? null,
+      change24h: Number(coin.price_change_percentage_24h ?? coin.change24h ?? 0),
+      lastUpdated: coin.last_updated || coin.lastUpdated || new Date().toISOString(),
+      isFallback: Boolean(coin.isFallback),
+    }))
+    .filter((coin) => coin.id && coin.name && Number.isFinite(coin.price))
 }
 
 export function normalizeHistoryData(prices) {
-  return (Array.isArray(prices) ? prices : []).map((point) => ({
-    timestamp: point.timestamp,
-    date: point.date || new Date(point.timestamp).toISOString(),
-    price: Number(point.price),
-  }))
+  return (Array.isArray(prices) ? prices : [])
+    .map((point) => {
+      const timestamp = Number(point.timestamp)
+      return {
+        timestamp,
+        date: point.date || (Number.isFinite(timestamp) ? new Date(timestamp).toISOString() : ''),
+        price: Number(point.price),
+      }
+    })
+    .filter((point) => Number.isFinite(point.timestamp) && Number.isFinite(point.price))
+}
+
+async function readJsonResponse(response, fallbackMessage) {
+  try {
+    return await response.json()
+  } catch {
+    throw new Error(fallbackMessage)
+  }
+}
+
+async function readErrorMessage(response, fallbackMessage) {
+  try {
+    const data = await response.json()
+    return data?.message || fallbackMessage
+  } catch {
+    return fallbackMessage
+  }
 }
 
 export async function fetchCryptoMarkets({ signal } = {}) {
   try {
     const response = await fetch('/api/crypto/markets', { signal })
-    const data = await response.json()
 
     if (!response.ok) {
-      throw new Error(data?.message || 'Market data is not available right now.')
+      throw new Error(await readErrorMessage(response, 'Market data is not available right now.'))
     }
 
-    return normalizeMarketData(data.coins)
+    const data = await readJsonResponse(response, 'Market API returned an invalid response.')
+    const markets = normalizeMarketData(data.coins)
+
+    if (markets.length === 0) {
+      throw new Error('Market data is not available right now.')
+    }
+
+    return markets
   } catch (error) {
     if (error.name === 'AbortError') throw error
-    return normalizeMarketData(fallbackCoins.map((coin) => ({ ...coin, isFallback: true })))
+    throw new Error(error.message || 'Market data is not available right now.')
   }
 }
 
@@ -53,14 +76,20 @@ export async function fetchCryptoHistory(coinId, range, { signal } = {}) {
     `/api/crypto/history?coinId=${encodeURIComponent(coinId)}&range=${encodeURIComponent(range)}`,
     { signal },
   )
-  const data = await response.json()
 
   if (!response.ok) {
-    throw new Error(data?.message || 'Crypto history data is not available right now.')
+    throw new Error(await readErrorMessage(response, 'Historical data is not available right now. Try another coin or range.'))
+  }
+
+  const data = await readJsonResponse(response, 'Historical data is not available right now. Try another coin or range.')
+  const prices = normalizeHistoryData(data.prices)
+
+  if (prices.length === 0) {
+    throw new Error('Historical data is not available right now. Try another coin or range.')
   }
 
   return {
-    prices: normalizeHistoryData(data.prices),
+    prices,
     message: data.message || '',
   }
 }

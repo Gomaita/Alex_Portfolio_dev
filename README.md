@@ -40,9 +40,11 @@ This portfolio includes small demos built for practice and learning. They are de
 
 The demos remain educational and local by default. The backend is prepared for contact messages and project submissions, but the demos are not all connected to backend storage.
 
-Weather Search App now includes city autocomplete, external weather/geocoding API integration, backend proxy endpoints and improved error handling.
+Weather Search App now includes city autocomplete, external weather/geocoding API integration, backend proxy endpoints, daily max/min temperatures and improved error handling.
 
-Market API Dashboard now includes multiple crypto assets, historical chart ranges, a selected coin view, public API data normalization and a live session chart.
+Market API Dashboard now includes multiple crypto assets, adaptive chart scaling, historical chart ranges, a selected coin view, public API data normalization and a live session chart.
+
+The Live chart is session-based and collects points while the page is open. Historical chart ranges depend on public CoinGecko API availability, so requests may be rate limited.
 
 API Health Monitor checks backend readiness, D1 connectivity and response times without exposing private records.
 

@@ -156,7 +156,7 @@ export const projects = [
     title: 'Market API Dashboard',
     subtitle: 'Crypto assets, historical ranges and public market API data in one dashboard.',
     summary:
-      'Crypto market dashboard with multiple assets, historical charts, range selection and public API integration.',
+      'Crypto market dashboard with multiple assets, adaptive chart scaling, historical ranges and clearer API error handling.',
     description:
       'This project fetches public crypto market data, normalizes prices and historical ranges, and displays the result with cards, filters, selected coin summaries and responsive Recharts visualizations.',
     type: 'API',
@@ -172,7 +172,7 @@ export const projects = [
       'Explaining public API rate limits clearly in the UI',
     ],
     technicalNotes:
-      'The frontend calls Cloudflare Functions endpoints that normalize CoinGecko market and market_chart responses. Live mode is a session chart collected while the page is open, not a fake minute-by-minute historical feed.',
+      'The chart scale adapts to the selected asset, so low-price and high-price coins remain readable. Historical ranges use public CoinGecko market chart data, while Live mode shows session data collected while the page is open.',
     improvements: [
       'Add user-defined watchlists',
       'Add server-side caching for public API rate limits',
@@ -226,9 +226,9 @@ export const projects = [
     title: 'Weather Search App',
     subtitle: 'City autocomplete, geocoding and current weather with clear states.',
     summary:
-      'Weather search demo with city autocomplete, API data normalization and clear error states.',
+      'Weather search demo with autocomplete, current conditions and daily high/low temperatures.',
     description:
-      'The weather demo searches cities through a geocoding endpoint, lets the user select a real location and then loads current weather through a normalized API response. It separates city-not-found errors from external service availability.',
+      'The weather demo searches cities through a geocoding endpoint, lets the user select a real location and then loads current weather, daily high and daily low through a normalized API response. It separates city-not-found errors from external service availability.',
     type: 'API',
     status: 'Completed',
     technologies: ['React', 'Forms', 'API', 'Autocomplete', 'Error Handling', 'Cloudflare Functions'],
@@ -242,7 +242,7 @@ export const projects = [
       'Rendering empty, loading, error and success states',
     ],
     technicalNotes:
-      'Cloudflare Functions proxy Open-Meteo geocoding and forecast endpoints. The frontend keeps the component focused on form interaction, debounce, suggestion selection and rendering states.',
+      'Cloudflare Functions proxy Open-Meteo geocoding and forecast endpoints, including current conditions and daily max/min temperatures. The frontend keeps the component focused on form interaction, debounce, suggestion selection and rendering states.',
     improvements: [
       'Add a forecast view',
       'Add geolocation when the user allows it',

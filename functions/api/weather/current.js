@@ -44,16 +44,27 @@ export async function onRequestGet(context) {
     return errorResponse('Valid latitude and longitude are required.', 400)
   }
 
-  const response = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`,
-  )
+  let response
+  try {
+    response = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&timezone=auto`,
+    )
+  } catch {
+    return errorResponse('Weather service is not available right now.', 502)
+  }
 
   if (!response.ok) {
     return errorResponse('Weather service is not available right now.', 502)
   }
 
-  const data = await response.json()
+  let data
+  try {
+    data = await response.json()
+  } catch {
+    return errorResponse('Weather service is not available right now.', 502)
+  }
   const current = data.current || {}
+  const daily = data.daily || {}
   const weatherCode = current.weather_code
 
   return jsonResponse({
@@ -67,6 +78,8 @@ export async function onRequestGet(context) {
       windSpeed: formatValue(current.wind_speed_10m),
       weatherCode: formatValue(weatherCode),
       description: weatherDescriptions[weatherCode] || 'Weather data available',
+      dailyMaxTemperature: daily.temperature_2m_max?.[0] ?? null,
+      dailyMinTemperature: daily.temperature_2m_min?.[0] ?? null,
       updatedAt: current.time || new Date().toISOString(),
       latitude,
       longitude,
