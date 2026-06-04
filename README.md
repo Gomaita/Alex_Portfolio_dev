@@ -2,9 +2,17 @@
 
 Live site: https://alexgl.dev
 
-Personal portfolio built to present my work as a junior software developer with a background in Multimedia Engineering, 3D and VR.
+## Overview
 
-The goal of this project is simple: show what I am learning, keep the code readable, and document small practical demos that connect frontend, data, UI and backend-ready ideas.
+This is my personal portfolio as a Junior Software Developer with a background in Multimedia Engineering, 3D and VR.
+
+I built it to practice and show small but complete software projects. Some demos use real backend endpoints, while others are educational simulations. The goal is to make the project practical, readable and easy to inspect.
+
+## Purpose
+
+This portfolio is not just a static page. I use it as a place to keep learning and to show how I work with React, APIs, forms, SQL concepts, Cloudflare D1, localStorage and clear UI states.
+
+I am still improving it, but I wanted it to feel honest: simple where it should be simple, and detailed enough to explain the thinking behind each demo.
 
 ## Tech Stack
 
@@ -12,97 +20,72 @@ The goal of this project is simple: show what I am learning, keep the code reada
 - Vite
 - JavaScript
 - Tailwind CSS
+- React Router
 - Framer Motion
+- Recharts
 - Lucide React
-- Cloudflare Pages-ready frontend
-- Cloudflare Pages Functions-ready backend structure
-- Cloudflare D1 SQL schema
+- Cloudflare Pages Functions
+- Cloudflare D1
+- Resend for contact email notifications
 
-## Features
+## Main Features
 
 - Responsive portfolio layout.
 - Light and dark mode.
-- Project pages with demo-focused explanations.
-- Educational frontend demos.
+- Project pages with practical demo explanations.
 - Programming cheatsheets.
-- CV download options.
-- Contact page with optional backend submission.
-- Backend-ready structure for moderated public submissions.
-- API Health Monitor.
-- D1 Database Metrics Dashboard.
-- Auth Flow Simulator.
-- Checkout Flow Simulator.
-- Documentation for backend, security and deployment preparation.
+- Two CV download options.
+- Contact form connected to Cloudflare Pages Functions and D1.
+- Structured contact email notifications with Resend.
+- Backend-ready moderated project submissions.
+- Educational demos for APIs, CRUD, auth concepts, checkout states, SQL concepts and backend monitoring.
 
-## Educational Demos
+## Demo Disclaimer
 
-This portfolio includes small demos built for practice and learning. They are designed to show frontend logic, state management, data handling and UI decisions in a clear way.
+The demos are built for learning and portfolio review.
 
-The demos remain educational and local by default. The backend is prepared for contact messages and project submissions, but the demos are not all connected to backend storage.
+Some demos use real API endpoints, such as Weather Search App, Market API Dashboard, API Health Monitor and D1 Database Metrics. Other demos are simulations that explain frontend or security concepts without pretending to be full production systems.
 
-Weather Search App now includes city autocomplete, external weather/geocoding API integration, backend proxy endpoints, daily max/min temperatures and improved error handling.
+Security-related demos are educational. Real applications need backend-side authentication, secure sessions, server-side validation, monitoring and a proper security review.
 
-Market API Dashboard now includes multiple crypto assets, adaptive chart scaling, historical chart ranges, a selected coin view, public API data normalization and a live session chart.
+## Current Demos
 
-The Live chart is session-based and collects points while the page is open. Historical chart ranges depend on public CoinGecko API availability, so requests may be rate limited.
+- Weather Search App: autocomplete, Open-Meteo data, current conditions and daily high/low temperatures.
+- Market API Dashboard: multiple crypto assets, adaptive chart scaling, historical ranges and session-based Live chart.
+- API Health Monitor: backend readiness checks without exposing private records.
+- D1 Database Metrics: aggregate metrics from D1 without returning private messages or emails.
+- Auth Flow Simulator: login states, roles, permissions and session expiration using visible demo data.
+- Checkout Flow Simulator: form validation and payment states without processing real payments.
+- Project Manager CRUD: local client/admin workflow with moderation states.
+- SQL Query Playground: database concepts using prepared example data.
+- Secure Users & Roles Demo: educational user records and password hashing concepts.
 
-API Health Monitor checks backend readiness, D1 connectivity and response times without exposing private records.
-
-D1 Database Metrics Dashboard reads aggregated counts from Cloudflare D1 and visualizes them without exposing messages, emails or user details.
-
-Auth Flow Simulator explains login states, session expiration, roles and protected views without implementing real authentication.
-
-Checkout Flow Simulator practices checkout UX, form validation and fake payment states without processing real payments or storing card data.
-
-## Backend-Ready Cloudflare Structure
+## Backend Preparation
 
 The project includes a first backend version prepared for Cloudflare Pages Functions and Cloudflare D1.
 
-It includes:
+Main backend pieces:
 
 - `functions/` for Cloudflare Pages Functions.
 - `db/schema.sql` for D1/SQLite tables and indexes.
 - `docs/BACKEND_PLAN.md` for setup notes.
 - `docs/SECURITY_NOTES.md` for security notes.
 - `src/services/` for frontend API helpers.
-- `.env.example` as a safe reference for local environment variables.
+- `.env.example` as a safe local reference.
 
-Backend support is disabled by default with:
+Backend support is controlled by:
 
 ```text
 VITE_BACKEND_ENABLED=false
 ```
 
-When enabled and deployed on the same Cloudflare Pages domain, the frontend can call relative `/api/...` routes.
-
-## Moderated Submissions
-
-Visitor project submissions are moderation-first.
-
-Every public submission starts as:
-
-```text
-moderation_status = pending
-visibility = private
-```
-
-Nothing submitted by a visitor appears publicly until it is approved by an admin.
-
-The public projects endpoint only returns approved and public rows.
-
-## Contact Messages
-
-The contact form can send messages to the backend when `VITE_BACKEND_ENABLED=true`.
-
-When the backend is disabled, the UI shows a friendly message and keeps the email link as the safe contact option.
+When it is enabled and deployed on the same Cloudflare Pages domain, the frontend can call relative `/api/...` routes.
 
 ## Email Notifications
 
-`/api/contact` stores contact messages in D1 first.
+`POST /api/contact` stores the message in D1 first. If Resend is configured in Cloudflare Pages, the Function then sends a structured HTML email notification with sender details, message content and technical metadata.
 
-If Resend is configured in Cloudflare Pages, the Function also sends an email notification when a new message arrives. The form still works if email notifications are not configured or if the email request fails after the message has been saved.
-
-Contact email notifications are sent with a structured HTML email including sender information, message content and technical details.
+If Resend is missing or fails after D1 storage succeeds, the contact form still returns a success response. The stored message is not lost because email is treated as a secondary step.
 
 Required backend variables:
 
@@ -112,7 +95,7 @@ CONTACT_NOTIFICATION_EMAIL=
 CONTACT_EMAIL_FROM=
 ```
 
-These are backend environment variables for Cloudflare Pages Functions. Do not prefix them with `VITE_` and do not expose them in frontend code.
+These variables belong only in Cloudflare Pages backend environment variables or secrets. They should not be prefixed with `VITE_`.
 
 ## Environment Variables
 
@@ -127,27 +110,9 @@ VITE_OPENWEATHER_API_KEY=
 
 Do not commit real tokens, API keys, passwords or production secrets.
 
-Do not put `ADMIN_API_TOKEN` in frontend variables. `VITE_` variables are exposed to the browser.
+`ADMIN_API_TOKEN`, `RESEND_API_KEY`, `CONTACT_NOTIFICATION_EMAIL` and `CONTACT_EMAIL_FROM` must stay in backend environment variables/secrets, not in frontend code.
 
-`ADMIN_API_TOKEN` must be configured only as a Cloudflare Pages secret/environment variable for Functions.
-
-Email notification variables such as `RESEND_API_KEY`, `CONTACT_NOTIFICATION_EMAIL` and `CONTACT_EMAIL_FROM` must also be configured only in Cloudflare Pages backend environment variables/secrets.
-
-## Cloudflare D1 Setup
-
-To activate the backend:
-
-1. Create a Cloudflare D1 database.
-2. Apply `db/schema.sql`.
-3. Add a D1 binding called `DB` to the Cloudflare Pages project.
-4. Add `ADMIN_API_TOKEN` as a backend secret/environment variable.
-5. Add Resend email notification variables if you want contact email alerts.
-6. Set `VITE_BACKEND_ENABLED=true`.
-7. Redeploy the project.
-8. Test the public endpoints.
-9. Test admin endpoints from a secure API client.
-
-## Run Locally
+## Running Locally
 
 Install dependencies:
 
@@ -173,6 +138,28 @@ Preview the production build locally:
 npm run preview
 ```
 
+## Build
+
+The Vite build output is generated in:
+
+```text
+dist/
+```
+
+`dist/` is ignored by git and should be generated during deployment.
+
+## Deployment
+
+The project is intended to run on Cloudflare Pages with:
+
+- Build command: `npm run build`
+- Output directory: `dist`
+- Custom domain: `https://alexgl.dev`
+- Pages Functions in `functions/`
+- D1 binding named `DB`
+
+Backend secrets and environment variables are configured in Cloudflare, not committed to the repository.
+
 ## CV Downloads
 
 The site includes two CV download options:
@@ -181,17 +168,6 @@ The site includes two CV download options:
 - Visual CV: `/Alex_Gomez_CV_Visual.pdf`
 
 The PDFs live in `public/` and are served as downloadable files. Their content is not copied into the website.
-
-## Demo Disclaimer
-
-The demos in this portfolio are educational and portfolio-focused. They are not production systems.
-
-Security-related demos are meant to explain concepts and show structure, not to replace a real production security review.
-
-## Repository Notes
-
-This repository does not include private environment variables or production secrets.
-Use `.env.example` as a reference and create a local `.env` file only when needed.
 
 ## Project Structure
 
@@ -216,6 +192,26 @@ docs/
 db/
 ```
 
-## About
+## Repository Notes
 
-I built this project as a junior developer portfolio: something practical, personal and easy to explain. It is a place to collect what I am learning and keep improving it step by step.
+This repository does not include private environment variables or production secrets.
+Use `.env.example` as a reference and create a local `.env` file only when needed.
+
+## What This Portfolio Demonstrates
+
+- Building React interfaces with reusable components.
+- Handling loading, empty, error and success states.
+- Working with public APIs through backend proxy endpoints.
+- Using Cloudflare Pages Functions and D1 for a small backend.
+- Keeping private data out of public endpoints.
+- Documenting demos honestly, including their limits.
+- Making a portfolio that is easy to read, test and improve.
+
+## Future Improvements
+
+- Add Cloudflare Turnstile to public forms.
+- Add stronger admin authentication.
+- Add server-side caching for public API requests.
+- Add more automated tests.
+- Improve manual QA documentation.
+- Keep refining the demos as I learn more.

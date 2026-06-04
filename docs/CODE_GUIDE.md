@@ -82,17 +82,17 @@ Supported demo keys:
 
 `src/services/apiClient.js` is a prepared fetch client for future backend routes. It uses `appConfig.apiBaseUrl`, checks whether backend mode is enabled, handles HTTP errors, handles invalid JSON and applies a simple timeout.
 
-`src/services/backend/` contains placeholders for future Cloudflare Functions/Workers services:
+`src/services/backend/` contains frontend helpers for the Cloudflare Functions-backed flows:
 
 - `projectSubmissionsService.js`
 - `contactMessagesService.js`
 - `adminModerationService.js`
 
-Weather Search App and Market API Dashboard use public API proxy endpoints. Project Manager CRUD, Secure Users & Roles Demo and SQL Query Playground remain local educational demos unless they are intentionally connected to a protected backend.
+Weather Search App and Market API Dashboard use public API proxy endpoints. Contact messages, backend health checks, D1 metrics and moderated submissions use Cloudflare Functions. Project Manager CRUD, Secure Users & Roles Demo and SQL Query Playground remain local educational demos unless they are intentionally connected to a protected backend.
 
-User-generated content needs moderation because visitor input can contain spam, offensive content or unsafe data. A future backend should store public submissions as pending/private first, then expose only approved records.
+User-generated content needs moderation because visitor input can contain spam, offensive content or unsafe data. Public submissions should start as pending/private first, then expose only approved records.
 
-The future D1/SQLite schema lives in `db/schema.sql`.
+The D1/SQLite schema lives in `db/schema.sql`.
 
 ## Weather Search App
 

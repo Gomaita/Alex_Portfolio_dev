@@ -59,7 +59,7 @@ function Home() {
         <div className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl items-center py-8">
           <div className="max-w-5xl">
             <Badge tone="blue">
-              Junior Software Developer · Multimedia Engineering background
+              Junior Software Developer - Multimedia Engineering background
             </Badge>
             <h1 className="mt-7 max-w-5xl text-6xl font-bold tracking-normal text-slate-950 sm:text-7xl lg:text-8xl dark:text-white">
               Learning software by building things that actually work.

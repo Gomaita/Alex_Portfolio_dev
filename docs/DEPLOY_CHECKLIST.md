@@ -2,35 +2,34 @@
 
 ## Before Deploying
 
-- Run `npm install`.
-- Run `npm run dev`.
+- Run `npm install` if dependencies are not installed yet.
+- Run `npm run dev` and review the main routes locally.
 - Run `npm run build`.
-- Review all routes.
-- Review internal links.
-- Review external links.
 - Review responsive layouts.
-- Review environment variables.
-- Review README.
+- Review light and dark mode.
+- Review internal and external links.
 - Confirm there are no API keys or private tokens in the code.
 - Confirm `public/Alex_Gomez_CV_ATS.pdf` exists.
 - Confirm `public/Alex_Gomez_CV_Visual.pdf` exists.
+- Confirm README and docs use `https://alexgl.dev`.
 
-## Vercel
+## Cloudflare Pages
 
 - Push the project to GitHub.
-- Import the repository in Vercel.
-- Select Vite as the framework.
+- Let Cloudflare Pages deploy from the connected repository.
 - Build command: `npm run build`.
 - Output directory: `dist`.
-- Add environment variables if needed.
+- Functions directory: `functions/`.
+- Custom domain: `https://alexgl.dev`.
 
-## Netlify
+Backend configuration in Cloudflare:
 
-- Push the project to GitHub.
-- Import the repository in Netlify.
-- Build command: `npm run build`.
-- Publish directory: `dist`.
-- Add environment variables if needed.
+- D1 binding: `DB`.
+- `ADMIN_API_TOKEN`.
+- `RESEND_API_KEY`.
+- `CONTACT_NOTIFICATION_EMAIL`.
+- `CONTACT_EMAIL_FROM`.
+- `VITE_BACKEND_ENABLED=true`.
 
 ## Post-Deploy
 
@@ -38,10 +37,12 @@
 - Test Portfolio.
 - Test project detail pages.
 - Test Cheatsheets.
-- Test cheatsheet detail pages.
-- Test APIs and fallback states.
-- Test Project Manager localStorage behavior.
-- Test mobile navigation.
-- Test external links.
+- Test About and Contact.
+- Test `/api/health`.
+- Test `/api/metrics`.
+- Test Weather Search App.
+- Test Market API Dashboard.
+- Test Contact form storage and email notification.
 - Test ATS CV and Visual CV downloads.
+- Test mobile navigation.
 - Test 404 page.
