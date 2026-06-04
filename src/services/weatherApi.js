@@ -1,213 +1,135 @@
-const OPENWEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather'
-const OPENWEATHER_GEO_URL = 'https://api.openweathermap.org/geo/1.0/direct'
-
-const supportedCities = [
-  { name: 'Alicante', country: 'ES', condition: 'Sunny', description: 'clear sky', temperature: 24, feelsLike: 25, humidity: 58, windSpeed: 12 },
-  { name: 'Madrid', country: 'ES', condition: 'Cloudy', description: 'few clouds', temperature: 19, feelsLike: 18, humidity: 44, windSpeed: 10 },
-  { name: 'Barcelona', country: 'ES', condition: 'Sunny', description: 'clear sky', temperature: 22, feelsLike: 22, humidity: 61, windSpeed: 11 },
-  { name: 'Valencia', country: 'ES', condition: 'Sunny', description: 'clear sky', temperature: 23, feelsLike: 24, humidity: 63, windSpeed: 13 },
-  { name: 'Seville', country: 'ES', condition: 'Sunny', description: 'clear sky', temperature: 27, feelsLike: 28, humidity: 39, windSpeed: 9 },
-  { name: 'Bilbao', country: 'ES', condition: 'Rain', description: 'light rain', temperature: 16, feelsLike: 15, humidity: 78, windSpeed: 14 },
-  { name: 'Malaga', country: 'ES', condition: 'Sunny', description: 'clear sky', temperature: 25, feelsLike: 26, humidity: 55, windSpeed: 10 },
-  { name: 'Murcia', country: 'ES', condition: 'Sunny', description: 'clear sky', temperature: 26, feelsLike: 27, humidity: 42, windSpeed: 12 },
-  { name: 'Zaragoza', country: 'ES', condition: 'Cloudy', description: 'scattered clouds', temperature: 20, feelsLike: 19, humidity: 47, windSpeed: 18 },
-  { name: 'Granada', country: 'ES', condition: 'Sunny', description: 'clear sky', temperature: 21, feelsLike: 20, humidity: 40, windSpeed: 8 },
-  { name: 'London', country: 'GB', condition: 'Rain', description: 'light rain', temperature: 13, feelsLike: 12, humidity: 76, windSpeed: 16 },
-  { name: 'Paris', country: 'FR', condition: 'Cloudy', description: 'broken clouds', temperature: 15, feelsLike: 14, humidity: 69, windSpeed: 11 },
-  { name: 'Berlin', country: 'DE', condition: 'Cloudy', description: 'overcast clouds', temperature: 14, feelsLike: 13, humidity: 66, windSpeed: 13 },
-  { name: 'Rome', country: 'IT', condition: 'Sunny', description: 'clear sky', temperature: 23, feelsLike: 23, humidity: 52, windSpeed: 9 },
-  { name: 'Lisbon', country: 'PT', condition: 'Sunny', description: 'clear sky', temperature: 21, feelsLike: 21, humidity: 59, windSpeed: 17 },
-  { name: 'Amsterdam', country: 'NL', condition: 'Rain', description: 'light rain', temperature: 12, feelsLike: 11, humidity: 81, windSpeed: 19 },
-  { name: 'Brussels', country: 'BE', condition: 'Cloudy', description: 'broken clouds', temperature: 13, feelsLike: 12, humidity: 74, windSpeed: 14 },
-  { name: 'Dublin', country: 'IE', condition: 'Rain', description: 'moderate rain', temperature: 11, feelsLike: 10, humidity: 83, windSpeed: 22 },
-  { name: 'Copenhagen', country: 'DK', condition: 'Cloudy', description: 'scattered clouds', temperature: 10, feelsLike: 9, humidity: 70, windSpeed: 20 },
-  { name: 'Stockholm', country: 'SE', condition: 'Cloudy', description: 'broken clouds', temperature: 8, feelsLike: 6, humidity: 67, windSpeed: 15 },
-  { name: 'Oslo', country: 'NO', condition: 'Cloudy', description: 'overcast clouds', temperature: 7, feelsLike: 5, humidity: 72, windSpeed: 12 },
-  { name: 'Vienna', country: 'AT', condition: 'Sunny', description: 'clear sky', temperature: 17, feelsLike: 16, humidity: 55, windSpeed: 10 },
-  { name: 'Prague', country: 'CZ', condition: 'Cloudy', description: 'few clouds', temperature: 14, feelsLike: 13, humidity: 58, windSpeed: 12 },
-  { name: 'Warsaw', country: 'PL', condition: 'Cloudy', description: 'scattered clouds', temperature: 13, feelsLike: 12, humidity: 62, windSpeed: 13 },
-  { name: 'Athens', country: 'GR', condition: 'Sunny', description: 'clear sky', temperature: 26, feelsLike: 27, humidity: 46, windSpeed: 9 },
-  { name: 'New York', country: 'US', condition: 'Cloudy', description: 'broken clouds', temperature: 18, feelsLike: 18, humidity: 60, windSpeed: 15 },
-  { name: 'Los Angeles', country: 'US', condition: 'Sunny', description: 'clear sky', temperature: 24, feelsLike: 24, humidity: 49, windSpeed: 10 },
-  { name: 'Chicago', country: 'US', condition: 'Wind', description: 'windy', temperature: 12, feelsLike: 10, humidity: 56, windSpeed: 28 },
-  { name: 'Miami', country: 'US', condition: 'Rain', description: 'light rain', temperature: 27, feelsLike: 30, humidity: 78, windSpeed: 18 },
-  { name: 'Toronto', country: 'CA', condition: 'Cloudy', description: 'overcast clouds', temperature: 10, feelsLike: 8, humidity: 65, windSpeed: 17 },
-  { name: 'Vancouver', country: 'CA', condition: 'Rain', description: 'light rain', temperature: 9, feelsLike: 7, humidity: 82, windSpeed: 14 },
-  { name: 'Mexico City', country: 'MX', condition: 'Cloudy', description: 'scattered clouds', temperature: 20, feelsLike: 20, humidity: 51, windSpeed: 9 },
-  { name: 'Buenos Aires', country: 'AR', condition: 'Cloudy', description: 'few clouds', temperature: 17, feelsLike: 16, humidity: 57, windSpeed: 16 },
-  { name: 'Sao Paulo', country: 'BR', condition: 'Rain', description: 'light rain', temperature: 22, feelsLike: 23, humidity: 75, windSpeed: 12 },
-  { name: 'Tokyo', country: 'JP', condition: 'Cloudy', description: 'scattered clouds', temperature: 21, feelsLike: 22, humidity: 68, windSpeed: 9 },
-  { name: 'Kyoto', country: 'JP', condition: 'Cloudy', description: 'few clouds', temperature: 20, feelsLike: 20, humidity: 65, windSpeed: 8 },
-  { name: 'Seoul', country: 'KR', condition: 'Sunny', description: 'clear sky', temperature: 19, feelsLike: 18, humidity: 49, windSpeed: 11 },
-  { name: 'Beijing', country: 'CN', condition: 'Cloudy', description: 'haze', temperature: 18, feelsLike: 17, humidity: 44, windSpeed: 10 },
-  { name: 'Shanghai', country: 'CN', condition: 'Rain', description: 'light rain', temperature: 21, feelsLike: 22, humidity: 73, windSpeed: 13 },
-  { name: 'Singapore', country: 'SG', condition: 'Rain', description: 'thunderstorm', temperature: 29, feelsLike: 34, humidity: 82, windSpeed: 10 },
-  { name: 'Sydney', country: 'AU', condition: 'Sunny', description: 'clear sky', temperature: 22, feelsLike: 22, humidity: 55, windSpeed: 14 },
-  { name: 'Melbourne', country: 'AU', condition: 'Cloudy', description: 'broken clouds', temperature: 16, feelsLike: 15, humidity: 63, windSpeed: 17 },
-  { name: 'Cape Town', country: 'ZA', condition: 'Wind', description: 'windy', temperature: 18, feelsLike: 17, humidity: 58, windSpeed: 26 },
-  { name: 'Cairo', country: 'EG', condition: 'Sunny', description: 'clear sky', temperature: 30, feelsLike: 29, humidity: 31, windSpeed: 12 },
+const fallbackCities = [
+  { id: 'fallback-alicante', name: 'Alicante', country: 'Spain', admin1: 'Valencian Community', latitude: 38.3452, longitude: -0.481, label: 'Alicante, Valencian Community, Spain' },
+  { id: 'fallback-madrid', name: 'Madrid', country: 'Spain', admin1: 'Madrid', latitude: 40.4168, longitude: -3.7038, label: 'Madrid, Madrid, Spain' },
+  { id: 'fallback-london', name: 'London', country: 'United Kingdom', admin1: 'England', latitude: 51.5072, longitude: -0.1276, label: 'London, England, United Kingdom' },
+  { id: 'fallback-tokyo', name: 'Tokyo', country: 'Japan', admin1: 'Tokyo', latitude: 35.6762, longitude: 139.6503, label: 'Tokyo, Tokyo, Japan' },
 ]
 
-function normalizeText(value) {
-  return value.trim().toLowerCase()
+const fallbackWeather = {
+  Alicante: { temperature: 24, feelsLike: 25, humidity: 58, windSpeed: 12, weatherCode: 0, description: 'Clear sky' },
+  Madrid: { temperature: 19, feelsLike: 18, humidity: 44, windSpeed: 10, weatherCode: 2, description: 'Partly cloudy' },
+  London: { temperature: 13, feelsLike: 12, humidity: 76, windSpeed: 16, weatherCode: 61, description: 'Slight rain' },
+  Tokyo: { temperature: 21, feelsLike: 22, humidity: 68, windSpeed: 9, weatherCode: 2, description: 'Partly cloudy' },
 }
 
-function normalizeCityResult(city) {
+function normalizeQuery(query) {
+  return query.trim().toLowerCase()
+}
+
+function normalizeCity(city) {
   return {
+    id: city.id || `${city.latitude}-${city.longitude}`,
     name: city.name,
-    country: city.country,
-    label: `${city.name}, ${city.country}`,
+    country: city.country || '',
+    admin1: city.admin1 || city.state || '',
+    latitude: Number(city.latitude ?? city.lat),
+    longitude: Number(city.longitude ?? city.lon),
+    label:
+      city.label ||
+      [city.name, city.admin1 || city.state, city.country].filter(Boolean).join(', '),
   }
 }
 
-function mapOpenWeatherResponse(data) {
+function normalizeWeather(weather, city) {
   return {
-    city: data.name,
-    country: data.sys?.country || '',
-    temperature: Math.round(data.main?.temp ?? 0),
-    feelsLike: Math.round(data.main?.feels_like ?? 0),
-    humidity: data.main?.humidity ?? 0,
-    windSpeed: Math.round((data.wind?.speed ?? 0) * 3.6),
-    description: data.weather?.[0]?.description || 'weather data unavailable',
-    condition: data.weather?.[0]?.main || 'Weather',
-    timestamp: new Date().toISOString(),
-    source: 'api',
+    city: weather.city || city?.name || 'Selected city',
+    country: weather.country || city?.country || '',
+    temperature: weather.temperature ?? 'Not available',
+    feelsLike: weather.feelsLike ?? 'Not available',
+    humidity: weather.humidity ?? 'Not available',
+    windSpeed: weather.windSpeed ?? 'Not available',
+    weatherCode: weather.weatherCode ?? 'Not available',
+    description: weather.description || 'Weather data available',
+    updatedAt: weather.updatedAt || new Date().toISOString(),
+    latitude: weather.latitude ?? city?.latitude,
+    longitude: weather.longitude ?? city?.longitude,
+    source: weather.source || 'Open-Meteo',
+    isFallback: Boolean(weather.isFallback),
   }
 }
 
-function mapMockWeather(city) {
-  return {
-    city: city.name,
-    country: city.country,
-    temperature: city.temperature,
-    feelsLike: city.feelsLike,
-    humidity: city.humidity,
-    windSpeed: city.windSpeed,
-    description: city.description,
-    condition: city.condition,
-    timestamp: new Date().toISOString(),
-    source: 'mock',
-  }
+function fallbackSearch(query) {
+  const normalized = normalizeQuery(query)
+  return fallbackCities.filter((city) => normalizeQuery(city.label).includes(normalized))
 }
 
-function findLocalCity(cityName) {
-  const normalizedCity = normalizeText(cityName)
+function getFallbackWeather(city) {
+  const base = fallbackWeather[city.name] || fallbackWeather.Alicante
 
-  return supportedCities.find(
-    (city) =>
-      normalizeText(city.name) === normalizedCity ||
-      normalizeText(`${city.name}, ${city.country}`) === normalizedCity,
+  return normalizeWeather(
+    {
+      ...base,
+      city: city.name,
+      country: city.country,
+      updatedAt: new Date().toISOString(),
+      latitude: city.latitude,
+      longitude: city.longitude,
+      source: 'Fallback demo data',
+      isFallback: true,
+    },
+    city,
   )
 }
 
 export async function searchCities(query) {
   const trimmedQuery = query.trim()
 
-  if (trimmedQuery.length < 2) {
-    return []
+  if (trimmedQuery.length < 2) return []
+  if (trimmedQuery.length > 80) {
+    throw new Error('City search is too long.')
   }
 
-  const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY
+  try {
+    const response = await fetch(`/api/weather/search?q=${encodeURIComponent(trimmedQuery)}`)
+    const data = await response.json()
 
-  if (apiKey) {
-    try {
-      const response = await fetch(
-        `${OPENWEATHER_GEO_URL}?q=${encodeURIComponent(
-          trimmedQuery,
-        )}&limit=8&appid=${apiKey}`,
-      )
-
-      if (response.ok) {
-        const data = await response.json()
-
-        return data.map((city) => ({
-          name: city.name,
-          country: city.country || '',
-          state: city.state || '',
-          lat: city.lat,
-          lon: city.lon,
-          label: [city.name, city.state, city.country].filter(Boolean).join(', '),
-        }))
-      }
-    } catch {
-      return []
+    if (!response.ok) {
+      throw new Error(data?.message || 'Weather service is not available right now.')
     }
+
+    return Array.isArray(data.results) ? data.results.map(normalizeCity) : []
+  } catch (error) {
+    const fallbackResults = fallbackSearch(trimmedQuery)
+    if (fallbackResults.length > 0) return fallbackResults.map(normalizeCity)
+    throw new Error(error.message || 'Weather service is not available right now.')
   }
-
-  const normalizedQuery = normalizeText(trimmedQuery)
-
-  return supportedCities
-    .filter((city) =>
-      normalizeText(`${city.name} ${city.country}`).includes(normalizedQuery),
-    )
-    .slice(0, 8)
-    .map(normalizeCityResult)
 }
 
-export async function fetchWeatherByCity(city) {
-  const trimmedCity = city.trim()
+export async function fetchWeatherByCoordinates(city) {
+  const normalizedCity = normalizeCity(city)
 
-  if (!trimmedCity) {
-    throw new Error('Please enter a city name before searching.')
+  if (!Number.isFinite(normalizedCity.latitude) || !Number.isFinite(normalizedCity.longitude)) {
+    throw new Error('Selected city does not include valid coordinates.')
   }
 
-  const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY
+  try {
+    const params = new URLSearchParams({
+      lat: String(normalizedCity.latitude),
+      lon: String(normalizedCity.longitude),
+      name: normalizedCity.name,
+      country: normalizedCity.country,
+    })
+    const response = await fetch(`/api/weather/current?${params.toString()}`)
+    const data = await response.json()
 
-  if (!apiKey) {
-    const localCity = findLocalCity(trimmedCity)
-
-    if (!localCity) {
-      throw new Error('This city does not exist in the local demo list. Try selecting one from the suggestions.')
+    if (!response.ok) {
+      throw new Error(data?.message || 'Weather service is not available right now.')
     }
 
-    return mapMockWeather(localCity)
+    return normalizeWeather(data.weather || {}, normalizedCity)
+  } catch (error) {
+    const quickFallback = fallbackCities.find((cityItem) => cityItem.name === normalizedCity.name)
+    if (quickFallback) return getFallbackWeather(normalizedCity)
+    throw new Error(error.message || 'Weather service is not available right now.')
+  }
+}
+
+export async function fetchWeatherByCity(cityName) {
+  const results = await searchCities(cityName)
+
+  if (results.length === 0) {
+    throw new Error('No city found. Try a more specific name.')
   }
 
-  let geoResponse
-
-  try {
-    geoResponse = await fetch(
-      `${OPENWEATHER_GEO_URL}?q=${encodeURIComponent(
-        trimmedCity,
-      )}&limit=1&appid=${apiKey}`,
-    )
-  } catch {
-    throw new Error('Network error. Please check your connection and try again.')
-  }
-
-  if (geoResponse.status === 401) {
-    throw new Error('OpenWeatherMap API key is missing or invalid.')
-  }
-
-  if (!geoResponse.ok) {
-    throw new Error('Weather service error. Please try again later.')
-  }
-
-  const geoData = await geoResponse.json()
-
-  if (!Array.isArray(geoData) || geoData.length === 0) {
-    throw new Error('This city does not exist. Check the spelling or choose a suggestion.')
-  }
-
-  const [location] = geoData
-  const weatherUrl = `${OPENWEATHER_URL}?lat=${location.lat}&lon=${location.lon}&appid=${apiKey}&units=metric&lang=en`
-
-  let weatherResponse
-
-  try {
-    weatherResponse = await fetch(weatherUrl)
-  } catch {
-    throw new Error('Network error. Please check your connection and try again.')
-  }
-
-  if (weatherResponse.status === 401) {
-    throw new Error('OpenWeatherMap API key is missing or invalid.')
-  }
-
-  if (!weatherResponse.ok) {
-    throw new Error('Weather service error. Please try again later.')
-  }
-
-  const weatherData = await weatherResponse.json()
-  return mapOpenWeatherResponse(weatherData)
+  return fetchWeatherByCoordinates(results[0])
 }

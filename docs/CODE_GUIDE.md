@@ -84,11 +84,33 @@ Supported demo keys:
 - `contactMessagesService.js`
 - `adminModerationService.js`
 
-These services are intentionally not wired into the current demos yet. Project Manager CRUD, Secure Users & Roles Demo and SQL Query Playground remain local educational demos unless they are intentionally connected to a protected backend.
+Weather Search App and Market API Dashboard use public API proxy endpoints. Project Manager CRUD, Secure Users & Roles Demo and SQL Query Playground remain local educational demos unless they are intentionally connected to a protected backend.
 
 User-generated content needs moderation because visitor input can contain spam, offensive content or unsafe data. A future backend should store public submissions as pending/private first, then expose only approved records.
 
 The future D1/SQLite schema lives in `db/schema.sql`.
+
+## Weather Search App
+
+`src/components/WeatherSearchDemo.jsx` renders the weather demo.
+
+`src/services/weatherApi.js` calls the Cloudflare Pages Functions weather endpoints:
+
+- `/api/weather/search`
+- `/api/weather/current`
+
+The demo includes city autocomplete, Open-Meteo geocoding, normalized weather responses, quick cities, debounce, clear city-not-found errors and a controlled fallback for service failures.
+
+## Market API Dashboard
+
+`src/components/MarketDashboard.jsx` renders the crypto market dashboard.
+
+`src/services/marketApi.js` calls the Cloudflare Pages Functions crypto endpoints:
+
+- `/api/crypto/markets`
+- `/api/crypto/history`
+
+The dashboard includes multiple crypto assets, search/filter, selected coin summary, historical ranges, a Recharts line chart and a live session chart. Live mode collects points while the page is open instead of pretending to be real historical minute data.
 
 ## Project Manager CRUD
 

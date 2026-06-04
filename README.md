@@ -36,6 +36,10 @@ This portfolio includes small demos built for practice and learning. They are de
 
 The demos remain educational and local by default. The backend is prepared for contact messages and project submissions, but the demos are not all connected to backend storage.
 
+Weather Search App now includes city autocomplete, external weather/geocoding API integration, backend proxy endpoints and improved error handling.
+
+Market API Dashboard now includes multiple crypto assets, historical chart ranges, a selected coin view, public API data normalization and a live session chart.
+
 ## Backend-Ready Cloudflare Structure
 
 The project includes a first backend version prepared for Cloudflare Pages Functions and Cloudflare D1.

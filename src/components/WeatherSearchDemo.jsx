@@ -1,248 +1,258 @@
 import { motion } from 'framer-motion'
-import { ChevronDown, Search, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import { fetchWeatherByCity, searchCities } from '../services/weatherApi'
+import { Clock, MapPin, Search, X } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { fetchWeatherByCoordinates, searchCities } from '../services/weatherApi'
 import DemoNotice from './ui/DemoNotice'
 
-const quickCities = ['Alicante', 'Madrid', 'London', 'Tokyo']
-const technicalBadges = ['Forms', 'API ready', 'Validation', 'Loading states', 'Fallback data']
+const quickCities = [
+  { name: 'Alicante', country: 'Spain', admin1: 'Valencian Community', latitude: 38.3452, longitude: -0.481, label: 'Alicante, Valencian Community, Spain' },
+  { name: 'Madrid', country: 'Spain', admin1: 'Madrid', latitude: 40.4168, longitude: -3.7038, label: 'Madrid, Madrid, Spain' },
+  { name: 'London', country: 'United Kingdom', admin1: 'England', latitude: 51.5072, longitude: -0.1276, label: 'London, England, United Kingdom' },
+  { name: 'Tokyo', country: 'Japan', admin1: 'Tokyo', latitude: 35.6762, longitude: 139.6503, label: 'Tokyo, Tokyo, Japan' },
+]
+
+const technicalBadges = ['Autocomplete', 'Open-Meteo', 'API normalization', 'Error states', 'Cloudflare Functions']
 
 const dateFormatter = new Intl.DateTimeFormat('en-US', {
-  hour: '2-digit',
-  minute: '2-digit',
-  second: '2-digit',
+  dateStyle: 'medium',
+  timeStyle: 'short',
 })
+
+function formatMetric(value, suffix = '') {
+  if (value === null || value === undefined || value === 'Not available') return 'Not available'
+  return `${value}${suffix}`
+}
 
 function WeatherMetric({ label, value }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-950">
+      <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">
         {label}
       </p>
-      <p className="mt-2 text-lg font-bold text-slate-950">{value}</p>
+      <p className="mt-2 text-lg font-bold text-slate-950 dark:text-white">{value}</p>
     </div>
   )
 }
 
 function WeatherSearchDemo() {
-  const [city, setCity] = useState('')
+  const [query, setQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [weather, setWeather] = useState(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSearchingCities, setIsSearchingCities] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
+  const [isLoadingWeather, setIsLoadingWeather] = useState(false)
   const [error, setError] = useState('')
-  const [validationMessage, setValidationMessage] = useState('')
+  const [emptyMessage, setEmptyMessage] = useState('')
+
+  const trimmedQuery = query.trim()
 
   useEffect(() => {
-    let isActive = true
+    if (!showSuggestions || trimmedQuery.length < 2) {
+      setSuggestions([])
+      setEmptyMessage('')
+      return undefined
+    }
 
-    async function loadSuggestions() {
-      if (!showSuggestions || city.trim().length < 2) {
-        setSuggestions([])
-        return
-      }
-
-      setIsSearchingCities(true)
+    const controller = new AbortController()
+    const timeoutId = window.setTimeout(async () => {
+      setIsSearching(true)
+      setError('')
+      setEmptyMessage('')
 
       try {
-        const cityResults = await searchCities(city)
-        if (isActive) setSuggestions(cityResults)
+        const results = await searchCities(trimmedQuery, { signal: controller.signal })
+        setSuggestions(results)
+        if (results.length === 0) {
+          setEmptyMessage('No city found. Try a more specific name.')
+        }
+      } catch {
+        setSuggestions([])
+        setError('Weather service is not available right now.')
       } finally {
-        if (isActive) setIsSearchingCities(false)
+        setIsSearching(false)
       }
-    }
-
-    loadSuggestions()
+    }, 300)
 
     return () => {
-      isActive = false
+      controller.abort()
+      window.clearTimeout(timeoutId)
     }
-  }, [city, showSuggestions])
+  }, [showSuggestions, trimmedQuery])
 
-  async function searchWeather(cityToSearch = city) {
-    const trimmedCity = cityToSearch.trim()
+  async function loadWeather(city) {
+    setError('')
+    setEmptyMessage('')
+    setIsLoadingWeather(true)
+    setShowSuggestions(false)
+    setQuery(city.label || city.name)
 
-    if (!trimmedCity) {
-      setValidationMessage('Please enter a city name before searching.')
-      setError('')
+    try {
+      const nextWeather = await fetchWeatherByCoordinates(city)
+      setWeather(nextWeather)
+    } catch (requestError) {
+      setWeather(null)
+      setError(requestError.message || 'Weather service is not available right now.')
+    } finally {
+      setIsLoadingWeather(false)
+    }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+
+    if (suggestions.length > 0) {
+      loadWeather(suggestions[0])
       return
     }
 
-    setCity(trimmedCity)
-    setValidationMessage('')
+    if (trimmedQuery.length < 2) {
+      setEmptyMessage('Type at least two letters to search cities.')
+      return
+    }
+
+    setIsSearching(true)
     setError('')
-    setIsLoading(true)
-    setShowSuggestions(false)
 
     try {
-      const weatherData = await fetchWeatherByCity(trimmedCity)
-      setWeather(weatherData)
-    } catch (requestError) {
+      const results = await searchCities(trimmedQuery)
+      setSuggestions(results)
+      if (results.length > 0) {
+        loadWeather(results[0])
+      } else {
+        setWeather(null)
+        setEmptyMessage('No city found. Try a more specific name.')
+        setShowSuggestions(true)
+      }
+    } catch {
       setWeather(null)
-      setError(requestError.message)
+      setError('Weather service is not available right now.')
     } finally {
-      setIsLoading(false)
+      setIsSearching(false)
     }
   }
 
-  function handleSubmit(event) {
-    event.preventDefault()
-    searchWeather()
-  }
-
-  function handleSuggestionSelect(suggestion) {
-    const nextCity = suggestion.country
-      ? `${suggestion.name}, ${suggestion.country}`
-      : suggestion.name
-
-    searchWeather(nextCity)
-  }
-
   function clearSearch() {
-    setCity('')
+    setQuery('')
     setSuggestions([])
     setShowSuggestions(false)
     setWeather(null)
     setError('')
-    setValidationMessage('')
+    setEmptyMessage('')
   }
+
+  const updatedAt = useMemo(() => {
+    if (!weather?.updatedAt || weather.updatedAt === 'Not available') return 'Not available'
+    return dateFormatter.format(new Date(weather.updatedAt))
+  }, [weather])
 
   return (
     <motion.section
       id="weather-search"
       aria-labelledby="weather-search-title"
-      aria-busy={isLoading}
-      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+      aria-busy={isSearching || isLoadingWeather}
+      className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="border-b border-slate-200 bg-slate-50 p-5 sm:p-6 lg:p-8">
-        <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
-          API-ready demo
+      <div className="border-b border-slate-200 bg-slate-50 p-5 sm:p-6 lg:p-8 dark:border-slate-800 dark:bg-slate-950">
+        <p className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-sky-300">
+          API search demo
         </p>
-        <h3
-          id="weather-search-title"
-          className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl"
-        >
+        <h3 id="weather-search-title" className="mt-3 text-3xl font-bold tracking-normal text-slate-950 sm:text-4xl dark:text-white">
           Weather Search App
         </h3>
-        <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-          A weather lookup interface built to practice forms, validation,
-          service separation and clear loading or error states.
+        <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg dark:text-slate-300">
+          Weather search demo with city autocomplete, API data normalization and clear conditional UI states.
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           {technicalBadges.map((badge) => (
-            <span
-              key={badge}
-              className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700"
-            >
+            <span key={badge} className="rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 dark:border-sky-800 dark:bg-sky-950/50 dark:text-sky-200">
               {badge}
             </span>
           ))}
         </div>
       </div>
 
-      <div className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[0.9fr_1.1fr] lg:p-8">
+      <div className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[0.92fr_1.08fr] lg:p-8">
         <DemoNotice className="lg:col-span-2">
-          API demo. Data may depend on external service availability.
+          This demo uses city search, API data normalization and conditional UI states.
         </DemoNotice>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <form onSubmit={handleSubmit}>
             <label className="block">
-              <span className="text-sm font-medium text-slate-700">City name</span>
-              <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-                <div className="relative flex-1">
-                  <Search
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                    size={18}
-                  />
-                  <input
-                    value={city}
-                    onChange={(event) => {
-                      setCity(event.target.value)
-                      setValidationMessage('')
-                    }}
-                    onFocus={() => setShowSuggestions(true)}
-                    placeholder="Search city"
-                    className="min-h-11 w-full rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setShowSuggestions((value) => !value)}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
-                >
-                  Suggestions <ChevronDown size={17} />
-                </button>
+              <span className="text-sm font-medium text-slate-700 dark:text-slate-200">City search</span>
+              <div className="relative mt-2">
+                <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
+                <input
+                  value={query}
+                  onChange={(event) => {
+                    setQuery(event.target.value)
+                    setShowSuggestions(true)
+                    setError('')
+                    setEmptyMessage('')
+                  }}
+                  onFocus={() => setShowSuggestions(true)}
+                  placeholder="Search any city"
+                  className="min-h-11 w-full rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-24 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-500 dark:focus:border-sky-400 dark:focus:ring-sky-950"
+                />
                 <button
                   type="submit"
-                  disabled={isLoading}
-                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-60"
+                  disabled={isSearching || isLoadingWeather}
+                  className="absolute right-1.5 top-1/2 inline-flex min-h-8 -translate-y-1/2 items-center justify-center rounded-md bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60 dark:bg-sky-500 dark:text-slate-950"
                 >
-                  <Search size={18} />
-                  Search
+                  {isSearching ? 'Searching' : 'Search'}
                 </button>
-              </div>
-            </label>
 
-            {validationMessage && (
-              <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                {validationMessage}
-              </p>
-            )}
-          </form>
-
-          {showSuggestions && (
-            <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm font-semibold text-slate-800">
-                  City suggestions
-                </p>
-                {isSearchingCities && (
-                  <p className="text-xs text-slate-500">Searching...</p>
+                {showSuggestions && (trimmedQuery.length >= 2 || suggestions.length > 0) && (
+                  <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-20 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-950">
+                    {isSearching ? (
+                      <p className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">Searching cities...</p>
+                    ) : suggestions.length > 0 ? (
+                      suggestions.map((suggestion) => (
+                        <button
+                          key={suggestion.id}
+                          type="button"
+                          onClick={() => loadWeather(suggestion)}
+                          className="block w-full border-b border-slate-100 px-4 py-3 text-left transition last:border-b-0 hover:bg-blue-50 focus:bg-blue-50 focus:outline-none dark:border-slate-800 dark:hover:bg-slate-800"
+                        >
+                          <span className="block text-sm font-semibold text-slate-950 dark:text-white">{suggestion.name}</span>
+                          <span className="mt-1 block text-xs text-slate-500 dark:text-slate-400">
+                            {[suggestion.admin1, suggestion.country].filter(Boolean).join(', ')}
+                          </span>
+                        </button>
+                      ))
+                    ) : (
+                      <p className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                        No city found. Try a more specific name.
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
-              {city.trim().length < 2 ? (
-                <p className="mt-3 text-sm text-slate-600">
-                  Type at least two letters to search cities.
-                </p>
-              ) : suggestions.length === 0 && !isSearchingCities ? (
-                <p className="mt-3 text-sm text-slate-600">
-                  No city suggestions found.
-                </p>
-              ) : (
-                <div className="mt-3 grid gap-2">
-                  {suggestions.map((suggestion) => (
-                    <button
-                      key={`${suggestion.name}-${suggestion.country}-${suggestion.state || ''}`}
-                      type="button"
-                      onClick={() => handleSuggestionSelect(suggestion)}
-                      className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-sm text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
-                    >
-                      {suggestion.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+            </label>
+          </form>
+
+          {(emptyMessage || error) && (
+            <p className={`mt-3 rounded-lg border px-3 py-2 text-sm ${error ? 'border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200' : 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200'}`}>
+              {error || emptyMessage}
+            </p>
           )}
 
           <div className="mt-5">
-            <p className="text-sm font-medium text-slate-700">Quick search</p>
+            <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Quick cities</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {quickCities.map((quickCity) => (
                 <button
-                  key={quickCity}
+                  key={quickCity.name}
                   type="button"
-                  onClick={() => searchWeather(quickCity)}
-                  disabled={isLoading}
-                  className="rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => loadWeather(quickCity)}
+                  disabled={isLoadingWeather}
+                  className="rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-200 dark:hover:bg-slate-800 dark:focus:ring-sky-400 dark:focus:ring-offset-slate-950"
                 >
-                  {quickCity}
+                  {quickCity.name}
                 </button>
               ))}
             </div>
@@ -251,7 +261,7 @@ function WeatherSearchDemo() {
           <button
             type="button"
             onClick={clearSearch}
-            className="mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+            className="mt-6 inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800 dark:focus:ring-sky-400 dark:focus:ring-offset-slate-950"
           >
             <X size={16} />
             Clear
@@ -259,78 +269,63 @@ function WeatherSearchDemo() {
         </div>
 
         <div aria-live="polite">
-          {isLoading && (
-            <div className="min-h-80 animate-pulse rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="h-5 w-40 rounded bg-slate-200" />
-              <div className="mt-6 h-12 w-32 rounded bg-blue-100" />
+          {isLoadingWeather ? (
+            <div className="min-h-80 animate-pulse rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="h-5 w-40 rounded bg-slate-200 dark:bg-slate-800" />
+              <div className="mt-6 h-12 w-32 rounded bg-blue-100 dark:bg-slate-800" />
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {[1, 2, 3, 4].map((item) => (
-                  <div key={item} className="h-20 rounded-xl bg-slate-100" />
+                  <div key={item} className="h-20 rounded-xl bg-slate-100 dark:bg-slate-800" />
                 ))}
               </div>
             </div>
-          )}
-
-          {!isLoading && error && (
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-5">
-              <p className="font-semibold text-red-700">
-                Weather data could not be loaded
-              </p>
-              <p className="mt-2 text-sm leading-6 text-red-600">{error}</p>
-            </div>
-          )}
-
-          {!isLoading && !error && !weather && (
-            <div className="flex min-h-80 items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+          ) : !weather ? (
+            <div className="flex min-h-80 items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm dark:border-slate-800 dark:bg-slate-900">
               <div>
-                <p className="text-lg font-semibold text-slate-950">
-                  Search for a city to preview weather data
-                </p>
-                <p className="mt-2 max-w-md text-sm leading-6 text-slate-600">
-                  The demo can use OpenWeatherMap with an API key. Without a
-                  key, it uses local demo data and keeps the state clear.
+                <MapPin className="mx-auto text-blue-600 dark:text-sky-300" size={28} />
+                <p className="mt-4 text-lg font-semibold text-slate-950 dark:text-white">Search for a city</p>
+                <p className="mt-2 max-w-md text-sm leading-6 text-slate-600 dark:text-slate-300">
+                  Start typing to get autocomplete suggestions, then select a city to load current weather.
                 </p>
               </div>
             </div>
-          )}
-
-          {!isLoading && !error && weather && (
+          ) : (
             <motion.article
-              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35 }}
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
-                    {weather.source === 'api' ? 'Live API data' : 'Local demo data'}
+                  <p className="text-sm font-semibold uppercase tracking-widest text-blue-600 dark:text-sky-300">
+                    {weather.isFallback ? 'Fallback data' : 'Open-Meteo data'}
                   </p>
-                  <h4 className="mt-2 text-2xl font-bold text-slate-950">
-                    {weather.city}, {weather.country}
+                  <h4 className="mt-2 text-2xl font-bold text-slate-950 dark:text-white">
+                    {weather.city}{weather.country ? `, ${weather.country}` : ''}
                   </h4>
-                  <p className="mt-2 capitalize text-slate-600">
-                    {weather.description}
-                  </p>
+                  <p className="mt-2 text-slate-600 dark:text-slate-300">{weather.description}</p>
                 </div>
-                <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-center">
-                  <p className="text-4xl font-bold text-slate-950">
-                    {weather.temperature}°C
+                <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-center dark:border-sky-800 dark:bg-sky-950/50">
+                  <p className="text-4xl font-bold text-slate-950 dark:text-white">
+                    {formatMetric(weather.temperature, '°C')}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-blue-700">
-                    {weather.condition}
-                  </p>
+                  <p className="mt-1 text-sm font-semibold text-blue-700 dark:text-sky-200">Current</p>
                 </div>
               </div>
 
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <WeatherMetric label="Feels like" value={`${weather.feelsLike}°C`} />
-                <WeatherMetric label="Humidity" value={`${weather.humidity}%`} />
-                <WeatherMetric label="Wind" value={`${weather.windSpeed} km/h`} />
-                <WeatherMetric
-                  label="Updated"
-                  value={dateFormatter.format(new Date(weather.timestamp))}
-                />
+                <WeatherMetric label="Feels like" value={formatMetric(weather.feelsLike, '°C')} />
+                <WeatherMetric label="Humidity" value={formatMetric(weather.humidity, '%')} />
+                <WeatherMetric label="Wind" value={formatMetric(weather.windSpeed, ' km/h')} />
+                <WeatherMetric label="Last updated" value={updatedAt} />
+              </div>
+
+              <div className="mt-5 flex flex-col gap-2 border-t border-slate-200 pt-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800 dark:text-slate-400">
+                <span>Data source: {weather.source}</span>
+                <span>
+                  Coordinates: {Number(weather.latitude).toFixed(3)}, {Number(weather.longitude).toFixed(3)}
+                </span>
               </div>
             </motion.article>
           )}
