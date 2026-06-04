@@ -30,6 +30,8 @@ The goal of this project is simple: show what I am learning, keep the code reada
 - Backend-ready structure for moderated public submissions.
 - API Health Monitor.
 - D1 Database Metrics Dashboard.
+- Auth Flow Simulator.
+- Checkout Flow Simulator.
 - Documentation for backend, security and deployment preparation.
 
 ## Educational Demos
@@ -45,6 +47,10 @@ Market API Dashboard now includes multiple crypto assets, historical chart range
 API Health Monitor checks backend readiness, D1 connectivity and response times without exposing private records.
 
 D1 Database Metrics Dashboard reads aggregated counts from Cloudflare D1 and visualizes them without exposing messages, emails or user details.
+
+Auth Flow Simulator explains login states, session expiration, roles and protected views without implementing real authentication.
+
+Checkout Flow Simulator practices checkout UX, form validation and fake payment states without processing real payments or storing card data.
 
 ## Backend-Ready Cloudflare Structure
 

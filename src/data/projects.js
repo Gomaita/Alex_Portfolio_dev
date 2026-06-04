@@ -12,6 +12,77 @@ export const projectCategories = [
 
 export const projects = [
   {
+    id: 'auth-flow-simulator',
+    slug: 'auth-flow-simulator',
+    title: 'Auth Flow Simulator',
+    subtitle: 'Educational login, session and role-based UI simulator.',
+    summary:
+      'An educational authentication flow simulator that explains login states, session expiration, permissions and protected views without implementing real authentication.',
+    description:
+      'I built this to practice how authentication flows are represented in a frontend: credentials, session state, roles, permissions, protected areas and access denied states. It does not send passwords anywhere and it is not real authentication.',
+    type: 'Educational Security Demo',
+    status: 'Completed',
+    technologies: ['React', 'State Management', 'Role-based UI', 'Session Simulation', 'Security Concepts'],
+    featured: true,
+    category: 'Security',
+    skillsDemonstrated: [
+      'Auth states',
+      'Role-based UI',
+      'Protected route logic',
+      'Session expiration',
+      'Local state',
+      'Permission checks',
+      'Security awareness',
+    ],
+    technicalNotes:
+      'This is an educational simulator. It uses visible demo credentials and a mock session object to show how UI state changes around roles and permissions. Real apps need backend-side auth, secure sessions and password hashing.',
+    improvements: [
+      'Real backend sessions',
+      'OAuth provider',
+      'Cloudflare Access',
+      'Server-side auth',
+      'Audit logs',
+      'Refresh tokens',
+    ],
+    demoComponentKey: 'auth-flow',
+    githubUrl: '',
+  },
+  {
+    id: 'checkout-flow-simulator',
+    slug: 'checkout-flow-simulator',
+    title: 'Checkout Flow Simulator',
+    subtitle: 'Fake checkout flow focused on forms, validation and payment states.',
+    summary:
+      'A fake checkout flow that simulates cart state, form validation, payment states and receipt UI without processing real payments.',
+    description:
+      'This demo shows a multi-step checkout experience with cart state, customer validation, demo payment outcomes and a fake receipt. It does not process payments, store cards or send card data anywhere.',
+    type: 'UX Demo',
+    status: 'Completed',
+    technologies: ['React', 'Forms', 'Validation', 'State Management', 'Checkout UX'],
+    featured: true,
+    category: 'Frontend',
+    skillsDemonstrated: [
+      'Multi-step forms',
+      'Form validation',
+      'State transitions',
+      'Conditional rendering',
+      'Checkout UX',
+      'Error/success handling',
+      'Data safety awareness',
+    ],
+    technicalNotes:
+      'Payment states are simulated with visible demo card numbers. Card data is kept only in component state while the demo is open and is never persisted or sent to a backend.',
+    improvements: [
+      'Real payment provider integration',
+      'Backend order creation',
+      'Email receipts',
+      'Webhook handling',
+      'Fraud checks',
+    ],
+    demoComponentKey: 'checkout-flow',
+    githubUrl: '',
+  },
+  {
     id: 'api-health-monitor',
     slug: 'api-health-monitor',
     title: 'API Health Monitor',

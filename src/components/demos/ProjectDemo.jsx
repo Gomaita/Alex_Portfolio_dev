@@ -3,6 +3,8 @@ import GitHubProjectsExplorer from '../GitHubProjectsExplorer'
 import MarketDashboard from '../MarketDashboard'
 import ProjectManagerDemo from '../ProjectManagerDemo'
 import APIHealthMonitor from './APIHealthMonitor'
+import AuthFlowSimulator from './AuthFlowSimulator'
+import CheckoutFlowSimulator from './CheckoutFlowSimulator'
 import D1DatabaseMetrics from './D1DatabaseMetrics'
 import SecureUsersRolesDemo from './SecureUsersRolesDemo'
 import SQLQueryPlayground from './SQLQueryPlayground'
@@ -18,6 +20,8 @@ const demos = {
   'secure-users': <SecureUsersRolesDemo />,
   'api-health': <APIHealthMonitor />,
   'd1-metrics': <D1DatabaseMetrics />,
+  'auth-flow': <AuthFlowSimulator />,
+  'checkout-flow': <CheckoutFlowSimulator />,
 }
 
 function ProjectDemo({ project }) {

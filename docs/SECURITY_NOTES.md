@@ -72,6 +72,14 @@ Health checks must not expose stack traces, SQL details, tokens, emails, message
 
 Admin tokens must never be available in frontend code.
 
+## Educational Auth And Checkout Demos
+
+Auth Flow Simulator is not real authentication. It exists to explain frontend auth states, roles, permission checks and session expiration.
+
+Checkout Flow Simulator does not process payments. Do not enter real payment data.
+
+No real cards or real passwords should be stored in these demos. Real applications need backend-side authentication, secure session handling, server-side validation, payment provider tokenization and careful audit logging.
+
 ## Before Accepting Public Submissions At Scale
 
 Add additional protections before relying on this for high-volume public submissions:

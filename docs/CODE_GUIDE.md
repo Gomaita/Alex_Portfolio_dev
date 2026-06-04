@@ -65,6 +65,8 @@ Supported demo keys:
 - `secure-users`
 - `api-health`
 - `d1-metrics`
+- `auth-flow`
+- `checkout-flow`
 
 ## Backend-Ready Architecture
 
@@ -127,6 +129,18 @@ The endpoint checks D1 readiness and table/query availability without returning 
 `src/components/demos/D1DatabaseMetrics.jsx` renders the aggregated metrics dashboard.
 
 It calls `/api/metrics` and shows contact/project counts, charts and a metric details table. The endpoint returns only aggregate values and timestamps, never emails, messages, admin notes or record IDs.
+
+## Auth Flow Simulator
+
+`src/components/demos/AuthFlowSimulator.jsx` renders an educational auth flow simulator.
+
+It uses visible demo credentials, mock sessions, role-based UI, protected area checks, session expiration controls, a timeline and an event log. It does not send passwords to a backend and it is not real authentication.
+
+## Checkout Flow Simulator
+
+`src/components/demos/CheckoutFlowSimulator.jsx` renders a fake checkout flow.
+
+It includes cart state, customer form validation, demo payment cards, simulated payment outcomes, a fake receipt and an event log. It does not process payments, store card data or send card details to a backend.
 
 ## Project Manager CRUD
 
