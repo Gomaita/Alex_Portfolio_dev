@@ -1,7 +1,7 @@
 import { apiPost } from '../apiClient'
 import { appConfig } from '../../config/appConfig'
 
-// Future Cloudflare Functions/Workers service. The current contact UI remains frontend-only.
+// Optional Cloudflare Pages Functions service. The email link remains the fallback.
 export function createContactMessage(data) {
   if (!appConfig.isBackendEnabled) {
     return Promise.reject(

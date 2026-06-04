@@ -33,7 +33,7 @@ function Contact() {
     event.preventDefault()
     setFormStatus('')
 
-    if (!appConfig.isBackendEnabled || !appConfig.apiBaseUrl) {
+    if (!appConfig.isBackendEnabled) {
       setFormStatus('The backend is not connected in this demo build. Please use the email link.')
       return
     }

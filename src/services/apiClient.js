@@ -3,7 +3,7 @@ import { appConfig } from '../config/appConfig'
 const DEFAULT_TIMEOUT_MS = 8000
 
 function ensureBackendEnabled() {
-  if (!appConfig.isBackendEnabled || !appConfig.apiBaseUrl) {
+  if (!appConfig.isBackendEnabled) {
     throw new Error('Backend API is not enabled. Current demos are running in local educational mode.')
   }
 }
@@ -25,7 +25,9 @@ async function apiRequest(path, options = {}) {
 
   const controller = new AbortController()
   const timeoutId = window.setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS)
-  const url = `${appConfig.apiBaseUrl.replace(/\/$/, '')}${path}`
+  const baseUrl = appConfig.apiBaseUrl.replace(/\/$/, '')
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const url = baseUrl ? `${baseUrl}${normalizedPath}` : normalizedPath
 
   try {
     const response = await fetch(url, {
@@ -60,10 +62,6 @@ export function apiGet(path) {
 
 export function apiPost(path, payload) {
   return apiRequest(path, { method: 'POST', body: JSON.stringify(payload) })
-}
-
-export function apiPut(path, payload) {
-  return apiRequest(path, { method: 'PUT', body: JSON.stringify(payload) })
 }
 
 export function apiPatch(path, payload) {

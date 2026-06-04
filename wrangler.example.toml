@@ -1,12 +1,10 @@
 name = "alex-portfolio"
-compatibility_date = "2026-01-01"
+compatibility_date = "2026-06-03"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "alex-portfolio-db"
 database_id = "replace-with-your-d1-database-id"
 
-[vars]
-BACKEND_ENV = "production"
-
-# ADMIN_API_TOKEN must be configured as a secret, not as a public frontend variable.
+# Reference only. Do not put real account IDs, database IDs or secrets here.
+# ADMIN_API_TOKEN must be configured as a Cloudflare secret/environment variable, not as a VITE variable.

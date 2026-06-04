@@ -1,61 +1,66 @@
 # Security Notes
 
-## 1. Demo Vs Production
+This backend is designed as a first safe version for a junior portfolio project. It is prepared for Cloudflare Pages Functions and D1, but it should still be treated as an early backend.
 
-The current demos are educational and are not production systems.
+## Validation
 
-## 2. User-Generated Content Risk
+Frontend validation is only for user experience.
 
-If visitors can submit content, it must not become public automatically. Public submission features need moderation before anything is shown to other visitors.
+Backend validation is mandatory because visitors can bypass frontend code. The Functions validate and sanitize contact messages and project submissions before writing to D1.
 
-## 3. Moderation-First Approach
+## Sanitization
 
-Everything submitted publicly should start as pending and private. Only approved records should become public.
+Submitted text is trimmed, repeated spaces are normalized and control characters are removed.
 
-## 4. Passwords
+The backend rejects obvious risky content such as:
 
-The Secure Users demo is educational. Real passwords should never be handled only in frontend code or stored in `localStorage`.
+- `<script`
+- HTML-like tags
+- `javascript:`
+- inline event handlers such as `onclick=`
 
-Real password hashing must happen server-side using production-ready algorithms and parameters.
+## Moderation
 
-## 5. Sanitization
+Moderation protects the public site from spam or unsafe content.
 
-Frontend validation is useful for user experience, but backend validation is mandatory. The backend must validate length, required fields, allowed values and unsafe content.
+Project submissions start as:
 
-## 6. Admin Endpoints
+```text
+moderation_status = pending
+visibility = private
+```
 
-Never expose admin secrets in frontend code. Any admin token or secret must stay in server-side environment variables.
+Only approved and public projects can be returned by the public endpoint.
 
-## 7. Data Retention
+Contact messages are private and are not exposed publicly.
 
-The backend should allow deleting or rejecting user submissions. Deleted or rejected content should not appear publicly.
+## Admin Token
 
-## 8. Recommended Production Protections
+Admin endpoints require an `Authorization: Bearer` token.
 
-- Cloudflare Turnstile
-- Rate limiting
-- Server-side validation
-- Moderation queue
-- Audit logs
-- Environment secrets
-- Backups
+The admin token must be configured only as a Cloudflare Pages secret/environment variable:
 
-## 9. Backend Validation
+```text
+ADMIN_API_TOKEN
+```
 
-Backend validation is mandatory. Frontend validation is only a user experience improvement and cannot be trusted for security.
+Never expose the admin token in frontend code.
+Never create a public `VITE_` variable for admin authentication.
+Never put the admin token in `.env.example`.
 
-## 10. Moderation Queue
+## Demo Scope
 
-The moderation queue prevents public spam and unsafe user-generated content. Public submissions should stay pending/private until reviewed.
+The demos in this portfolio are educational. They are not production systems.
 
-## 11. Admin Token Handling
+This backend prepares real storage and moderation, but real authentication, role management, abuse prevention and admin tooling are future work.
 
-The admin token must never be exposed to frontend code. Do not create `VITE_ADMIN_TOKEN` or similar public variables. Admin secrets belong only in Cloudflare backend secrets.
+## Before Accepting Public Submissions At Scale
 
-## 12. Scaling Public Submissions
+Add additional protections before relying on this for high-volume public submissions:
 
-Use Turnstile before accepting public submissions at scale. Consider rate limiting and avoid storing raw IP addresses if they are not needed.
-
-## 13. Soft Delete Vs Hard Delete
-
-Soft delete keeps a record marked as deleted or archived so admins can audit what happened. Hard delete removes the record entirely. For moderation workflows, soft delete is usually safer because it supports review and audit history.
+- Cloudflare Turnstile.
+- Rate limiting.
+- Better audit dashboards.
+- Real admin authentication.
+- Monitoring and alerting.
+- More detailed abuse review.

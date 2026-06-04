@@ -1,4 +1,5 @@
 export const appConfig = {
+  siteUrl: 'https://alexgl.dev',
   appName: 'Alex Gómez Portfolio',
   ownerName: 'Alex Gómez',
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL || '',

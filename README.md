@@ -1,5 +1,7 @@
 # Alex Gomez Portfolio
 
+Live site: https://alexgl.dev
+
 Personal portfolio built to present my work as a junior software developer with a background in Multimedia Engineering, 3D and VR.
 
 The goal of this project is simple: show what I am learning, keep the code readable, and document small practical demos that connect frontend, data, UI and backend-ready ideas.
@@ -12,46 +14,99 @@ The goal of this project is simple: show what I am learning, keep the code reada
 - Tailwind CSS
 - Framer Motion
 - Lucide React
-- Cloudflare-ready structure with Functions, D1-style schema and environment examples
+- Cloudflare Pages-ready frontend
+- Cloudflare Pages Functions-ready backend structure
+- Cloudflare D1 SQL schema
 
 ## Features
 
-- Responsive portfolio layout
-- Light and dark mode
-- Project pages with demo-focused explanations
-- Educational frontend demos
-- Programming cheatsheets
-- CV download options
-- Contact page prepared for a future backend
-- Documentation for backend and deployment preparation
+- Responsive portfolio layout.
+- Light and dark mode.
+- Project pages with demo-focused explanations.
+- Educational frontend demos.
+- Programming cheatsheets.
+- CV download options.
+- Contact page with optional backend submission.
+- Backend-ready structure for moderated public submissions.
+- Documentation for backend, security and deployment preparation.
 
 ## Educational Demos
 
 This portfolio includes small demos built for practice and learning. They are designed to show frontend logic, state management, data handling and UI decisions in a clear way.
 
-Some demos are fully frontend-based. Others are prepared to connect with a backend later, but they are still safe to run as portfolio examples.
+The demos remain educational and local by default. The backend is prepared for contact messages and project submissions, but the demos are not all connected to backend storage.
 
-## Backend-Ready Structure
+## Backend-Ready Cloudflare Structure
 
-The project includes a backend-ready structure with:
+The project includes a first backend version prepared for Cloudflare Pages Functions and Cloudflare D1.
 
-- `functions/` for Cloudflare Pages Functions
-- `db/` for database schema files
-- `docs/` for backend, security and deployment notes
-- `src/services/` for API and backend service helpers
-- `.env.example` as a safe reference for local environment variables
+It includes:
 
-No production secrets are included in the repository.
+- `functions/` for Cloudflare Pages Functions.
+- `db/schema.sql` for D1/SQLite tables and indexes.
+- `docs/BACKEND_PLAN.md` for setup notes.
+- `docs/SECURITY_NOTES.md` for security notes.
+- `src/services/` for frontend API helpers.
+- `.env.example` as a safe reference for local environment variables.
 
-## Cloudflare-Ready Deployment
+Backend support is disabled by default with:
 
-The project is prepared to be deployed with Cloudflare Pages. The frontend can be built with Vite, and the backend folder structure is ready for future Cloudflare Functions usage.
-
-For a normal static deployment, the build output is generated in:
-
-```bash
-dist
+```text
+VITE_BACKEND_ENABLED=false
 ```
+
+When enabled and deployed on the same Cloudflare Pages domain, the frontend can call relative `/api/...` routes.
+
+## Moderated Submissions
+
+Visitor project submissions are moderation-first.
+
+Every public submission starts as:
+
+```text
+moderation_status = pending
+visibility = private
+```
+
+Nothing submitted by a visitor appears publicly until it is approved by an admin.
+
+The public projects endpoint only returns approved and public rows.
+
+## Contact Messages
+
+The contact form can send messages to the backend when `VITE_BACKEND_ENABLED=true`.
+
+When the backend is disabled, the UI shows a friendly message and keeps the email link as the safe contact option.
+
+## Environment Variables
+
+Use `.env.example` as a reference and create a local `.env` file only when needed.
+
+```text
+VITE_API_BASE_URL=
+VITE_BACKEND_ENABLED=false
+VITE_DEMO_MODE=true
+VITE_OPENWEATHER_API_KEY=
+```
+
+Do not commit real tokens, API keys, passwords or production secrets.
+
+Do not put `ADMIN_API_TOKEN` in frontend variables. `VITE_` variables are exposed to the browser.
+
+`ADMIN_API_TOKEN` must be configured only as a Cloudflare Pages secret/environment variable for Functions.
+
+## Cloudflare D1 Setup
+
+To activate the backend:
+
+1. Create a Cloudflare D1 database.
+2. Apply `db/schema.sql`.
+3. Add a D1 binding called `DB` to the Cloudflare Pages project.
+4. Add `ADMIN_API_TOKEN` as a backend secret/environment variable.
+5. Set `VITE_BACKEND_ENABLED=true`.
+6. Redeploy the project.
+7. Test the public endpoints.
+8. Test admin endpoints from a secure API client.
 
 ## Run Locally
 
@@ -78,22 +133,6 @@ Preview the production build locally:
 ```bash
 npm run preview
 ```
-
-## Environment Variables
-
-Use `.env.example` as a reference and create a local `.env` file only when needed.
-
-Do not commit real tokens, API keys, passwords or production secrets.
-
-Example variables may include:
-
-```bash
-VITE_API_BASE_URL=
-VITE_ENABLE_BACKEND=false
-ADMIN_API_TOKEN=
-```
-
-Values in `.env.example` should stay empty or clearly fake.
 
 ## CV Downloads
 
@@ -126,13 +165,16 @@ src/
   pages/
   services/
 
+functions/
+  api/
+  _utils/
+
 public/
   Alex_Gomez_CV_ATS.pdf
   Alex_Gomez_CV_Visual.pdf
 
 docs/
 db/
-functions/
 ```
 
 ## About

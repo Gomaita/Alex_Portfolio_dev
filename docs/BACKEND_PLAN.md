@@ -1,162 +1,126 @@
-# Backend and Database Plan
+# Backend Plan
 
-## 1. Goal
+This project is prepared for a first real backend version using Cloudflare Pages Functions and Cloudflare D1.
 
-The current portfolio contains frontend educational demos. The backend plan is for controlled future features such as contact messages, moderated project submissions and admin review tools.
+The backend is not meant to connect every demo. It focuses on two practical flows:
 
-The goal is not to turn every demo into shared public data. By default, demos should remain local or simulated unless a specific feature is intentionally connected to a protected backend.
+- Contact messages.
+- Project submissions with manual moderation.
 
-## 2. Proposed Stack
+The frontend remains safe to run without the backend because `VITE_BACKEND_ENABLED` is disabled by default.
 
-- React/Vite frontend
-- Cloudflare Pages or Workers
-- Cloudflare Functions/Workers API routes
-- Cloudflare D1 database
-- Environment variables for configuration and secrets
+## Cloudflare Pages Functions
 
-## 3. Important Security Rule
+The backend routes live in `functions/` and follow the Cloudflare Pages Functions format:
 
-No public user-generated content should become visible without moderation.
+- `onRequestPost`
+- `onRequestGet`
+- `onRequestPatch`
+- `onRequestDelete`
 
-## 4. Public Submissions Flow
+No Express server or Node server is required.
 
-1. A visitor submits a project proposal or contact message.
-2. The backend validates and sanitizes the input.
-3. The record is stored as pending and private.
-4. An admin reviews it in a protected moderation area.
-5. Only approved records can become public.
-6. Rejected or deleted records never appear publicly.
+## D1 Binding
 
-## 5. Suggested Database Schema
+The expected D1 binding is:
 
-```sql
-CREATE TABLE IF NOT EXISTS project_submissions (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  submitter_name TEXT NOT NULL,
-  submitter_email TEXT,
-  category TEXT NOT NULL,
-  technologies TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
-  visibility TEXT NOT NULL DEFAULT 'private',
-  moderation_status TEXT NOT NULL DEFAULT 'pending',
-  admin_notes TEXT,
-  created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL,
-  approved_at TEXT,
-  rejected_at TEXT,
-  deleted_at TEXT
-);
-
-CREATE TABLE IF NOT EXISTS contact_messages (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  message TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'new',
-  created_at TEXT NOT NULL,
-  reviewed_at TEXT,
-  deleted_at TEXT
-);
-
-CREATE TABLE IF NOT EXISTS audit_logs (
-  id TEXT PRIMARY KEY,
-  action TEXT NOT NULL,
-  target_type TEXT NOT NULL,
-  target_id TEXT NOT NULL,
-  actor TEXT NOT NULL,
-  created_at TEXT NOT NULL,
-  metadata TEXT
-);
-
-CREATE TABLE IF NOT EXISTS admin_settings (
-  key TEXT PRIMARY KEY,
-  value TEXT NOT NULL,
-  updated_at TEXT NOT NULL
-);
+```js
+context.env.DB
 ```
 
-## 6. Validation Rules
+If the binding is missing, endpoints return:
 
-- Limit title length.
-- Limit description and message length.
-- Accept only allowed categories.
-- Validate email format.
-- Reject HTML/script-like content.
-- Trim whitespace.
-- Normalize repeated spaces.
-- Reject empty submissions.
+```text
+Database binding is not configured.
+```
 
-## 7. Anti-Spam Protection
+The database schema is in:
 
-- Add a honeypot field.
-- Add simple rate limiting.
-- Use Cloudflare Turnstile in the future.
-- Store an IP/user-agent hash instead of raw IP where possible.
-- Route all public submissions through a moderation queue.
+```text
+db/schema.sql
+```
 
-## 8. Future API Endpoints
+## Endpoints
 
+Public endpoints:
+
+- `POST /api/contact`
 - `POST /api/project-submissions`
 - `GET /api/projects/public`
+
+Admin endpoints:
+
 - `GET /api/admin/project-submissions`
-- `PATCH /api/admin/project-submissions/:id/approve`
-- `PATCH /api/admin/project-submissions/:id/reject`
-- `DELETE /api/admin/project-submissions/:id`
-- `POST /api/contact`
+- `PATCH /api/admin/project-submissions`
+- `DELETE /api/admin/project-submissions`
 - `GET /api/admin/contact-messages`
+- `PATCH /api/admin/contact-messages`
+- `DELETE /api/admin/contact-messages`
 
-## 9. Admin Protection
+## Moderation Flow
 
-Admin endpoints must not be exposed publicly without protection.
+Visitor submissions always start as:
 
-An environment-stored admin token could be used as a temporary first step, but it must never be placed in frontend code. Later, this should move to proper authentication.
+```text
+moderation_status = pending
+visibility = private
+```
 
-## 10. What Should Stay Local/Demo
+Nothing submitted by visitors appears publicly until an admin approves it.
 
-Project Manager CRUD, Secure Users & Roles Demo and SQL Query Playground can remain frontend educational demos unless they are intentionally connected to the backend.
+Public project reads only return rows where:
 
-## 11. Deployment Notes For Cloudflare
+```text
+moderation_status = approved
+visibility = public
+deleted_at IS NULL
+```
 
-Cloudflare D1 should be connected through Cloudflare bindings. Public frontend environment variables can use `VITE_`, but server secrets must stay in Cloudflare environment variables and must not be exposed to browser code.
+The public endpoint does not return `submitter_email`, `admin_notes` or internal moderation fields.
 
-## 12. Implemented Backend Preparation
+## Contact Messages
 
-The repository now includes a first Cloudflare Pages Functions backend structure:
+Contact messages are stored privately with:
 
-- `functions/api/contact.js`
-- `functions/api/project-submissions.js`
-- `functions/api/projects/public.js`
-- `functions/api/admin/project-submissions.js`
-- `functions/api/admin/contact-messages.js`
-- `functions/_utils/`
+```text
+status = new
+```
 
-The D1 database binding is expected as `env.DB`.
+They are never exposed through a public endpoint.
 
-Admin endpoints expect an environment secret named `ADMIN_API_TOKEN` and require an `Authorization: Bearer <token>` header.
+## Admin Protection
 
-Public submissions start as pending and private. Contact messages are stored for review and are not exposed publicly. Public project listings only return approved/public project submissions.
+Admin endpoints require:
 
-The schema lives in `db/schema.sql`.
+```text
+Authorization: Bearer <token>
+```
 
-## 13. Next Deployment Steps
+The token must come from `context.env.ADMIN_API_TOKEN`.
+
+Do not expose this token in frontend code and do not create a `VITE_` variable for it.
+
+## Deployment Steps
 
 1. Create a Cloudflare D1 database.
 2. Apply `db/schema.sql`.
-3. Configure the `DB` binding.
-4. Configure `ADMIN_API_TOKEN` as a backend secret.
-5. Deploy the frontend to Cloudflare Pages.
-6. Set `VITE_BACKEND_ENABLED=true` only when the API is ready.
-7. Test contact message submission.
-8. Test project submission.
-9. Test admin moderation using secure tooling.
+3. Add the D1 binding `DB` to the Cloudflare Pages project.
+4. Add `ADMIN_API_TOKEN` as a backend secret/environment variable.
+5. Set `VITE_BACKEND_ENABLED=true`.
+6. Redeploy the Cloudflare Pages project.
+7. Test `POST /api/contact`.
+8. Test `POST /api/project-submissions`.
+9. Test admin endpoints using a secure API client.
 
-## 14. Future Improvements
+## Local Frontend Config
 
-- Real authentication
-- Admin dashboard
-- Cloudflare Turnstile
-- Rate limiting with KV or Durable Objects if needed
-- Server-side password hashing if real users exist
-- Tests
+Use `.env.example` as a reference:
+
+```text
+VITE_API_BASE_URL=
+VITE_BACKEND_ENABLED=false
+VITE_DEMO_MODE=true
+VITE_OPENWEATHER_API_KEY=
+```
+
+When deployed on the same Cloudflare Pages domain, `VITE_API_BASE_URL` can stay empty and the frontend will call relative `/api/...` routes.
