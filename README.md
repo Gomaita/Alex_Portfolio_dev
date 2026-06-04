@@ -78,6 +78,22 @@ The contact form can send messages to the backend when `VITE_BACKEND_ENABLED=tru
 
 When the backend is disabled, the UI shows a friendly message and keeps the email link as the safe contact option.
 
+## Email Notifications
+
+`/api/contact` stores contact messages in D1 first.
+
+If Resend is configured in Cloudflare Pages, the Function also sends an email notification when a new message arrives. The form still works if email notifications are not configured or if the email request fails after the message has been saved.
+
+Required backend variables:
+
+```text
+RESEND_API_KEY=
+CONTACT_NOTIFICATION_EMAIL=
+CONTACT_EMAIL_FROM=
+```
+
+These are backend environment variables for Cloudflare Pages Functions. Do not prefix them with `VITE_` and do not expose them in frontend code.
+
 ## Environment Variables
 
 Use `.env.example` as a reference and create a local `.env` file only when needed.
@@ -95,6 +111,8 @@ Do not put `ADMIN_API_TOKEN` in frontend variables. `VITE_` variables are expose
 
 `ADMIN_API_TOKEN` must be configured only as a Cloudflare Pages secret/environment variable for Functions.
 
+Email notification variables such as `RESEND_API_KEY`, `CONTACT_NOTIFICATION_EMAIL` and `CONTACT_EMAIL_FROM` must also be configured only in Cloudflare Pages backend environment variables/secrets.
+
 ## Cloudflare D1 Setup
 
 To activate the backend:
@@ -103,10 +121,11 @@ To activate the backend:
 2. Apply `db/schema.sql`.
 3. Add a D1 binding called `DB` to the Cloudflare Pages project.
 4. Add `ADMIN_API_TOKEN` as a backend secret/environment variable.
-5. Set `VITE_BACKEND_ENABLED=true`.
-6. Redeploy the project.
-7. Test the public endpoints.
-8. Test admin endpoints from a secure API client.
+5. Add Resend email notification variables if you want contact email alerts.
+6. Set `VITE_BACKEND_ENABLED=true`.
+7. Redeploy the project.
+8. Test the public endpoints.
+9. Test admin endpoints from a secure API client.
 
 ## Run Locally
 

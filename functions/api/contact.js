@@ -1,4 +1,5 @@
 import { createId } from '../_utils/ids.js'
+import { sendContactNotification } from '../_utils/email.js'
 import { errorResponse, jsonResponse } from '../_utils/response.js'
 import { validateContactMessage } from '../_utils/validation.js'
 
@@ -30,20 +31,44 @@ export async function onRequestPost(context) {
   }
 
   const now = new Date().toISOString()
+  const id = createId('msg')
+  const savedMessage = {
+    id,
+    name: validation.value.name,
+    email: validation.value.email,
+    message: validation.value.message,
+    created_at: now,
+  }
 
   await env.DB.prepare(
     `INSERT INTO contact_messages (id, name, email, message, status, created_at)
      VALUES (?, ?, ?, ?, ?, ?)`,
   )
     .bind(
-      createId('msg'),
-      validation.value.name,
-      validation.value.email,
-      validation.value.message,
+      savedMessage.id,
+      savedMessage.name,
+      savedMessage.email,
+      savedMessage.message,
       'new',
-      now,
+      savedMessage.created_at,
     )
     .run()
+
+  try {
+    const emailResult = await sendContactNotification(env, savedMessage)
+
+    if (!emailResult.ok && !emailResult.skipped) {
+      console.warn('Contact notification email failed after message was stored.', {
+        messageId: savedMessage.id,
+        reason: emailResult.reason,
+      })
+    }
+  } catch (error) {
+    console.warn('Contact notification email failed after message was stored.', {
+      messageId: savedMessage.id,
+      reason: error?.message || 'Unknown email error.',
+    })
+  }
 
   return jsonResponse({ ok: true, message: 'Message received.' })
 }

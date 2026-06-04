@@ -48,6 +48,16 @@ Never expose the admin token in frontend code.
 Never create a public `VITE_` variable for admin authentication.
 Never put the admin token in `.env.example`.
 
+## Email Notification Secrets
+
+`RESEND_API_KEY` must never be exposed in frontend code.
+
+Do not create `VITE_` variables for email notification secrets. Resend credentials, notification recipients and verified sender addresses belong in Cloudflare Pages backend environment variables/secrets.
+
+User-provided contact content must be escaped before it is inserted into email HTML.
+
+Email notification failure must not lose a stored contact message. `/api/contact` saves to D1 first, then tries to send the notification.
+
 ## Demo Scope
 
 The demos in this portfolio are educational. They are not production systems.

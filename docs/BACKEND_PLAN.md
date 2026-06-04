@@ -88,6 +88,28 @@ status = new
 
 They are never exposed through a public endpoint.
 
+## Email Notifications
+
+`POST /api/contact` stores messages in D1 first. After the message is stored, the Function can send an email notification through Resend.
+
+Required Cloudflare Pages backend variables:
+
+```text
+RESEND_API_KEY
+CONTACT_NOTIFICATION_EMAIL
+CONTACT_EMAIL_FROM
+```
+
+`RESEND_API_KEY` is used only inside Cloudflare Pages Functions. Do not expose it in frontend code and do not create a `VITE_` variable for it.
+
+If `RESEND_API_KEY` or `CONTACT_NOTIFICATION_EMAIL` is missing, the endpoint skips email notification and still returns a normal success response after saving the message.
+
+If Resend fails after D1 storage succeeds, the endpoint logs a safe warning and still returns:
+
+```json
+{ "ok": true, "message": "Message received." }
+```
+
 ## Admin Protection
 
 Admin endpoints require:
@@ -106,11 +128,12 @@ Do not expose this token in frontend code and do not create a `VITE_` variable f
 2. Apply `db/schema.sql`.
 3. Add the D1 binding `DB` to the Cloudflare Pages project.
 4. Add `ADMIN_API_TOKEN` as a backend secret/environment variable.
-5. Set `VITE_BACKEND_ENABLED=true`.
-6. Redeploy the Cloudflare Pages project.
-7. Test `POST /api/contact`.
-8. Test `POST /api/project-submissions`.
-9. Test admin endpoints using a secure API client.
+5. Add `RESEND_API_KEY`, `CONTACT_NOTIFICATION_EMAIL` and optionally `CONTACT_EMAIL_FROM`.
+6. Set `VITE_BACKEND_ENABLED=true`.
+7. Redeploy the Cloudflare Pages project.
+8. Test `POST /api/contact`.
+9. Test `POST /api/project-submissions`.
+10. Test admin endpoints using a secure API client.
 
 ## Local Frontend Config
 
