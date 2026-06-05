@@ -114,7 +114,9 @@ The demo includes city autocomplete, Open-Meteo geocoding, normalized weather re
 - `/api/crypto/markets`
 - `/api/crypto/history`
 
-The dashboard includes multiple crypto assets, search/filter, selected coin summary, historical ranges, adaptive chart scaling, a Recharts line chart and a live session chart. Live mode collects points while the page is open instead of pretending to be real historical minute data. Historical ranges depend on the public CoinGecko API and may be rate limited.
+The dashboard includes multiple crypto assets, search/filter, selected coin summary, historical ranges, adaptive chart scaling, a Recharts line chart and a live session chart. Live mode collects points while the page is open instead of pretending to be real historical minute data.
+
+To reduce CoinGecko calls, markets and historical ranges use `sessionStorage` cache. Live mode uses one shared market refresh per minute for all listed coins. Day, month and year histories are loaded on demand by `coinId + range` and reused during the browser session. Public API responses may still be rate limited.
 
 ## API Health Monitor
 

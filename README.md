@@ -48,10 +48,12 @@ Some demos use real API endpoints, such as Weather Search App, Market API Dashbo
 
 Security-related demos are educational. Real applications need backend-side authentication, secure sessions, server-side validation, monitoring and a proper security review.
 
+Market API Dashboard caches historical ranges in `sessionStorage`. Day, month and year charts are loaded on demand and reused during the browser session. Live mode uses one shared market refresh per minute for all listed coins, which helps reduce repeated CoinGecko calls and avoids hitting public API limits too quickly.
+
 ## Current Demos
 
 - Weather Search App: autocomplete, Open-Meteo data, current conditions and daily high/low temperatures.
-- Market API Dashboard: multiple crypto assets, adaptive chart scaling, historical ranges and session-based Live chart.
+- Market API Dashboard: multiple crypto assets, adaptive chart scaling, cached historical ranges and session-based Live chart.
 - API Health Monitor: backend readiness checks without exposing private records.
 - D1 Database Metrics: aggregate metrics from D1 without returning private messages or emails.
 - Auth Flow Simulator: login states, roles, permissions and session expiration using visible demo data.

@@ -8,6 +8,12 @@ const rangeToDays = {
   year: 365,
 }
 
+const rangeCacheSeconds = {
+  day: 300,
+  month: 1800,
+  year: 43200,
+}
+
 const allowedRanges = new Set(['live', 'day', 'month', 'year'])
 
 export async function onRequestGet(context) {
@@ -53,7 +59,7 @@ export async function onRequestGet(context) {
       }
 
       if (response.status === 429) {
-        return errorResponse('Market history is rate limited right now. Try again later.', 429)
+        return errorResponse('CoinGecko rate limit reached. Try again later.', 429)
       }
 
       if (response.status === 404) {
@@ -89,7 +95,18 @@ export async function onRequestGet(context) {
       return errorResponse('Market history is not available right now.', 502)
     }
 
-    return jsonResponse({ ok: true, coinId, range, prices })
+    return jsonResponse(
+      {
+        ok: true,
+        coinId,
+        range,
+        prices,
+        fetchedAt: new Date().toISOString(),
+        source: 'coingecko',
+      },
+      200,
+      { 'Cache-Control': `public, max-age=${rangeCacheSeconds[range]}` },
+    )
   } catch {
     return errorResponse('Market history is not available right now.', 502)
   }

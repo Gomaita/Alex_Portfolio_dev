@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { RefreshCcw, Search } from 'lucide-react'
+import { RefreshCcw, Search, Trash2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   CartesianGrid,
@@ -10,7 +10,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import { fetchCryptoHistory, fetchCryptoMarkets } from '../services/marketApi'
+import { liveRefreshMs } from '../config/cryptoConfig'
+import { clearCryptoCache, fetchCryptoHistory, fetchCryptoMarkets } from '../services/marketApi'
 import DemoNotice from './ui/DemoNotice'
 
 const ranges = [
@@ -21,7 +22,7 @@ const ranges = [
 ]
 
 const quickCoins = ['bitcoin', 'ethereum', 'solana', 'ripple']
-const skillBadges = ['CoinGecko API', 'Recharts', 'Range selector', 'Data normalization', 'Live session']
+const skillBadges = ['CoinGecko API', 'Recharts', 'Range selector', 'Session cache', 'Live session']
 
 const compactCurrencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -83,6 +84,17 @@ function formatDateLabel(timestamp, range) {
   return new Intl.DateTimeFormat('en-US', { month: 'short', year: '2-digit' }).format(date)
 }
 
+function formatStatusTime(value) {
+  if (!value) return 'Not updated yet'
+  return `Last updated ${formatDateLabel(new Date(value).getTime(), 'live')}`
+}
+
+function cacheStatusLabel({ fromCache, stale }) {
+  if (stale) return 'Using stale cache'
+  if (fromCache) return 'From session cache'
+  return 'Fresh data'
+}
+
 function MarketCard({ coin, active, onSelect }) {
   const isPositive = coin.change24h >= 0
 
@@ -122,26 +134,36 @@ function MarketDashboard() {
   const [range, setRange] = useState('live')
   const [searchQuery, setSearchQuery] = useState('')
   const [history, setHistory] = useState([])
-  const [liveSession, setLiveSession] = useState([])
+  const [liveSessionByCoin, setLiveSessionByCoin] = useState({})
   const [isLoadingMarkets, setIsLoadingMarkets] = useState(true)
   const [isLoadingHistory, setIsLoadingHistory] = useState(false)
   const [error, setError] = useState('')
   const [historyError, setHistoryError] = useState('')
-  const [updatedAt, setUpdatedAt] = useState(null)
+  const [cacheMessage, setCacheMessage] = useState('')
+  const [lastMarketRefresh, setLastMarketRefresh] = useState(null)
+  const [lastChartRefresh, setLastChartRefresh] = useState(null)
+  const [marketDataFromCache, setMarketDataFromCache] = useState(false)
+  const [marketDataStale, setMarketDataStale] = useState(false)
+  const [chartDataFromCache, setChartDataFromCache] = useState(false)
+  const [chartDataStale, setChartDataStale] = useState(false)
+  const [nextLiveRefreshSeconds, setNextLiveRefreshSeconds] = useState(liveRefreshMs / 1000)
 
   const selectedCoin = coins.find((coin) => coin.id === selectedCoinId) || coins[0]
 
-  const loadMarkets = useCallback(async (signal) => {
+  const loadMarkets = useCallback(async ({ forceRefresh = false, signal } = {}) => {
     setIsLoadingMarkets(true)
     setError('')
 
     try {
-      const nextCoins = await fetchCryptoMarkets({ signal })
-      setCoins(nextCoins)
-      setUpdatedAt(new Date())
+      const result = await fetchCryptoMarkets({ forceRefresh, signal })
+      setCoins(result.data)
+      setLastMarketRefresh(result.fetchedAt || new Date().toISOString())
+      setMarketDataFromCache(result.fromCache)
+      setMarketDataStale(result.stale)
+      setCacheMessage(result.warning || (result.fromCache ? 'Data from cache.' : 'Data refreshed.'))
 
       setSelectedCoinId((currentCoinId) =>
-        nextCoins.some((coin) => coin.id === currentCoinId) ? currentCoinId : nextCoins[0]?.id || currentCoinId,
+        result.data.some((coin) => coin.id === currentCoinId) ? currentCoinId : result.data[0]?.id || currentCoinId,
       )
     } catch (requestError) {
       if (requestError.name !== 'AbortError') {
@@ -152,7 +174,7 @@ function MarketDashboard() {
     }
   }, [])
 
-  const loadHistory = useCallback(async (coinId, selectedRange, signal) => {
+  const loadHistory = useCallback(async (coinId, selectedRange, { forceRefresh = false, signal } = {}) => {
     if (!coinId || selectedRange === 'live') return
 
     setIsLoadingHistory(true)
@@ -160,12 +182,18 @@ function MarketDashboard() {
     setHistory([])
 
     try {
-      const result = await fetchCryptoHistory(coinId, selectedRange, { signal })
-      setHistory(result.prices)
+      const result = await fetchCryptoHistory(coinId, selectedRange, { forceRefresh, signal })
+      setHistory(result.data)
+      setLastChartRefresh(result.fetchedAt || new Date().toISOString())
+      setChartDataFromCache(result.fromCache)
+      setChartDataStale(result.stale)
+      setHistoryError(result.warning || '')
     } catch (requestError) {
       if (requestError.name !== 'AbortError') {
         setHistory([])
-        setHistoryError(requestError.message || 'Crypto history data is not available right now.')
+        setChartDataFromCache(false)
+        setChartDataStale(false)
+        setHistoryError(requestError.message || 'Historical data is not available for this coin/range right now.')
       }
     } finally {
       if (!signal?.aborted) setIsLoadingHistory(false)
@@ -174,7 +202,7 @@ function MarketDashboard() {
 
   useEffect(() => {
     const controller = new AbortController()
-    loadMarkets(controller.signal)
+    loadMarkets({ signal: controller.signal })
     return () => controller.abort()
   }, [loadMarkets])
 
@@ -183,35 +211,56 @@ function MarketDashboard() {
     if (range === 'live') {
       setHistory([])
       setHistoryError('')
+      setChartDataFromCache(false)
+      setChartDataStale(false)
     } else {
-      loadHistory(selectedCoinId, range, controller.signal)
+      loadHistory(selectedCoinId, range, { signal: controller.signal })
     }
     return () => controller.abort()
   }, [loadHistory, range, selectedCoinId])
 
   useEffect(() => {
-    setLiveSession([])
-    setHistory([])
-    setHistoryError('')
-  }, [selectedCoinId])
+    if (range !== 'live' || !selectedCoin) return
+
+    setLiveSessionByCoin((current) => {
+      const currentCoinPoints = current[selectedCoin.id] || []
+      const latestPoint = currentCoinPoints[currentCoinPoints.length - 1]
+      if (latestPoint?.price === selectedCoin.price && latestPoint?.marketRefresh === lastMarketRefresh) {
+        return current
+      }
+
+      return {
+        ...current,
+        [selectedCoin.id]: [
+          ...currentCoinPoints.slice(-29),
+          {
+            coinId: selectedCoin.id,
+            marketRefresh: lastMarketRefresh,
+            timestamp: Date.now(),
+            price: selectedCoin.price,
+          },
+        ],
+      }
+    })
+  }, [range, selectedCoin?.id, selectedCoin?.price, lastMarketRefresh])
 
   useEffect(() => {
-    if (range !== 'live' || !selectedCoin) return undefined
+    if (range !== 'live') return undefined
 
-    setLiveSession((current) => {
-      const currentCoinPoints = current.filter((point) => point.coinId === selectedCoin.id)
-      return [
-        ...currentCoinPoints.slice(-29),
-        { coinId: selectedCoin.id, timestamp: Date.now(), price: selectedCoin.price },
-      ]
-    })
+    setNextLiveRefreshSeconds(liveRefreshMs / 1000)
+    const countdownId = window.setInterval(() => {
+      setNextLiveRefreshSeconds((current) => (current <= 1 ? liveRefreshMs / 1000 : current - 1))
+    }, 1000)
 
-    const intervalId = window.setInterval(() => {
+    const refreshId = window.setInterval(() => {
       loadMarkets()
-    }, 60000)
+    }, liveRefreshMs)
 
-    return () => window.clearInterval(intervalId)
-  }, [range, selectedCoin?.id, updatedAt, loadMarkets])
+    return () => {
+      window.clearInterval(countdownId)
+      window.clearInterval(refreshId)
+    }
+  }, [loadMarkets, range])
 
   const filteredCoins = useMemo(() => {
     const normalized = searchQuery.trim().toLowerCase()
@@ -223,7 +272,7 @@ function MarketDashboard() {
 
   const chartData = useMemo(() => {
     const source = range === 'live'
-      ? liveSession.filter((point) => point.coinId === selectedCoinId)
+      ? liveSessionByCoin[selectedCoinId] || []
       : history
 
     return source.map((point) => ({
@@ -231,7 +280,7 @@ function MarketDashboard() {
       timestamp: point.timestamp,
       price: point.price,
     }))
-  }, [history, liveSession, range, selectedCoinId])
+  }, [history, liveSessionByCoin, range, selectedCoinId])
 
   const priceDomain = useMemo(() => getPriceDomain(chartData), [chartData])
 
@@ -244,22 +293,42 @@ function MarketDashboard() {
   }, [coins])
 
   function refreshData() {
-    loadMarkets()
-    if (range !== 'live') loadHistory(selectedCoinId, range)
+    if (range === 'live') {
+      loadMarkets({ forceRefresh: true })
+      return
+    }
+
+    loadHistory(selectedCoinId, range, { forceRefresh: true })
+  }
+
+  function handleClearCache() {
+    clearCryptoCache()
+    setCacheMessage('Crypto cache cleared.')
+    setHistory([])
+    setLiveSessionByCoin({})
+    if (range === 'live') {
+      loadMarkets({ forceRefresh: true })
+    } else {
+      loadHistory(selectedCoinId, range, { forceRefresh: true })
+    }
   }
 
   function handleSelectCoin(coinId) {
     setSelectedCoinId(coinId)
     setHistoryError('')
     setHistory([])
-    setLiveSession([])
+    setLiveSessionByCoin((current) => ({
+      ...current,
+      [coinId]: [],
+    }))
   }
 
   function handleRangeChange(nextRange) {
     setRange(nextRange)
     setHistoryError('')
     setHistory([])
-    if (nextRange === 'live') setLiveSession([])
+    setChartDataFromCache(false)
+    setChartDataStale(false)
   }
 
   return (
@@ -283,7 +352,7 @@ function MarketDashboard() {
               Market API Dashboard
             </h3>
             <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg dark:text-slate-300">
-              Crypto market dashboard with multiple assets, adaptive chart scaling, historical ranges and clearer public API error handling.
+              Crypto market dashboard with multiple assets, adaptive chart scaling, session cache and clearer public API error handling.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {skillBadges.map((badge) => (
@@ -294,28 +363,51 @@ function MarketDashboard() {
             </div>
           </div>
 
-          <div className="flex w-full flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:w-auto sm:min-w-64 dark:border-slate-800 dark:bg-slate-900">
+          <div className="flex w-full flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:w-auto sm:min-w-72 dark:border-slate-800 dark:bg-slate-900">
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-slate-400">Data status</p>
-            <p className="text-sm text-slate-600 dark:text-slate-300">
-              {updatedAt ? `Last updated ${formatDateLabel(updatedAt.getTime(), 'live')}` : 'Waiting for market update'}
+            <p className="text-sm text-slate-600 dark:text-slate-300">{formatStatusTime(lastMarketRefresh)}</p>
+            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              Markets: {cacheStatusLabel({ fromCache: marketDataFromCache, stale: marketDataStale })}
             </p>
-            <button
-              type="button"
-              onClick={refreshData}
-              disabled={isLoadingMarkets || isLoadingHistory}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-60 dark:bg-sky-500 dark:text-slate-950 dark:focus:ring-sky-400 dark:focus:ring-offset-slate-950"
-            >
-              <RefreshCcw size={16} />
-              {isLoadingMarkets || isLoadingHistory ? 'Refreshing...' : 'Refresh Data'}
-            </button>
+            {range === 'live' && (
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Next refresh in {nextLiveRefreshSeconds}s
+              </p>
+            )}
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={refreshData}
+                disabled={isLoadingMarkets || isLoadingHistory}
+                className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white disabled:opacity-60 dark:bg-sky-500 dark:text-slate-950 dark:focus:ring-sky-400 dark:focus:ring-offset-slate-950"
+              >
+                <RefreshCcw size={16} />
+                {isLoadingMarkets || isLoadingHistory ? 'Refreshing...' : 'Refresh'}
+              </button>
+              <button
+                type="button"
+                onClick={handleClearCache}
+                disabled={isLoadingMarkets || isLoadingHistory}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-60 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                <Trash2 size={16} />
+                Cache
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="p-5 sm:p-6 lg:p-8">
         <DemoNotice className="mb-6">
-          Market data from CoinGecko public API. Public APIs may be rate limited. Try again later if a request fails.
+          Market data from CoinGecko public API. Live uses one shared market refresh per minute. Historical ranges are cached during the session to avoid rate limits.
         </DemoNotice>
+
+        {cacheMessage && (
+          <div className="mb-6 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-700 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-200">
+            {cacheMessage}
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-200" role="alert">
@@ -407,7 +499,10 @@ function MarketDashboard() {
                 <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-300">
                   {range === 'live'
                     ? 'Live chart shows session data collected while this page is open.'
-                    : 'Historical chart uses CoinGecko market_chart data.'}
+                    : 'Historical chart uses CoinGecko market_chart data loaded on demand.'}
+                </p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  Chart: {range === 'live' ? 'Session data' : cacheStatusLabel({ fromCache: chartDataFromCache, stale: chartDataStale })} - {formatStatusTime(range === 'live' ? lastMarketRefresh : lastChartRefresh)}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -431,13 +526,15 @@ function MarketDashboard() {
             {historyError && (
               <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200" role="alert">
                 <p>{historyError}</p>
-                <button
-                  type="button"
-                  onClick={() => loadHistory(selectedCoinId, range)}
-                  className="mt-3 rounded-md bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 transition hover:bg-amber-200 dark:bg-amber-900/60 dark:text-amber-100 dark:hover:bg-amber-900"
-                >
-                  Retry chart
-                </button>
+                {range !== 'live' && (
+                  <button
+                    type="button"
+                    onClick={() => loadHistory(selectedCoinId, range, { forceRefresh: true })}
+                    className="mt-3 rounded-md bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900 transition hover:bg-amber-200 dark:bg-amber-900/60 dark:text-amber-100 dark:hover:bg-amber-900"
+                  >
+                    Retry chart
+                  </button>
+                )}
               </div>
             )}
 
@@ -451,7 +548,7 @@ function MarketDashboard() {
               ) : chartData.length === 0 ? (
                 <div className="flex h-full items-center justify-center rounded-xl border border-slate-200 bg-slate-50 p-6 text-center text-sm leading-6 text-slate-600 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-300">
                   {historyError
-                    ? 'Historical data is not available right now. Try another coin or range.'
+                    ? 'Historical data is not available for this coin/range right now.'
                     : range === 'live'
                       ? 'Live session will add more points as data refreshes.'
                       : 'Historical chart will appear after a successful API response.'}
@@ -496,7 +593,7 @@ function MarketDashboard() {
             </div>
 
             <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-              Data source: CoinGecko public API. Historical ranges depend on API availability and rate limits.
+              Data source: CoinGecko public API. Historical ranges are cached during this browser session.
             </p>
           </div>
         </div>

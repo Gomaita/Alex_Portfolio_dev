@@ -19,25 +19,21 @@ export const allowedCoinIds = [
 ]
 
 async function safeErrorResponse(response) {
-  let detail = ''
   try {
-    detail = await response.text()
+    await response.text()
   } catch {
-    detail = ''
+    // Keep external details out of the public response.
   }
 
   if (response.status === 429) {
-    return errorResponse('Market data is rate limited right now. Try again later.', 429)
+    return errorResponse('CoinGecko rate limit reached. Try again later.', 429)
   }
 
   if (response.status === 404) {
     return errorResponse('Market data was not found.', 404)
   }
 
-  return errorResponse(
-    detail ? 'Crypto market data is not available right now.' : 'Crypto market data is not available right now.',
-    502,
-  )
+  return errorResponse('Crypto market data is not available right now.', 502)
 }
 
 export async function onRequestGet() {
@@ -81,7 +77,16 @@ export async function onRequestGet() {
           }))
       : []
 
-    return jsonResponse({ ok: true, coins })
+    return jsonResponse(
+      {
+        ok: true,
+        coins,
+        fetchedAt: new Date().toISOString(),
+        source: 'coingecko',
+      },
+      200,
+      { 'Cache-Control': 'public, max-age=60' },
+    )
   } catch {
     return errorResponse('Crypto market data is not available right now.', 502)
   }
