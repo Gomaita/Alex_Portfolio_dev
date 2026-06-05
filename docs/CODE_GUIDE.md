@@ -33,6 +33,7 @@ Shared repeated styles should stay in UI components or in the small semantic cla
 - `/`
 - `/portfolio`
 - `/portfolio/:slug`
+- `/security-lab`
 - `/about`
 - `/contact`
 - `/cheatsheets`
@@ -47,6 +48,7 @@ Important project routes include:
 - `/portfolio/programming-cheatsheets`
 - `/portfolio/sql-query-playground`
 - `/portfolio/secure-users-roles-demo`
+- `/security-lab`
 
 ## Project Flow
 
@@ -117,6 +119,23 @@ The demo includes city autocomplete, Open-Meteo geocoding, normalized weather re
 The dashboard includes multiple crypto assets, search/filter, selected coin summary, historical ranges, adaptive chart scaling, a Recharts line chart and a live session chart. Live mode collects points while the page is open instead of pretending to be real historical minute data.
 
 To reduce CoinGecko calls, markets and historical ranges use `sessionStorage` cache. Live mode uses one shared market refresh per minute for all listed coins. Day, month and year histories are loaded on demand by `coinId + range` and reused during the browser session. Public API responses may still be rate limited.
+
+## Security Lab
+
+`src/pages/SecurityLab.jsx` renders the standalone `/security-lab` route.
+
+The main app component is `src/components/security-lab/SecurityLabPage.jsx`. It owns local state for enabled firewall rules and incident updates, then renders the internal modules:
+
+- Overview
+- Traffic Monitor
+- Firewall Rules
+- Request Simulator
+- Incidents
+- Security Report
+
+The lab data lives in `src/data/securityLabData.js`. It uses simulated traffic records, documentation IP ranges, simulated incidents, quick request scenarios and local firewall rules.
+
+The request simulator logic lives in `src/utils/securityRules.js`. It normalizes request input, evaluates enabled rules, detects suspicious payload patterns, checks private IP ranges, calculates risk score, chooses a decision and returns a local timeline. It does not call backend APIs, inspect real visitor traffic or scan external services.
 
 ## API Health Monitor
 

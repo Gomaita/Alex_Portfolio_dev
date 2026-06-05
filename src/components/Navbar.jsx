@@ -7,6 +7,7 @@ import { cvOptions } from './ui/CVDownloads'
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Portfolio', path: '/portfolio' },
+  { label: 'Security Lab', path: '/security-lab', featured: true },
   { label: 'Cheatsheets', path: '/cheatsheets' },
   { label: 'About', path: '/about' },
   { label: 'Contact', path: '/contact' },
@@ -23,6 +24,12 @@ function Navbar() {
         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
     }`
 
+  const getLinkClass = (item) => (state) => {
+    const baseClass = linkClass(state)
+    if (!item.featured || state.isActive) return baseClass
+    return `${baseClass} border border-cyan-200 bg-cyan-50 text-cyan-800 dark:border-cyan-900 dark:bg-cyan-950/40 dark:text-cyan-200`
+  }
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-6 lg:px-8">
@@ -36,7 +43,7 @@ function Navbar() {
 
         <div className="hidden items-center gap-1 md:flex">
           {navItems.map((item) => (
-            <NavLink key={item.path} to={item.path} className={linkClass}>
+            <NavLink key={item.path} to={item.path} className={getLinkClass(item)}>
               {item.label}
             </NavLink>
           ))}
@@ -81,7 +88,7 @@ function Navbar() {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={linkClass}
+                className={getLinkClass(item)}
                 onClick={() => setIsOpen(false)}
               >
                 {item.label}

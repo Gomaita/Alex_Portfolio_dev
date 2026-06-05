@@ -9,6 +9,7 @@ import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import Portfolio from './pages/Portfolio'
 import ProjectDetail from './pages/ProjectDetail'
+import SecurityLab from './pages/SecurityLab'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/:slug" element={<ProjectDetail />} />
+          <Route path="/security-lab" element={<SecurityLab />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cheatsheets" element={<Cheatsheets />} />

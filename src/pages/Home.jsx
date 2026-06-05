@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ShieldCheck } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
@@ -118,6 +118,34 @@ function Home() {
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </div>
+      </Section>
+
+      <Section>
+        <Card className="overflow-hidden border-slate-800 bg-slate-950 p-0 text-white">
+          <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,#0891b233,transparent_34%),#020617] p-6 sm:p-8 lg:border-b-0 lg:border-r">
+              <Badge tone="cyan">Security Lab</Badge>
+              <h2 className="mt-5 text-3xl font-bold tracking-normal sm:text-4xl">
+                Security Operations Center Lite
+              </h2>
+              <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+                A more complete defensive security interface built to practice monitoring, firewall logic, incident review and risk scoring.
+              </p>
+              <Button to="/security-lab" variant="primary" className="mt-6">
+                Open Security Lab <ArrowRight size={17} />
+              </Button>
+            </div>
+            <div className="grid gap-4 p-6 sm:grid-cols-2 sm:p-8">
+              {['Traffic monitor', 'Firewall rules', 'Request simulator', 'Incident review'].map((item) => (
+                <div key={item} className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+                  <ShieldCheck className="text-cyan-300" size={22} />
+                  <p className="mt-3 font-semibold text-slate-100">{item}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">Privacy-safe simulated security workflow.</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
       </Section>
 
       <Section>

@@ -39,6 +39,7 @@ I am still improving it, but I wanted it to feel honest: simple where it should 
 - Structured contact email notifications with Resend.
 - Backend-ready moderated project submissions.
 - Educational demos for APIs, CRUD, auth concepts, checkout states, SQL concepts and backend monitoring.
+- Security Lab with a defensive Security Operations Center Lite simulation.
 
 ## Demo Disclaimer
 
@@ -50,10 +51,13 @@ Security-related demos are educational. Real applications need backend-side auth
 
 Market API Dashboard caches historical ranges in `sessionStorage`. Day, month and year charts are loaded on demand and reused during the browser session. Live mode uses one shared market refresh per minute for all listed coins, which helps reduce repeated CoinGecko calls and avoids hitting public API limits too quickly.
 
+Security Operations Center Lite is a defensive simulation. It does not inspect real visitor traffic, expose private logs or scan external services. It is built to practice firewall-style rule evaluation, suspicious request detection, risk scoring and incident review.
+
 ## Current Demos
 
 - Weather Search App: autocomplete, Open-Meteo data, current conditions and daily high/low temperatures.
 - Market API Dashboard: multiple crypto assets, adaptive chart scaling, cached historical ranges and session-based Live chart.
+- Security Operations Center Lite: defensive security lab with simulated traffic, firewall rules, request evaluation, incidents and reporting.
 - API Health Monitor: backend readiness checks without exposing private records.
 - D1 Database Metrics: aggregate metrics from D1 without returning private messages or emails.
 - Auth Flow Simulator: login states, roles, permissions and session expiration using visible demo data.
@@ -176,11 +180,13 @@ The PDFs live in `public/` and are served as downloadable files. Their content i
 ```text
 src/
   components/
+    security-lab/
   config/
   data/
   hooks/
   pages/
   services/
+  utils/
 
 functions/
   api/

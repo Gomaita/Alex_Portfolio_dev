@@ -80,6 +80,14 @@ Checkout Flow Simulator does not process payments. Do not enter real payment dat
 
 No real cards or real passwords should be stored in these demos. Real applications need backend-side authentication, secure session handling, server-side validation, payment provider tokenization and careful audit logging.
 
+## Security Lab Scope
+
+Security Operations Center Lite is a defensive security simulation.
+
+It should not be used as a real firewall, monitoring system or traffic inspection tool. It uses simulated events and documentation IP ranges only.
+
+The lab intentionally avoids real visitor traffic inspection, real IP logs, private logs, external URL scanning and offensive behavior. A production security monitoring system would need careful logging rules, retention limits, access control, privacy review and incident response procedures.
+
 ## Before Accepting Public Submissions At Scale
 
 Add additional protections before relying on this for high-volume public submissions:
