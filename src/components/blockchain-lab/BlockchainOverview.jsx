@@ -27,16 +27,29 @@ function BlockchainOverview({ agreement, transactions, milestones, dispute }) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-violet-500/20 bg-[radial-gradient(circle_at_top_right,#7c3aed33,transparent_36%),#0f172a] p-6 shadow-xl shadow-violet-950/20">
-        <span className="inline-flex rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-violet-200">
-          Flagship Web3 project
+      <div className="rounded-[1.75rem] border border-violet-300/15 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.22),transparent_34%),linear-gradient(135deg,#11112a,#151633)] p-6 shadow-2xl shadow-violet-950/20">
+        <span className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-cyan-200">
+          Contract command overview
         </span>
-        <h1 className="mt-5 text-4xl font-bold tracking-normal text-white sm:text-5xl">Blockchain Lab</h1>
-        <p className="mt-3 text-xl font-semibold text-cyan-200">Smart Escrow & Contract Security Dashboard</p>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-          A complete Web3 learning project focused on smart escrow logic, contract states, role permissions and smart contract security.
+        <h1 className="mt-5 text-3xl font-black tracking-normal text-white sm:text-4xl">
+          Simulated escrow agreement workspace
+        </h1>
+        <p className="mt-3 text-lg font-semibold text-violet-200">Smart contract concepts without wallets or real funds</p>
+        <p className="mt-4 max-w-3xl text-base leading-8 text-indigo-200/75">
+          Review agreement states, milestone payments, event logs, dispute votes and educational security notes in one Web3-style dashboard.
         </p>
-        <p className="mt-5 rounded-xl border border-slate-700 bg-slate-950/70 p-4 text-sm leading-6 text-slate-300">
+        <div className="mt-5 flex flex-wrap gap-2">
+          <span className="rounded-full border border-violet-300/20 bg-violet-300/10 px-3 py-1 text-xs font-bold text-violet-100">
+            Contract: 0xA17...E5C0
+          </span>
+          <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-100">
+            Status: {agreement.currentStatus}
+          </span>
+          <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-100">
+            No wallet connected
+          </span>
+        </div>
+        <p className="mt-5 rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-sm leading-6 text-indigo-200/75">
           This is an educational smart contract simulation. It does not use real wallets, real funds or a deployed blockchain contract.
         </p>
       </div>
@@ -53,7 +66,7 @@ function BlockchainOverview({ agreement, transactions, milestones, dispute }) {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-3">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
           <h2 className="font-bold text-white">Agreement states</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -67,7 +80,7 @@ function BlockchainOverview({ agreement, transactions, milestones, dispute }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
           <h2 className="font-bold text-white">Milestone distribution</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -82,7 +95,7 @@ function BlockchainOverview({ agreement, transactions, milestones, dispute }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
           <h2 className="font-bold text-white">Contract activity</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -98,7 +111,7 @@ function BlockchainOverview({ agreement, transactions, milestones, dispute }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
         <h2 className="font-bold text-white">Key learning points</h2>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           {[
@@ -108,7 +121,7 @@ function BlockchainOverview({ agreement, transactions, milestones, dispute }) {
             'Dispute resolution should be planned before funds are released.',
             'Not all application data belongs on-chain.',
           ].map((point) => (
-            <p key={point} className="rounded-xl border border-slate-800 bg-slate-950 p-4 text-sm leading-6 text-slate-300">{point}</p>
+            <p key={point} className="rounded-2xl border border-violet-300/10 bg-[#080b1f]/80 p-4 text-sm leading-6 text-indigo-200/75">{point}</p>
           ))}
         </div>
       </div>

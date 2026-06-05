@@ -32,22 +32,24 @@ function FlagshipLabCard({
 
   return (
     <article
-      className={`relative overflow-hidden rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-slate-900 dark:shadow-none ${styles.border}`}
+      className={`relative flex h-full min-h-[420px] overflow-hidden rounded-2xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:bg-slate-900 dark:shadow-none sm:p-7 ${styles.border}`}
     >
       <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-r ${styles.glow}`} />
-      <div className="relative">
-        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ring-1 ${styles.badge}`}>
-          {label}
-        </span>
-        <h2 className="mt-5 text-2xl font-bold tracking-normal text-slate-950 dark:text-white">
-          {title}
-        </h2>
-        <p className="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
-          {subtitle}
-        </p>
-        <p className="mt-4 max-w-2xl leading-7 text-slate-600 dark:text-slate-300">
-          {description}
-        </p>
+      <div className="relative flex min-h-full w-full flex-col justify-center">
+        <div>
+          <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ring-1 ${styles.badge}`}>
+            {label}
+          </span>
+          <h2 className="mt-5 text-2xl font-bold tracking-normal text-slate-950 dark:text-white">
+            {title}
+          </h2>
+          <p className="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
+            {subtitle}
+          </p>
+          <p className="mt-4 max-w-2xl leading-7 text-slate-600 dark:text-slate-300">
+            {description}
+          </p>
+        </div>
 
         <div className="mt-5 grid gap-2 sm:grid-cols-2">
           {bullets.map((bullet) => (
@@ -73,7 +75,7 @@ function FlagshipLabCard({
 
         <Link
           to={href}
-          className={`mt-6 inline-flex items-center gap-2 text-sm font-bold transition ${styles.button}`}
+          className={`mt-7 inline-flex w-fit items-center gap-2 text-sm font-bold transition ${styles.button}`}
         >
           Open {title}
           <ArrowRight size={16} />

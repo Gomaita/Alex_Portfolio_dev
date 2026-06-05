@@ -34,25 +34,25 @@ function SecurityOverview({ events, incidents, postureScore }) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-cyan-500/20 bg-[radial-gradient(circle_at_top_right,#0e749033,transparent_35%),#0f172a] p-6 shadow-xl shadow-cyan-950/20">
+      <div className="rounded-[1.75rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.18),transparent_34%),linear-gradient(135deg,#0b1220,#101827)] p-6 shadow-2xl shadow-cyan-950/20">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <span className="inline-flex rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-cyan-200">
-              Flagship security project
+            <span className="inline-flex rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-emerald-200">
+              SOC command overview
             </span>
-            <h1 className="mt-5 text-4xl font-bold tracking-normal text-white sm:text-5xl">
-              Security Operations Center Lite
+            <h1 className="mt-5 text-3xl font-black tracking-normal text-white sm:text-4xl">
+              Monitoring simulated defensive signals
             </h1>
-            <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-              A defensive security simulation for monitoring traffic, evaluating firewall rules and reviewing incidents.
+            <p className="mt-4 max-w-3xl text-base leading-8 text-[#8ea5c7]">
+              A privacy-safe security workspace for reviewing simulated traffic, rule decisions and incident signals.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 text-sm text-slate-300">
+          <div className="rounded-2xl border border-cyan-300/15 bg-[#050816]/70 p-4 text-sm text-[#8ea5c7]">
             <p className="font-semibold text-cyan-200">Simulated security data</p>
             <p className="mt-1">No real visitor traffic inspected</p>
           </div>
         </div>
-        <p className="mt-5 rounded-xl border border-slate-700 bg-slate-950/70 p-4 text-sm leading-6 text-slate-300">
+        <p className="mt-5 rounded-2xl border border-white/10 bg-white/[0.045] p-4 text-sm leading-6 text-[#8ea5c7]">
           This is a defensive security simulation. It does not inspect real visitor traffic or expose private logs.
         </p>
       </div>
@@ -69,7 +69,7 @@ function SecurityOverview({ events, incidents, postureScore }) {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-3">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Allowed vs blocked vs flagged</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -85,7 +85,7 @@ function SecurityOverview({ events, incidents, postureScore }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Events by severity</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -100,7 +100,7 @@ function SecurityOverview({ events, incidents, postureScore }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Security posture areas</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -116,7 +116,7 @@ function SecurityOverview({ events, incidents, postureScore }) {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Risk score over time</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -131,7 +131,7 @@ function SecurityOverview({ events, incidents, postureScore }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Top findings</h2>
           <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
             <li>Repeated invalid admin access attempts</li>

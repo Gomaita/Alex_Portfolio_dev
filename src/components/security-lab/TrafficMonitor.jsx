@@ -25,11 +25,11 @@ function TrafficMonitor({ events }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Traffic Monitor</h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-[#8ea5c7]">
               Simulated firewall records using documentation IP ranges only.
             </p>
           </div>
@@ -43,22 +43,22 @@ function TrafficMonitor({ events }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search IP, path or rule"
-            className="min-h-11 rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-white outline-none focus:border-cyan-400"
+            className="min-h-11 rounded-xl border border-cyan-300/15 bg-[#050816]/85 px-3 text-sm text-white outline-none transition focus:border-cyan-300"
           />
-          <select value={action} onChange={(event) => setAction(event.target.value)} className="min-h-11 rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-white">
+          <select value={action} onChange={(event) => setAction(event.target.value)} className="min-h-11 rounded-xl border border-cyan-300/15 bg-[#050816]/85 px-3 text-sm text-white">
             <option value="all">All actions</option>
             <option value="allowed">Allowed</option>
             <option value="flagged">Flagged</option>
             <option value="blocked">Blocked</option>
           </select>
-          <select value={severity} onChange={(event) => setSeverity(event.target.value)} className="min-h-11 rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-white">
+          <select value={severity} onChange={(event) => setSeverity(event.target.value)} className="min-h-11 rounded-xl border border-cyan-300/15 bg-[#050816]/85 px-3 text-sm text-white">
             <option value="all">All severities</option>
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
             <option value="critical">Critical</option>
           </select>
-          <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="min-h-11 rounded-lg border border-slate-700 bg-slate-950 px-3 text-sm text-white">
+          <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="min-h-11 rounded-xl border border-cyan-300/15 bg-[#050816]/85 px-3 text-sm text-white">
             <option value="riskScore">Sort by risk</option>
             <option value="time">Sort by time</option>
           </select>
@@ -66,10 +66,10 @@ function TrafficMonitor({ events }) {
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.4fr_0.8fr]">
-        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+        <div className="overflow-hidden rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 shadow-xl shadow-cyan-950/10">
           <div className="overflow-x-auto">
             <table className="min-w-[900px] w-full text-left text-sm">
-              <thead className="border-b border-slate-800 bg-slate-950 text-xs uppercase tracking-widest text-slate-400">
+              <thead className="border-b border-cyan-300/10 bg-[#050816] text-xs uppercase tracking-widest text-[#8ea5c7]">
                 <tr>
                   <th className="px-4 py-3">Time</th>
                   <th className="px-4 py-3">Source</th>
@@ -80,12 +80,12 @@ function TrafficMonitor({ events }) {
                   <th className="px-4 py-3">Severity</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800">
+              <tbody className="divide-y divide-cyan-300/10">
                 {filteredEvents.map((event) => (
                   <tr
                     key={event.id}
                     onClick={() => setSelectedId(event.id)}
-                    className={`cursor-pointer transition hover:bg-slate-800/70 ${selectedEvent?.id === event.id ? 'bg-cyan-500/10' : ''}`}
+                    className={`cursor-pointer transition hover:bg-cyan-300/[0.055] ${selectedEvent?.id === event.id ? 'bg-cyan-400/10' : ''}`}
                   >
                     <td className="px-4 py-4 text-slate-300">{event.time}</td>
                     <td className="px-4 py-4 text-slate-300">{event.sourceIp}<span className="block text-xs text-slate-500">{event.country}</span></td>
@@ -101,7 +101,7 @@ function TrafficMonitor({ events }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           {selectedEvent ? (
             <>
               <h2 className="text-xl font-bold text-white">Event detail</h2>
@@ -116,7 +116,7 @@ function TrafficMonitor({ events }) {
                 <p><span className="text-slate-500">Reason:</span> {selectedEvent.reason}</p>
                 <p><span className="text-slate-500">Recommendation:</span> {selectedEvent.recommendation}</p>
               </div>
-              <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4">
+              <div className="mt-5 rounded-2xl border border-cyan-300/12 bg-[#050816]/90 p-4">
                 <p className="text-sm font-semibold text-white">Timeline</p>
                 <ol className="mt-3 space-y-2 text-sm text-slate-400">
                   {['Request received', 'Input normalized', 'Rules evaluated', 'Decision applied'].map((step) => (

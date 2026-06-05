@@ -42,25 +42,25 @@ function Portfolio() {
           ))}
         </div>
 
-        <Card className="mb-8 overflow-hidden border-slate-800 bg-slate-950 p-0 text-white">
+        <Card className="mb-8 overflow-hidden border-cyan-200 bg-white p-0 dark:border-cyan-900/70 dark:bg-slate-900">
           <div className="grid gap-0 lg:grid-cols-[0.8fr_1.2fr]">
-            <div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,#06b6d433,transparent_35%),#020617] p-6 lg:border-b-0 lg:border-r">
+            <div className="border-b border-cyan-200 bg-[radial-gradient(circle_at_top_left,#06b6d426,transparent_35%),#ecfeff] p-6 lg:border-b-0 lg:border-r dark:border-cyan-900/70 dark:bg-[radial-gradient(circle_at_top_left,#06b6d433,transparent_35%),#020617]">
               <div className="flex flex-wrap gap-2">
                 <Badge tone="cyan">Flagship project</Badge>
                 <Badge tone="green">Security</Badge>
               </div>
-              <ShieldCheck className="mt-6 text-cyan-300" size={34} />
-              <h2 className="mt-4 text-2xl font-bold tracking-normal text-white">
+              <ShieldCheck className="mt-6 text-cyan-700 dark:text-cyan-300" size={34} />
+              <h2 className="mt-4 text-2xl font-bold tracking-normal text-slate-950 dark:text-white">
                 Security Operations Center Lite
               </h2>
             </div>
             <div className="p-6">
-              <p className="max-w-3xl leading-7 text-slate-300">
+              <p className="max-w-3xl leading-7 text-slate-600 dark:text-slate-300">
                 A defensive security dashboard that simulates firewall traffic analysis, rule evaluation, suspicious request detection and incident review.
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {['React', 'Recharts', 'Security Modeling', 'Risk Scoring', 'Firewall Rules', 'Incident Workflow'].map((tech) => (
-                  <span key={tech} className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+                  <span key={tech} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300">
                     {tech}
                   </span>
                 ))}
@@ -72,25 +72,25 @@ function Portfolio() {
           </div>
         </Card>
 
-        <Card className="mb-8 overflow-hidden border-slate-800 bg-slate-950 p-0 text-white">
+        <Card className="mb-8 overflow-hidden border-violet-200 bg-white p-0 dark:border-violet-900/70 dark:bg-slate-900">
           <div className="grid gap-0 lg:grid-cols-[0.8fr_1.2fr]">
-            <div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,#8b5cf633,transparent_35%),#020617] p-6 lg:border-b-0 lg:border-r">
+            <div className="border-b border-violet-200 bg-[radial-gradient(circle_at_top_left,#8b5cf626,transparent_35%),#f5f3ff] p-6 lg:border-b-0 lg:border-r dark:border-violet-900/70 dark:bg-[radial-gradient(circle_at_top_left,#8b5cf633,transparent_35%),#020617]">
               <div className="flex flex-wrap gap-2">
                 <Badge tone="violet">Flagship Web3 project</Badge>
                 <Badge tone="cyan">Blockchain</Badge>
               </div>
-              <Boxes className="mt-6 text-violet-300" size={34} />
-              <h2 className="mt-4 text-2xl font-bold tracking-normal text-white">
+              <Boxes className="mt-6 text-violet-700 dark:text-violet-300" size={34} />
+              <h2 className="mt-4 text-2xl font-bold tracking-normal text-slate-950 dark:text-white">
                 Smart Escrow & Contract Security Dashboard
               </h2>
             </div>
             <div className="p-6">
-              <p className="max-w-3xl leading-7 text-slate-300">
+              <p className="max-w-3xl leading-7 text-slate-600 dark:text-slate-300">
                 A complete smart contract simulation that models escrow states, role permissions, DAO-style disputes, milestone payments and contract security notes.
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
                 {['React', 'Recharts', 'Solidity Concepts', 'State Machines', 'Smart Contract Security', 'Role-based UI'].map((tech) => (
-                  <span key={tech} className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+                  <span key={tech} className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300">
                     {tech}
                   </span>
                 ))}

@@ -4,9 +4,9 @@ import RolePermissionMatrix from './RolePermissionMatrix'
 function BlockchainSecurityNotes() {
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
         <h1 className="text-2xl font-bold text-white">Security Notes</h1>
-        <p className="mt-2 text-sm leading-6 text-slate-400">
+        <p className="mt-2 text-sm leading-6 text-indigo-200/70">
           This lab is educational. It does not use real wallets, real funds, deployed contracts, testnets or mainnet transactions.
         </p>
       </div>

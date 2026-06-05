@@ -40,15 +40,15 @@ function RequestSimulator({ rules }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
         <h1 className="text-2xl font-bold text-white">Request Simulator</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-[#8ea5c7]">
           Test simulated requests against the enabled firewall-style rules. Nothing is sent to a backend and no external URLs are scanned.
         </p>
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Request input</h2>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -129,7 +129,7 @@ function RequestSimulator({ rules }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 className="font-bold text-white">Simulation result</h2>
@@ -141,7 +141,7 @@ function RequestSimulator({ rules }) {
             </div>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950 p-5">
+          <div className="mt-6 rounded-2xl border border-cyan-300/15 bg-[#050816]/90 p-5">
             <p className="text-sm font-semibold uppercase tracking-widest text-slate-500">Risk score</p>
             <p className="mt-3 text-5xl font-bold text-white">{result.riskScore}<span className="text-2xl text-slate-500">/100</span></p>
             <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-800">
@@ -162,7 +162,7 @@ function RequestSimulator({ rules }) {
             </div>
           </div>
 
-          <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950 p-4">
+          <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-[#050816]/90 p-4">
             <p className="text-sm font-semibold text-white">Recommendation</p>
             <p className="mt-2 text-sm leading-6 text-slate-300">{result.recommendation}</p>
           </div>

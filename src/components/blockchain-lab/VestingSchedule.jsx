@@ -16,13 +16,13 @@ function VestingSchedule({ milestones, onUnlockMilestone, onReleaseMilestone, on
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Vesting / Milestone Schedule</h1>
-            <p className="mt-2 text-sm text-slate-400">Milestone payments reduce risk by releasing funds gradually instead of all at once.</p>
+            <p className="mt-2 text-sm text-indigo-200/70">Milestone payments reduce risk by releasing funds gradually instead of all at once.</p>
           </div>
-          <button type="button" onClick={onReset} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-violet-400">
+          <button type="button" onClick={onReset} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-violet-300/20 bg-violet-300/5 px-4 py-2 text-sm font-semibold text-violet-100 hover:border-violet-300">
             <RotateCcw size={16} />
             Reset schedule
           </button>
@@ -32,13 +32,13 @@ function VestingSchedule({ milestones, onUnlockMilestone, onReleaseMilestone, on
       <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
         <div className="space-y-3">
           {milestones.map((milestone) => (
-            <div key={milestone.id} className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+            <div key={milestone.id} className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <h2 className="font-bold text-white">{milestone.title}</h2>
-                  <p className="mt-1 text-sm text-slate-400">{milestone.percent}% - {milestone.amountEth} ETH - Due {milestone.dueDate}</p>
+                  <p className="mt-1 text-sm text-indigo-200/70">{milestone.percent}% - {milestone.amountEth} ETH - Due {milestone.dueDate}</p>
                 </div>
-                <span className="rounded-full border border-slate-700 px-3 py-1 text-xs font-bold text-slate-200">{milestone.status}</span>
+                <span className="rounded-full border border-violet-300/20 bg-violet-300/5 px-3 py-1 text-xs font-bold text-violet-100">{milestone.status}</span>
               </div>
               <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-800">
                 <div className="h-full rounded-full bg-violet-400" style={{ width: `${milestone.percent}%` }} />
@@ -55,7 +55,7 @@ function VestingSchedule({ milestones, onUnlockMilestone, onReleaseMilestone, on
           ))}
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
           <h2 className="font-bold text-white">Funds by milestone status</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -67,7 +67,7 @@ function VestingSchedule({ milestones, onUnlockMilestone, onReleaseMilestone, on
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <p className="mt-4 text-sm text-slate-400">{releasedPercent}% released in this simulated schedule.</p>
+          <p className="mt-4 text-sm text-indigo-200/70">{releasedPercent}% released in this simulated schedule.</p>
         </div>
       </div>
     </div>

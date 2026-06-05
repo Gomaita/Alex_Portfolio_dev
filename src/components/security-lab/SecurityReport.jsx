@@ -48,11 +48,11 @@ function SecurityReport({ events, incidents, rules, postureScore }) {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Security Report</h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-[#8ea5c7]">
               A privacy-safe summary generated from simulated lab data.
             </p>
           </div>
@@ -69,9 +69,9 @@ function SecurityReport({ events, incidents, rules, postureScore }) {
 
       <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
         <RiskScoreCard score={postureScore} />
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Main risks</h2>
-          <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+          <ul className="mt-4 space-y-3 text-sm leading-6 text-[#8ea5c7]">
             <li>Invalid admin route access attempts should remain blocked server-side.</li>
             <li>Suspicious public form payloads should be rejected before storage.</li>
             <li>Repeated contact attempts may need rate limiting if spam increases.</li>
@@ -81,11 +81,11 @@ function SecurityReport({ events, incidents, rules, postureScore }) {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Top triggered rules</h2>
           <div className="mt-4 space-y-3">
             {topRules.map(([rule, count]) => (
-              <div key={rule} className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950 p-3">
+              <div key={rule} className="flex items-center justify-between gap-3 rounded-2xl border border-cyan-300/12 bg-[#050816]/85 p-3">
                 <span className="text-sm text-slate-300">{rule}</span>
                 <span className="font-bold text-cyan-300">{count}</span>
               </div>
@@ -93,11 +93,11 @@ function SecurityReport({ events, incidents, rules, postureScore }) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Most common blocked paths</h2>
           <div className="mt-4 space-y-3">
             {blockedPaths.map(([path, count]) => (
-              <div key={path} className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950 p-3">
+              <div key={path} className="flex items-center justify-between gap-3 rounded-2xl border border-cyan-300/12 bg-[#050816]/85 p-3">
                 <span className="text-sm text-slate-300">{path}</span>
                 <span className="font-bold text-red-300">{count}</span>
               </div>
@@ -107,9 +107,9 @@ function SecurityReport({ events, incidents, rules, postureScore }) {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">Recommended improvements</h2>
-          <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+          <ul className="mt-4 space-y-3 text-sm leading-6 text-[#8ea5c7]">
             <li>Keep admin endpoints behind bearer token validation.</li>
             <li>Reject suspicious payloads before storing them.</li>
             <li>Add rate limiting for repeated contact attempts.</li>
@@ -119,9 +119,9 @@ function SecurityReport({ events, incidents, rules, postureScore }) {
           </ul>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/95 p-5 shadow-xl shadow-cyan-950/10">
           <h2 className="font-bold text-white">What this lab demonstrates</h2>
-          <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+          <ul className="mt-4 space-y-3 text-sm leading-6 text-[#8ea5c7]">
             <li>Defensive security thinking.</li>
             <li>Request validation and normalization.</li>
             <li>Rule-based decisions.</li>

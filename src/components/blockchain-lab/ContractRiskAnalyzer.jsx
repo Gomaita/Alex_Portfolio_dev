@@ -18,26 +18,26 @@ function ContractRiskAnalyzer() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
         <h1 className="text-2xl font-bold text-white">Contract Risk Analyzer</h1>
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-indigo-200/70">
           This analyzer uses simple educational rules. It is not a replacement for a professional smart contract audit.
         </p>
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[0.8fr_1.2fr]">
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
           <h2 className="font-bold text-white">Example snippets</h2>
           <div className="mt-4 grid gap-2">
             {riskExamples.map((example) => (
-              <button key={example.id} type="button" onClick={() => setActiveId(example.id)} className={`rounded-lg px-3 py-2 text-left text-sm font-semibold ${activeId === example.id ? 'bg-violet-500/20 text-violet-100' : 'border border-slate-800 text-slate-300 hover:border-slate-700'}`}>
+              <button key={example.id} type="button" onClick={() => setActiveId(example.id)} className={`rounded-xl px-3 py-2 text-left text-sm font-semibold ${activeId === example.id ? 'bg-violet-300/15 text-violet-100 ring-1 ring-violet-300/35' : 'border border-violet-300/10 text-indigo-200/75 hover:border-violet-300/35'}`}>
                 {example.label}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+        <div className="rounded-2xl border border-violet-300/12 bg-[#11112a]/95 p-5 shadow-xl shadow-violet-950/10">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h2 className="text-xl font-bold text-white">{active.label}</h2>
@@ -45,15 +45,15 @@ function ContractRiskAnalyzer() {
             </div>
             <p className="text-4xl font-bold text-white">{analysis.riskScore}<span className="text-xl text-slate-500">/100</span></p>
           </div>
-          <pre className="mt-4 overflow-x-auto rounded-xl border border-slate-800 bg-slate-950 p-4 text-sm leading-6 text-cyan-100"><code>{active.snippet}</code></pre>
+          <pre className="mt-4 overflow-x-auto rounded-2xl border border-violet-300/12 bg-[#050816] p-4 text-sm leading-6 text-cyan-100"><code>{active.snippet}</code></pre>
 
           <div className="mt-5 grid gap-4">
             {analysis.detectedIssues.length ? analysis.detectedIssues.map((issue) => (
-              <div key={issue.title} className="rounded-xl border border-slate-800 bg-slate-950 p-4">
+              <div key={issue.title} className="rounded-2xl border border-violet-300/12 bg-[#080b1f]/85 p-4">
                 <p className="font-semibold text-white">{issue.title}</p>
                 <p className={`mt-1 text-xs font-bold uppercase ${severityClass(issue.severity)}`}>{issue.severity}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{issue.explanation}</p>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{issue.recommendation}</p>
+                <p className="mt-2 text-sm leading-6 text-indigo-200/75">{issue.explanation}</p>
+                <p className="mt-2 text-sm leading-6 text-indigo-200/60">{issue.recommendation}</p>
               </div>
             )) : (
               <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-100">

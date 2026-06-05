@@ -8,10 +8,10 @@ function SecurityMetricCard({ label, value, detail, tone = 'cyan' }) {
   }[tone]
 
   return (
-    <div className="rounded-xl border border-slate-700/80 bg-slate-900/80 p-4 shadow-lg shadow-slate-950/30">
-      <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">{label}</p>
+    <div className="rounded-2xl border border-cyan-300/12 bg-[#0b1220]/90 p-4 shadow-xl shadow-cyan-950/10">
+      <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#8ea5c7]">{label}</p>
       <p className={`mt-3 text-3xl font-bold ${toneClass}`}>{value}</p>
-      {detail && <p className="mt-2 text-sm text-slate-400">{detail}</p>}
+      {detail && <p className="mt-2 text-sm text-[#8ea5c7]">{detail}</p>}
     </div>
   )
 }
