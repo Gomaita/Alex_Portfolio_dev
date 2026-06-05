@@ -1,12 +1,14 @@
-import { ArrowRight, Boxes, ShieldCheck } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
 import PageHeader from '../components/ui/PageHeader'
 import Section from '../components/ui/Section'
 import CVDownloads from '../components/ui/CVDownloads'
+import FlagshipLabCard from '../components/home/FlagshipLabCard'
 import ProjectCard from '../components/project/ProjectCard'
 import { projects } from '../data/projects'
+import usePageTitle from '../hooks/usePageTitle'
 
 const buildCards = [
   {
@@ -43,6 +45,8 @@ const focusGroups = [
 ]
 
 function Home() {
+  usePageTitle('Alex Gómez | Junior Software Developer')
+
   const selectedProjectSlugs = [
     'api-health-monitor',
     'd1-database-metrics',
@@ -62,13 +66,13 @@ function Home() {
               Junior Software Developer - Multimedia Engineering background
             </Badge>
             <h1 className="mt-7 max-w-5xl text-6xl font-bold tracking-normal text-slate-950 sm:text-7xl lg:text-8xl dark:text-white">
-              Learning software by building things that actually work.
+              Welcome to my developer portfolio.
             </h1>
             <p className="mt-8 max-w-4xl text-xl leading-9 text-slate-600 sm:text-2xl sm:leading-10 dark:text-slate-300">
-              I am Alex Gómez, a junior software developer with a Multimedia
-              Engineering background. I am focused on React, APIs, SQL and
-              interactive interfaces, building small projects that help me
-              understand how real applications are structured.
+              I am Alex Gomez, a junior software developer with a Multimedia
+              Engineering background. I built this portfolio to show practical
+              projects with React, APIs, SQL, Cloudflare backend functions,
+              security simulations and Web3 learning labs.
             </p>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-500 dark:text-slate-400">
               Before focusing on software, I worked around 3D environments, VR
@@ -121,59 +125,33 @@ function Home() {
       </Section>
 
       <Section>
-        <Card className="overflow-hidden border-slate-800 bg-slate-950 p-0 text-white">
-          <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,#0891b233,transparent_34%),#020617] p-6 sm:p-8 lg:border-b-0 lg:border-r">
-              <Badge tone="cyan">Security Lab</Badge>
-              <h2 className="mt-5 text-3xl font-bold tracking-normal sm:text-4xl">
-                Security Operations Center Lite
-              </h2>
-              <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-                A more complete defensive security interface built to practice monitoring, firewall logic, incident review and risk scoring.
-              </p>
-              <Button to="/security-lab" variant="primary" className="mt-6">
-                Open Security Lab <ArrowRight size={17} />
-              </Button>
-            </div>
-            <div className="grid gap-4 p-6 sm:grid-cols-2 sm:p-8">
-              {['Traffic monitor', 'Firewall rules', 'Request simulator', 'Incident review'].map((item) => (
-                <div key={item} className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                  <ShieldCheck className="text-cyan-300" size={22} />
-                  <p className="mt-3 font-semibold text-slate-100">{item}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">Privacy-safe simulated security workflow.</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-      </Section>
-
-      <Section className="bg-white dark:bg-slate-900">
-        <Card className="overflow-hidden border-slate-800 bg-slate-950 p-0 text-white">
-          <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,#7c3aed33,transparent_36%),#020617] p-6 sm:p-8 lg:border-b-0 lg:border-r">
-              <Badge tone="violet">Blockchain Lab</Badge>
-              <h2 className="mt-5 text-3xl font-bold tracking-normal sm:text-4xl">
-                Smart Escrow & Contract Security Dashboard
-              </h2>
-              <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-                A larger Web3 learning project focused on escrow logic, smart contract states, role permissions, dispute workflows and contract security.
-              </p>
-              <Button to="/blockchain-lab" variant="primary" className="mt-6">
-                Open Blockchain Lab <ArrowRight size={17} />
-              </Button>
-            </div>
-            <div className="grid gap-4 p-6 sm:grid-cols-2 sm:p-8">
-              {['Escrow simulator', 'Contract states', 'Risk analyzer', 'Dispute voting'].map((item) => (
-                <div key={item} className="rounded-xl border border-slate-800 bg-slate-900 p-4">
-                  <Boxes className="text-violet-300" size={22} />
-                  <p className="mt-3 font-semibold text-slate-100">{item}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">Educational Web3 simulation with no real funds.</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
+        <PageHeader
+          eyebrow="Flagship labs"
+          title="Two larger learning projects"
+          description="These sections have their own app-style interface, while the Home preview stays aligned with the rest of the portfolio."
+        />
+        <div className="grid gap-6 lg:grid-cols-2">
+          <FlagshipLabCard
+            title="Security Lab"
+            subtitle="Security Operations Center Lite"
+            description="A defensive security simulation focused on firewall-style rules, request analysis, incident review and risk scoring."
+            href="/security-lab"
+            label="Defensive security"
+            accent="cyan"
+            bullets={['Traffic monitor', 'Firewall rules', 'Request simulator', 'Incident workflow']}
+            metrics={['Simulated SOC', 'Privacy-safe data', 'Risk scoring']}
+          />
+          <FlagshipLabCard
+            title="Blockchain Lab"
+            subtitle="Smart Escrow & Contract Security"
+            description="A Web3 learning dashboard focused on escrow states, role permissions, transaction logs and smart contract security concepts."
+            href="/blockchain-lab"
+            label="Web3 learning"
+            accent="violet"
+            bullets={['Escrow simulator', 'Contract state machine', 'Solidity preview', 'Risk analyzer']}
+            metrics={['No real wallets', 'State machine', 'Contract notes']}
+          />
+        </div>
       </Section>
 
       <Section>

@@ -298,6 +298,8 @@ Check these routes:
 - `/portfolio/programming-cheatsheets`
 - `/portfolio/sql-query-playground`
 - `/portfolio/secure-users-roles-demo`
+- `/security-lab`
+- `/blockchain-lab`
 - `/cheatsheets`
 - `/cheatsheets/python`
 - `/cheatsheets/javascript`

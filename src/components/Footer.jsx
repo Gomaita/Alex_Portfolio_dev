@@ -43,7 +43,7 @@ function Footer() {
                 href={link.href}
                 download={link.download}
                 target={link.label === 'GitHub' ? '_blank' : undefined}
-                rel={link.label === 'GitHub' ? 'noreferrer' : undefined}
+                rel={link.label === 'GitHub' ? 'noopener noreferrer' : undefined}
                 className={footerLinkClass}
               >
                 {link.label}

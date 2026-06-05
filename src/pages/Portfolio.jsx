@@ -8,8 +8,11 @@ import Card from '../components/ui/Card'
 import EmptyState from '../components/ui/EmptyState'
 import Badge from '../components/ui/Badge'
 import { projectCategories, projects } from '../data/projects'
+import usePageTitle from '../hooks/usePageTitle'
 
 function Portfolio() {
+  usePageTitle('Portfolio | Alex Gómez')
+
   const [activeCategory, setActiveCategory] = useState('All')
 
   const filteredProjects = useMemo(() => {

@@ -8,6 +8,7 @@ import CVDownloads from '../components/ui/CVDownloads'
 import { appConfig } from '../config/appConfig'
 import { contact } from '../data/socialLinks'
 import { createContactMessage } from '../services/backend/contactMessagesService'
+import usePageTitle from '../hooks/usePageTitle'
 
 const contactItems = [
   { label: 'Email', value: contact.email, href: `mailto:${contact.email}`, icon: Mail },
@@ -16,6 +17,8 @@ const contactItems = [
 ]
 
 function Contact() {
+  usePageTitle('Contact | Alex Gómez')
+
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -76,7 +79,7 @@ function Contact() {
                   key={item.label}
                   href={item.href}
                   target={external ? '_blank' : undefined}
-                  rel={external ? 'noreferrer' : undefined}
+                  rel={external ? 'noopener noreferrer' : undefined}
                   download={item.download}
                   className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:border-slate-800 dark:bg-slate-900 dark:shadow-none dark:hover:bg-slate-800/70 dark:focus:ring-sky-400 dark:focus:ring-offset-slate-950"
                 >

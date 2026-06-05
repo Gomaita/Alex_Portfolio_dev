@@ -14,6 +14,8 @@ This portfolio is not just a static page. I use it as a place to keep learning a
 
 I am still improving it, but I wanted it to feel honest: simple where it should be simple, and detailed enough to explain the thinking behind each demo.
 
+Security Lab and Blockchain Lab are larger learning projects with their own interface and simulated workflows.
+
 ## Tech Stack
 
 - React

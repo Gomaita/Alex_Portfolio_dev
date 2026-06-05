@@ -4,6 +4,7 @@ import Section from '../components/ui/Section'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import CVDownloads from '../components/ui/CVDownloads'
+import usePageTitle from '../hooks/usePageTitle'
 
 const timeline = [
   'Multimedia Engineering',
@@ -32,6 +33,8 @@ const workCards = [
 ]
 
 function About() {
+  usePageTitle('About | Alex Gómez')
+
   return (
     <main className="min-h-[calc(100svh-4rem)] bg-[#F6F8FB] dark:bg-slate-950">
       <Section className="pt-16">

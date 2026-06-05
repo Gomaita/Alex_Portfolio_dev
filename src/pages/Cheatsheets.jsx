@@ -6,8 +6,11 @@ import Section from '../components/ui/Section'
 import Button from '../components/ui/Button'
 import EmptyState from '../components/ui/EmptyState'
 import { cheatsheetCategories, cheatsheets } from '../data/cheatsheets'
+import usePageTitle from '../hooks/usePageTitle'
 
 function Cheatsheets() {
+  usePageTitle('Cheatsheets | Alex Gómez')
+
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
 
