@@ -1,4 +1,4 @@
-import { ArrowRight, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Boxes, ShieldCheck } from 'lucide-react'
 import Button from '../components/ui/Button'
 import Card from '../components/ui/Card'
 import Badge from '../components/ui/Badge'
@@ -141,6 +141,34 @@ function Home() {
                   <ShieldCheck className="text-cyan-300" size={22} />
                   <p className="mt-3 font-semibold text-slate-100">{item}</p>
                   <p className="mt-2 text-sm leading-6 text-slate-400">Privacy-safe simulated security workflow.</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+      </Section>
+
+      <Section className="bg-white dark:bg-slate-900">
+        <Card className="overflow-hidden border-slate-800 bg-slate-950 p-0 text-white">
+          <div className="grid gap-0 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,#7c3aed33,transparent_36%),#020617] p-6 sm:p-8 lg:border-b-0 lg:border-r">
+              <Badge tone="violet">Blockchain Lab</Badge>
+              <h2 className="mt-5 text-3xl font-bold tracking-normal sm:text-4xl">
+                Smart Escrow & Contract Security Dashboard
+              </h2>
+              <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+                A larger Web3 learning project focused on escrow logic, smart contract states, role permissions, dispute workflows and contract security.
+              </p>
+              <Button to="/blockchain-lab" variant="primary" className="mt-6">
+                Open Blockchain Lab <ArrowRight size={17} />
+              </Button>
+            </div>
+            <div className="grid gap-4 p-6 sm:grid-cols-2 sm:p-8">
+              {['Escrow simulator', 'Contract states', 'Risk analyzer', 'Dispute voting'].map((item) => (
+                <div key={item} className="rounded-xl border border-slate-800 bg-slate-900 p-4">
+                  <Boxes className="text-violet-300" size={22} />
+                  <p className="mt-3 font-semibold text-slate-100">{item}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">Educational Web3 simulation with no real funds.</p>
                 </div>
               ))}
             </div>

@@ -34,6 +34,7 @@ Shared repeated styles should stay in UI components or in the small semantic cla
 - `/portfolio`
 - `/portfolio/:slug`
 - `/security-lab`
+- `/blockchain-lab`
 - `/about`
 - `/contact`
 - `/cheatsheets`
@@ -49,6 +50,7 @@ Important project routes include:
 - `/portfolio/sql-query-playground`
 - `/portfolio/secure-users-roles-demo`
 - `/security-lab`
+- `/blockchain-lab`
 
 ## Project Flow
 
@@ -136,6 +138,32 @@ The main app component is `src/components/security-lab/SecurityLabPage.jsx`. It 
 The lab data lives in `src/data/securityLabData.js`. It uses simulated traffic records, documentation IP ranges, simulated incidents, quick request scenarios and local firewall rules.
 
 The request simulator logic lives in `src/utils/securityRules.js`. It normalizes request input, evaluates enabled rules, detects suspicious payload patterns, checks private IP ranges, calculates risk score, chooses a decision and returns a local timeline. It does not call backend APIs, inspect real visitor traffic or scan external services.
+
+## Blockchain Lab
+
+`src/pages/BlockchainLab.jsx` renders the standalone `/blockchain-lab` route.
+
+The main app component is `src/components/blockchain-lab/BlockchainLabPage.jsx`. It owns local state for the simulated escrow agreement, selected role, milestones, dispute proposal and transaction/event log.
+
+The lab modules are:
+
+- Overview
+- Escrow Simulator
+- State Machine
+- Transactions
+- Contract Code
+- Risk Analyzer
+- Dispute Vote
+- Vesting Schedule
+- Security Notes
+
+The simulated data lives in `src/data/blockchainLabData.js`.
+
+The escrow transition logic lives in `src/utils/escrowStateMachine.js`. It validates role-based actions, applies state transitions and creates fake transaction hashes for the local event log.
+
+The smart contract risk analyzer lives in `src/utils/contractRiskRules.js`. It uses simple educational rules to detect patterns such as reentrancy risk, missing access control, missing events and state updates after transfers. It is not a real audit tool.
+
+Blockchain Lab does not connect wallets, deploy contracts, use testnets, use funds or call blockchain APIs.
 
 ## API Health Monitor
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ShieldCheck, ArrowUpRight } from 'lucide-react'
+import { Boxes, ShieldCheck, ArrowUpRight } from 'lucide-react'
 import PageHeader from '../components/ui/PageHeader'
 import Section from '../components/ui/Section'
 import ProjectCard from '../components/project/ProjectCard'
@@ -64,6 +64,36 @@ function Portfolio() {
               </div>
               <Button to="/security-lab" className="mt-6">
                 Open Security Lab <ArrowUpRight size={16} />
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="mb-8 overflow-hidden border-slate-800 bg-slate-950 p-0 text-white">
+          <div className="grid gap-0 lg:grid-cols-[0.8fr_1.2fr]">
+            <div className="border-b border-slate-800 bg-[radial-gradient(circle_at_top_left,#8b5cf633,transparent_35%),#020617] p-6 lg:border-b-0 lg:border-r">
+              <div className="flex flex-wrap gap-2">
+                <Badge tone="violet">Flagship Web3 project</Badge>
+                <Badge tone="cyan">Blockchain</Badge>
+              </div>
+              <Boxes className="mt-6 text-violet-300" size={34} />
+              <h2 className="mt-4 text-2xl font-bold tracking-normal text-white">
+                Smart Escrow & Contract Security Dashboard
+              </h2>
+            </div>
+            <div className="p-6">
+              <p className="max-w-3xl leading-7 text-slate-300">
+                A complete smart contract simulation that models escrow states, role permissions, DAO-style disputes, milestone payments and contract security notes.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {['React', 'Recharts', 'Solidity Concepts', 'State Machines', 'Smart Contract Security', 'Role-based UI'].map((tech) => (
+                  <span key={tech} className="rounded-full border border-slate-700 px-3 py-1 text-xs font-semibold text-slate-300">
+                    {tech}
+                  </span>
+                ))}
+              </div>
+              <Button to="/blockchain-lab" className="mt-6">
+                Open Blockchain Lab <ArrowUpRight size={16} />
               </Button>
             </div>
           </div>

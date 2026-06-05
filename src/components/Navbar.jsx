@@ -8,6 +8,7 @@ const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Portfolio', path: '/portfolio' },
   { label: 'Security Lab', path: '/security-lab', featured: true },
+  { label: 'Blockchain Lab', path: '/blockchain-lab', featured: true },
   { label: 'Cheatsheets', path: '/cheatsheets' },
   { label: 'About', path: '/about' },
   { label: 'Contact', path: '/contact' },

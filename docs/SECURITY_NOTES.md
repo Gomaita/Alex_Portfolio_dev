@@ -88,6 +88,14 @@ It should not be used as a real firewall, monitoring system or traffic inspectio
 
 The lab intentionally avoids real visitor traffic inspection, real IP logs, private logs, external URL scanning and offensive behavior. A production security monitoring system would need careful logging rules, retention limits, access control, privacy review and incident response procedures.
 
+## Blockchain Lab Scope
+
+Blockchain Lab is an educational smart contract simulation.
+
+It should not be used as production smart contract code. The Solidity snippets are simplified for learning and are not reviewed as deployable contract code.
+
+The lab does not connect real wallets, request wallet addresses, use real funds, deploy contracts, call testnets, call mainnet or submit transactions. A real smart contract project would require tests, professional audits, deployment reviews, key management, monitoring and careful incident planning.
+
 ## Before Accepting Public Submissions At Scale
 
 Add additional protections before relying on this for high-volume public submissions:

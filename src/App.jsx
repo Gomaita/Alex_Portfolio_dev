@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
 import About from './pages/About'
+import BlockchainLab from './pages/BlockchainLab'
 import Contact from './pages/Contact'
 import CheatsheetDetail from './pages/CheatsheetDetail'
 import Cheatsheets from './pages/Cheatsheets'
@@ -27,6 +28,7 @@ function App() {
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/:slug" element={<ProjectDetail />} />
           <Route path="/security-lab" element={<SecurityLab />} />
+          <Route path="/blockchain-lab" element={<BlockchainLab />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cheatsheets" element={<Cheatsheets />} />
