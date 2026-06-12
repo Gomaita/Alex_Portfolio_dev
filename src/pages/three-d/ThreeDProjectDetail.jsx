@@ -37,11 +37,15 @@ function PillList({ items }) {
 function ThreeDProjectDetail() {
   const { slug } = useParams()
   const [project, setProject] = useState(null)
+  const [loading, setLoading] = useState(true)
   const [lightboxIndex, setLightboxIndex] = useState(null)
   usePageTitle(project ? `${project.title} | Alex Gómez 3D` : '3D Project | Alex Gómez 3D')
 
   useEffect(() => {
-    getPublished3DProjectBySlug(slug).then(setProject)
+    setLoading(true)
+    getPublished3DProjectBySlug(slug)
+      .then(setProject)
+      .finally(() => setLoading(false))
   }, [slug])
 
   const galleryImages = useMemo(() => {
@@ -54,6 +58,18 @@ function ThreeDProjectDetail() {
     ]
     return images.filter((image) => image?.url)
   }, [project])
+
+  if (loading) {
+    return (
+      <ThreeDLayout>
+        <section className="px-5 py-24">
+          <div className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[#12161c] p-8 text-center shadow-2xl shadow-black/30">
+            <p className="text-sm font-bold text-zinc-400">Loading 3D project...</p>
+          </div>
+        </section>
+      </ThreeDLayout>
+    )
+  }
 
   if (!project) {
     return (

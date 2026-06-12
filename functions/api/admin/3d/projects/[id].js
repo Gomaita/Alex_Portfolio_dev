@@ -63,9 +63,14 @@ export async function onRequestDelete(context) {
   const { env, params } = context
   if (!env.DB) return errorResponse('Database binding is not configured.', 500)
 
-  const result = await env.DB.prepare('DELETE FROM portfolio_3d_projects WHERE id = ?')
-    .bind(params.id)
-    .run()
+  let result
+  try {
+    result = await env.DB.prepare('DELETE FROM portfolio_3d_projects WHERE id = ?')
+      .bind(params.id)
+      .run()
+  } catch {
+    return errorResponse('Could not delete 3D project.', 500)
+  }
 
   if (!result.meta?.changes) return errorResponse('3D project not found.', 404)
 

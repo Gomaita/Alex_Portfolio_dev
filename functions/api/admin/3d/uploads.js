@@ -91,11 +91,15 @@ export async function onRequestPost(context) {
   const safeFileName = getSafeFileName(file.name, file.type)
   const key = `3d/projects/${projectSlug}/${folder}/${safeFileName}`
 
-  await env.MEDIA_BUCKET.put(key, file.stream(), {
-    httpMetadata: {
-      contentType: file.type,
-    },
-  })
+  try {
+    await env.MEDIA_BUCKET.put(key, file.stream(), {
+      httpMetadata: {
+        contentType: file.type,
+      },
+    })
+  } catch {
+    return errorResponse('Could not upload media to R2.', 500)
+  }
 
   const publicBaseUrl = getPublicBaseUrl(env)
 
@@ -118,12 +122,18 @@ export async function onRequestDelete(context) {
   const data = await request.json().catch(() => null)
   if (!data) return errorResponse('Invalid JSON payload.', 400)
 
+  if (!data.key && !data.url) return errorResponse('Media key or URL is required.', 400)
+
   const key = keyFromUrlOrKey(data.key || data.url, getPublicBaseUrl(env))
   if (!key || !key.startsWith('3d/projects/')) {
     return errorResponse('Only 3D project media can be deleted.', 400)
   }
 
-  await env.MEDIA_BUCKET.delete(key)
+  try {
+    await env.MEDIA_BUCKET.delete(key)
+  } catch {
+    return errorResponse('Could not delete media from R2.', 500)
+  }
 
   return jsonResponse({ ok: true, message: 'Media deleted.', key })
 }

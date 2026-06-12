@@ -127,6 +127,16 @@ function getBlockImages(blocks = []) {
   return blocks.flatMap((block) => block.images || []).filter((image) => image?.url)
 }
 
+function isManaged3DMedia(image) {
+  if (image?.key?.startsWith('3d/projects/')) return true
+  if (!image?.url) return false
+  try {
+    return new URL(image.url).pathname.replace(/^\/+/, '').startsWith('3d/projects/')
+  } catch {
+    return String(image.url).replace(/^\/+/, '').startsWith('3d/projects/')
+  }
+}
+
 function projectToForm(project) {
   if (!project) return emptyForm
 
@@ -449,6 +459,12 @@ function ThreeDAdmin() {
   async function deleteUploadedMedia(image, onComplete) {
     if (!image?.key && !image?.url) {
       onComplete()
+      return
+    }
+
+    if (!isManaged3DMedia(image)) {
+      onComplete()
+      setStatus('Media removed from the project.')
       return
     }
 

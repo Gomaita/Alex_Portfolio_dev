@@ -28,6 +28,8 @@ function projectMatchesFilter(project, filter) {
 
   const haystack = [
     project.category,
+    ...(project.categories || []),
+    ...(project.tags || []),
     project.assetType,
     project.engine,
     project.textureWorkflow,

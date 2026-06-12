@@ -17,10 +17,15 @@ export async function onRequestGet(context) {
   const { env } = context
   if (!env.DB) return errorResponse('Database binding is not configured.', 500)
 
-  const result = await env.DB.prepare(
-    `SELECT * FROM portfolio_3d_projects
-     ORDER BY featured DESC, sort_order ASC, created_at DESC`,
-  ).all()
+  let result
+  try {
+    result = await env.DB.prepare(
+      `SELECT * FROM portfolio_3d_projects
+       ORDER BY featured DESC, sort_order ASC, created_at DESC`,
+    ).all()
+  } catch {
+    return errorResponse('Admin 3D projects are not available right now.', 500)
+  }
 
   return jsonResponse({ ok: true, projects: (result.results || []).map(map3DProject) })
 }
