@@ -1,0 +1,71 @@
+export const threeDTools = [
+  'Blender',
+  'Maya',
+  'ZBrush',
+  'Substance Painter',
+  'Substance Designer',
+  'Unreal Engine',
+  'Unity',
+  'Marmoset Toolbag',
+  'PBR Texturing',
+  'Retopology',
+  'UV Mapping',
+  'Environment Art',
+  'Props',
+  'Real-time Optimization',
+]
+
+export const threeDProjectsFallback = [
+  {
+    id: '3d_fallback_forest_shrine',
+    slug: 'forest-shrine-study',
+    title: 'Forest Shrine Study',
+    subtitle: 'Real-time environment mood study',
+    description:
+      'A placeholder 3D environment project structure for testing the gallery layout before adding final renders.',
+    date: '2026',
+    year: '2026',
+    category: 'Environment',
+    role: 'Environment art, composition, lighting',
+    thumbnailUrl: '',
+    heroImageUrl: '',
+    images: [],
+    tools: ['Blender', 'Substance Painter', 'Unreal Engine'],
+    techniques: ['Blockout', 'PBR Texturing', 'Lighting', 'Set dressing'],
+    externalLinks: [],
+    breakdown:
+      'This entry is a safe editable placeholder. Replace it with real images and production notes from the admin panel.',
+    technicalNotes:
+      'Recommended image paths: /3d/projects/forest-shrine-study/thumbnail.jpg and /3d/projects/forest-shrine-study/hero.jpg.',
+    published: true,
+    featured: true,
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  },
+  {
+    id: '3d_fallback_sci_fi_crate',
+    slug: 'sci-fi-crate-prop',
+    title: 'Sci-Fi Crate Prop',
+    subtitle: 'Hard-surface prop presentation',
+    description:
+      'A prop-focused placeholder for testing project cards, tool chips and technical breakdown sections.',
+    date: '2026',
+    year: '2026',
+    category: 'Prop',
+    role: 'Modeling, UVs, texturing, presentation',
+    thumbnailUrl: '',
+    heroImageUrl: '',
+    images: [],
+    tools: ['Maya', 'Substance Painter', 'Marmoset Toolbag'],
+    techniques: ['High poly', 'Low poly', 'Baking', 'PBR Texturing'],
+    externalLinks: [],
+    breakdown:
+      'Use this structure for a real prop breakdown: blockout, high poly, low poly, UVs, baking, texturing and final presentation.',
+    technicalNotes:
+      'No binary images are stored in D1. Add images to public/3d/projects/sci-fi-crate-prop/ or paste external URLs.',
+    published: true,
+    featured: false,
+    createdAt: '2026-01-02T00:00:00.000Z',
+    updatedAt: '2026-01-02T00:00:00.000Z',
+  },
+]

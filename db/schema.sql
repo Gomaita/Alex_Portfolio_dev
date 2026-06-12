@@ -61,3 +61,37 @@ CREATE TABLE IF NOT EXISTS admin_settings (
   value TEXT NOT NULL,
   updated_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS portfolio_3d_projects (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  title TEXT NOT NULL,
+  subtitle TEXT,
+  description TEXT,
+  date TEXT,
+  year TEXT,
+  category TEXT,
+  role TEXT,
+  thumbnail_url TEXT,
+  hero_image_url TEXT,
+  images_json TEXT,
+  tools_json TEXT,
+  techniques_json TEXT,
+  external_links_json TEXT,
+  breakdown TEXT,
+  technical_notes TEXT,
+  published INTEGER DEFAULT 0,
+  featured INTEGER DEFAULT 0,
+  sort_order INTEGER DEFAULT 0,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_portfolio_3d_projects_published
+  ON portfolio_3d_projects(published);
+
+CREATE INDEX IF NOT EXISTS idx_portfolio_3d_projects_featured
+  ON portfolio_3d_projects(featured);
+
+CREATE INDEX IF NOT EXISTS idx_portfolio_3d_projects_sort
+  ON portfolio_3d_projects(sort_order, created_at);

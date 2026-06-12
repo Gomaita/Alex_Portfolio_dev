@@ -56,18 +56,18 @@ async function apiRequest(path, options = {}) {
   }
 }
 
-export function apiGet(path) {
-  return apiRequest(path, { method: 'GET' })
+export function apiGet(path, options = {}) {
+  return apiRequest(path, { ...options, method: 'GET' })
 }
 
-export function apiPost(path, payload) {
-  return apiRequest(path, { method: 'POST', body: JSON.stringify(payload) })
+export function apiPost(path, payload, options = {}) {
+  return apiRequest(path, { ...options, method: 'POST', body: JSON.stringify(payload) })
 }
 
-export function apiPatch(path, payload) {
-  return apiRequest(path, { method: 'PATCH', body: JSON.stringify(payload) })
+export function apiPatch(path, payload, options = {}) {
+  return apiRequest(path, { ...options, method: 'PATCH', body: JSON.stringify(payload) })
 }
 
-export function apiDelete(path) {
-  return apiRequest(path, { method: 'DELETE' })
+export function apiDelete(path, options = {}) {
+  return apiRequest(path, { ...options, method: 'DELETE' })
 }
