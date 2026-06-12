@@ -18,9 +18,12 @@ function ThreeDNavbar() {
           <NavLink to="/3d/projects" className={linkClass}>
             Projects
           </NavLink>
-          <a href="mailto:alexgl.dvp@gmail.com" className="px-2.5 py-1.5 text-[13px] font-semibold text-zinc-400 hover:text-white">
-            Contact
+          <a href="/3d#about" className="px-2.5 py-1.5 text-[13px] font-semibold text-zinc-400 transition hover:text-white">
+            About
           </a>
+          <NavLink to="/3d/contact" className={linkClass}>
+            Contact
+          </NavLink>
           {isAdmin && (
             <span className="ml-2 rounded-full border border-sky-300/30 bg-sky-300/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-sky-200">
               Admin

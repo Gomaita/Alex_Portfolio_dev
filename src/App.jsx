@@ -12,6 +12,7 @@ import Portfolio from './pages/Portfolio'
 import ProjectDetail from './pages/ProjectDetail'
 import SecurityLab from './pages/SecurityLab'
 import ThreeDAdmin from './pages/three-d/ThreeDAdmin'
+import ThreeDContact from './pages/three-d/ThreeDContact'
 import ThreeDHome from './pages/three-d/ThreeDHome'
 import ThreeDProjectDetail from './pages/three-d/ThreeDProjectDetail'
 import ThreeDProjects from './pages/three-d/ThreeDProjects'
@@ -26,6 +27,7 @@ function App() {
         <Route path="/3d" element={<ThreeDHome />} />
         <Route path="/3d/projects" element={<ThreeDProjects />} />
         <Route path="/3d/projects/:slug" element={<ThreeDProjectDetail />} />
+        <Route path="/3d/contact" element={<ThreeDContact />} />
         <Route path="/3d/admin" element={<ThreeDAdmin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
