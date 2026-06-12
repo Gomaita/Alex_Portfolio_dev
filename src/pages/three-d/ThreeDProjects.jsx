@@ -43,8 +43,8 @@ function projectMatchesFilter(project, filter) {
     'VR Assets': ['vr'],
     Unreal: ['unreal'],
     Unity: ['unity'],
-    'Substance Designer': ['substance designer'],
-    'Substance Painter': ['substance painter'],
+    'Substance Designer': ['substance designer', 'substance 3d designer'],
+    'Substance Painter': ['substance painter', 'substance 3d painter'],
   }
 
   return (aliases[filter] || [filter.toLowerCase()]).some((alias) => haystack.includes(alias))

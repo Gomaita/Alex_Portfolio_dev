@@ -1,4 +1,5 @@
 import { apiDelete, apiGet, apiPatch, apiPost } from './apiClient'
+import { appConfig } from '../config/appConfig'
 
 function authHeaders(token) {
   return {
@@ -28,4 +29,56 @@ export function toggle3DProjectPublished(token, id, published) {
 
 export function toggle3DProjectFeatured(token, id, featured) {
   return apiPatch(`/api/admin/3d/projects/${id}/featured`, { featured }, { headers: authHeaders(token) })
+}
+
+async function adminRawRequest(path, token, options = {}) {
+  if (!appConfig.isBackendEnabled) {
+    throw new Error('Backend API is not enabled.')
+  }
+
+  const baseUrl = appConfig.apiBaseUrl.replace(/\/$/, '')
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const response = await fetch(baseUrl ? `${baseUrl}${normalizedPath}` : normalizedPath, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {}),
+    },
+  })
+  const text = await response.text()
+  let data = null
+
+  try {
+    data = text ? JSON.parse(text) : null
+  } catch {
+    throw new Error('Backend returned invalid JSON.')
+  }
+
+  if (!response.ok) {
+    throw new Error(data?.message || `Backend request failed with status ${response.status}.`)
+  }
+
+  return data
+}
+
+export function upload3DMedia(token, { file, projectSlug, mediaType }) {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('projectSlug', projectSlug)
+  formData.append('mediaType', mediaType)
+
+  return adminRawRequest('/api/admin/3d/uploads', token, {
+    method: 'POST',
+    body: formData,
+  })
+}
+
+export function delete3DMedia(token, payload) {
+  return adminRawRequest('/api/admin/3d/uploads', token, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
 }

@@ -24,6 +24,7 @@ export async function onRequestPatch(context) {
 
   const now = new Date().toISOString()
   const project = validation.value
+  if (project.published && !project.publishedAt) project.publishedAt = now
 
   try {
     const result = await env.DB.prepare(
@@ -34,18 +35,22 @@ export async function onRequestPatch(context) {
            breakdown = ?, technical_notes = ?, engine = ?, asset_type = ?,
            polycount = ?, texture_resolution = ?, texel_density = ?,
            target_platform = ?, time_spent = ?, software_used_json = ?,
-           materials_json = ?, shader_notes = ?, optimization_notes = ?,
-           texture_workflow = ?, substance_painter_notes = ?,
-           substance_designer_notes = ?, texture_maps_json = ?,
-           content_blocks_json = ?, published = ?, featured = ?,
-           sort_order = ?, updated_at = ?
+           categories_json = ?, tags_json = ?, materials_json = ?,
+           shader_notes = ?, optimization_notes = ?, texture_workflow = ?,
+           substance_painter_notes = ?, substance_designer_notes = ?,
+           texture_maps_json = ?, content_blocks_json = ?, published = ?,
+           featured = ?, sort_order = ?, published_at = ?, updated_at = ?
        WHERE id = ?`,
     )
       .bind(...bind3DProjectValues(project), now, params.id)
       .run()
 
     if (!result.meta?.changes) return errorResponse('3D project not found.', 404)
-  } catch {
+  } catch (error) {
+    const message = String(error?.message || '')
+    if (message.includes('no such column') || message.includes('has no column')) {
+      return errorResponse('D1 schema is missing 3D portfolio columns. Run the 3D R2 migration first.', 500)
+    }
     return errorResponse('A project with this slug already exists.', 409)
   }
 

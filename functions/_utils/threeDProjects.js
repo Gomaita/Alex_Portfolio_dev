@@ -58,6 +58,8 @@ export function map3DProject(row) {
     targetPlatform: row.target_platform || '',
     timeSpent: row.time_spent || '',
     softwareUsed: parseJsonArray(row.software_used_json),
+    categories: parseJsonArray(row.categories_json),
+    tags: parseJsonArray(row.tags_json),
     materials: parseJsonArray(row.materials_json),
     shaderNotes: row.shader_notes || '',
     optimizationNotes: row.optimization_notes || '',
@@ -71,6 +73,7 @@ export function map3DProject(row) {
     sortOrder: Number(row.sort_order || 0),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    publishedAt: row.published_at || '',
   }
 }
 
@@ -108,6 +111,8 @@ export function validate3DProjectPayload(data) {
       targetPlatform: sanitizeText(data?.targetPlatform, 120),
       timeSpent: sanitizeText(data?.timeSpent, 80),
       softwareUsed: cleanArray(data?.softwareUsed),
+      categories: cleanArray(data?.categories),
+      tags: cleanArray(data?.tags),
       materials: cleanArray(data?.materials),
       shaderNotes: sanitizeText(data?.shaderNotes, 3000),
       optimizationNotes: sanitizeText(data?.optimizationNotes, 3000),
@@ -119,6 +124,7 @@ export function validate3DProjectPayload(data) {
       published: data?.published ? 1 : 0,
       featured: data?.featured ? 1 : 0,
       sortOrder: Number(data?.sortOrder || 0),
+      publishedAt: sanitizeText(data?.publishedAt, 80),
     },
   }
 }
@@ -149,6 +155,8 @@ export function bind3DProjectValues(project) {
     project.targetPlatform,
     project.timeSpent,
     JSON.stringify(project.softwareUsed),
+    JSON.stringify(project.categories),
+    JSON.stringify(project.tags),
     JSON.stringify(project.materials),
     project.shaderNotes,
     project.optimizationNotes,
@@ -160,5 +168,6 @@ export function bind3DProjectValues(project) {
     project.published,
     project.featured,
     project.sortOrder,
+    project.publishedAt,
   ]
 }

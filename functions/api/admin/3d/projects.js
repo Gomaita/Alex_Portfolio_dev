@@ -40,6 +40,7 @@ export async function onRequestPost(context) {
   const now = new Date().toISOString()
   const id = createId('3d_project')
   const project = validation.value
+  if (project.published && !project.publishedAt) project.publishedAt = now
 
   try {
     await env.DB.prepare(
@@ -48,15 +49,19 @@ export async function onRequestPost(context) {
         thumbnail_url, hero_image_url, images_json, tools_json, techniques_json,
         external_links_json, breakdown, technical_notes, engine, asset_type,
         polycount, texture_resolution, texel_density, target_platform, time_spent,
-        software_used_json, materials_json, shader_notes, optimization_notes,
-        texture_workflow, substance_painter_notes, substance_designer_notes,
-        texture_maps_json, content_blocks_json, published, featured, sort_order,
-        created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        software_used_json, categories_json, tags_json, materials_json,
+        shader_notes, optimization_notes, texture_workflow, substance_painter_notes,
+        substance_designer_notes, texture_maps_json, content_blocks_json,
+        published, featured, sort_order, published_at, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
       .bind(id, ...bind3DProjectValues(project), now, now)
       .run()
-  } catch {
+  } catch (error) {
+    const message = String(error?.message || '')
+    if (message.includes('no such column') || message.includes('has no column')) {
+      return errorResponse('D1 schema is missing 3D portfolio columns. Run the 3D R2 migration first.', 500)
+    }
     return errorResponse('A project with this slug already exists.', 409)
   }
 

@@ -4,156 +4,192 @@ This project includes a separate 3D portfolio inside the same domain. It is inte
 
 ## Routes
 
-Public 3D routes:
+Public:
 
 - `/3d`
 - `/3d/projects`
 - `/3d/projects/:slug`
 
-Private admin route:
+Private:
 
 - `/3d/admin`
 
 The 3D section is not linked from the main software navbar, home page, footer, portfolio cards or sitemap. The direct entry point is `/3d`.
 
-## Profile Direction
+## Storage Model
 
-The 3D portfolio is focused on:
+D1 stores project data and media metadata only.
 
-- 3D Environment & Prop Artist work
-- real-time assets for games and VR
-- PBR texturing
-- Substance Painter workflows
-- Substance Designer procedural materials
-- retopology, UVs, baking and optimization
-- engine-ready presentation
+R2 stores images and media files.
 
-The tone should stay professional, visual and honest.
+No base64 images or binary blobs should be stored in D1.
 
-## Admin Access
-
-Open `/3d/admin` directly. The panel asks for the existing backend `ADMIN_API_TOKEN`.
-
-The token is:
-
-- entered manually by the owner
-- stored only in `sessionStorage`
-- sent as `Authorization: Bearer <token>`
-- never hardcoded in frontend code
-
-## Creating A Project
-
-Use `/3d/admin` to create, edit, duplicate, publish, hide, feature or delete projects.
+## Cloudflare Bindings
 
 Required:
 
-- Title
+- `DB`: D1 database binding
+- `MEDIA_BUCKET`: R2 bucket binding for `alex-portfolio-media`
+- `ADMIN_API_TOKEN`: backend admin token
 
-Recommended:
+Optional:
 
-- Slug
-- Description
-- Category
-- Role
-- Thumbnail URL
-- Hero Image URL
-- Gallery images
-- Tools
-- Techniques
-- Engine
-- Asset type
-- Texture workflow
-- Technical notes
+- `MEDIA_PUBLIC_BASE_URL=https://media.alexgl.dev`
 
-Projects are drafts by default unless `Published` is enabled.
+If `MEDIA_PUBLIC_BASE_URL` is not configured, the backend falls back to `https://media.alexgl.dev`.
 
-## Image Organization
+## R2 Structure
 
-This version does not upload binary images. Put images in `public/3d/projects/...` or use an external URL.
+Uploads are created automatically from the admin panel. You do not need to create folders manually.
 
-Recommended structure:
+Generated keys follow:
 
 ```text
-public/3d/projects/project-slug/thumbnail.jpg
-public/3d/projects/project-slug/hero.jpg
-public/3d/projects/project-slug/final-01.jpg
-public/3d/projects/project-slug/wireframe-01.jpg
-public/3d/projects/project-slug/textures-basecolor.jpg
+3d/projects/{slug}/thumbnail/{file}
+3d/projects/{slug}/hero/{file}
+3d/projects/{slug}/media/{file}
+3d/projects/{slug}/final/{file}
+3d/projects/{slug}/closeups/{file}
+3d/projects/{slug}/breakdown/{file}
+3d/projects/{slug}/textures/{file}
+3d/projects/{slug}/uv/{file}
+3d/projects/{slug}/wireframe/{file}
+3d/projects/{slug}/material/{file}
+3d/projects/{slug}/engine/{file}
+3d/projects/{slug}/other/{file}
 ```
 
-Public paths used in the admin:
+Public URL example:
 
 ```text
-/3d/projects/project-slug/thumbnail.jpg
-/3d/projects/project-slug/hero.jpg
-/3d/projects/project-slug/final-01.jpg
+https://media.alexgl.dev/3d/projects/medieval-barrel-prop/textures/base-color.webp
 ```
 
-## Gallery Images
+## Admin Workflow
 
-Gallery images use one item per line:
+Open `/3d/admin` directly and enter `ADMIN_API_TOKEN`.
+
+Recommended flow:
+
+1. Create new artwork.
+2. Add title and description.
+3. Upload a project thumbnail.
+4. Add media blocks: image, image grid, text or technical note.
+5. Select categories.
+6. Select software used.
+7. Add tags.
+8. Save draft.
+9. Preview.
+10. Publish.
+
+The token is stored only in `sessionStorage` and sent as:
 
 ```text
-URL | Alt text | Caption | Section
+Authorization: Bearer <token>
 ```
 
-Example:
+## Media Uploads
 
-```text
-/3d/projects/forest-shrine/final-01.jpg | Forest shrine final render | Final lighting pass | Final renders
-/3d/projects/forest-shrine/wireframe-01.jpg | Forest shrine wireframe | Low poly wireframe | Wireframe
+Admin upload endpoint:
+
+- `POST /api/admin/3d/uploads`
+
+FormData fields:
+
+- `file`
+- `projectSlug`
+- `mediaType`
+
+Accepted image types:
+
+- `image/jpeg`
+- `image/png`
+- `image/webp`
+- `image/avif`
+
+Upload limit:
+
+- 15 MB per file
+
+Recommended for performance:
+
+- WebP/JPG
+- under 5 MB for gallery images
+- around 1200x900 and under 1 MB for thumbnails
+
+Delete endpoint:
+
+- `DELETE /api/admin/3d/uploads`
+
+Payload:
+
+```json
+{
+  "key": "3d/projects/project-slug/media/file.webp"
+}
 ```
 
-Sections are displayed on the project detail page when present.
+or:
 
-## Texture Maps
-
-Texture maps use one item per line:
-
-```text
-Label | URL | Note
+```json
+{
+  "url": "https://media.alexgl.dev/3d/projects/project-slug/media/file.webp"
+}
 ```
 
-Example:
-
-```text
-Base Color | /3d/projects/forest-shrine/textures-basecolor.jpg | 2K PBR base color
-Normal | /3d/projects/forest-shrine/textures-normal.jpg | Baked high poly detail
-Roughness | /3d/projects/forest-shrine/textures-roughness.jpg | Painter roughness pass
-```
-
-Texture map images are displayed in their own section and can be opened in the project lightbox.
+Deletes are restricted to keys starting with `3d/projects/`.
 
 ## Content Blocks
 
-Content blocks allow a project page to behave more like a flexible ArtStation-style post.
+Project pages are built from `content_blocks_json`.
 
-Each line follows:
+Supported blocks:
 
-```text
-type | title | text | data
-```
-
-Supported first-version block types:
-
-- `text`
-- `note`
-- `specs`
-- `technicalBreakdown`
+- `image`
 - `imageGrid`
+- `text`
+- `technicalNote`
 
-Examples:
+Each block can store:
+
+- `type`
+- `title`
+- `text`
+- `category`
+- `images`
+
+Images store:
+
+- `url`
+- `key`
+- `alt`
+- `caption`
+
+D1 stores only these URLs and metadata. R2 stores the actual image files.
+
+## Categories, Software And Tags
+
+Categories are stored in:
 
 ```text
-text | Lighting pass | I used a cool key light and warm fill to separate the prop from the background.
-specs | Asset specs | | Tris: 18k; Textures: 2K; Target: Real-time
-technicalBreakdown | Optimization | | LODs: Planned; UV Sets: 1; Baking: High to low
-imageGrid | Wireframe | Low poly mesh and topology checks | /3d/projects/crate/wireframe.jpg, Wireframe view
+categories_json
 ```
 
-If a project has no content blocks, the classic description, gallery, breakdown and technical notes still render normally.
+Software used is stored in:
 
-## D1 Table
+```text
+software_used_json
+```
+
+Tags are stored in:
+
+```text
+tags_json
+```
+
+The legacy `category` and `tools_json` fields are still maintained for compatibility with older project cards and fallbacks.
+
+## D1 Schema
 
 The table is defined in `db/schema.sql`:
 
@@ -161,7 +197,19 @@ The table is defined in `db/schema.sql`:
 portfolio_3d_projects
 ```
 
-New technical fields include:
+Important media/editor fields:
+
+- `thumbnail_url`
+- `hero_image_url`
+- `content_blocks_json`
+- `software_used_json`
+- `categories_json`
+- `tags_json`
+- `published`
+- `featured`
+- `published_at`
+
+Technical fields kept for advanced details:
 
 - `engine`
 - `asset_type`
@@ -170,7 +218,6 @@ New technical fields include:
 - `texel_density`
 - `target_platform`
 - `time_spent`
-- `software_used_json`
 - `materials_json`
 - `shader_notes`
 - `optimization_notes`
@@ -178,11 +225,26 @@ New technical fields include:
 - `substance_painter_notes`
 - `substance_designer_notes`
 - `texture_maps_json`
-- `content_blocks_json`
 
-JSON fields are stored as text and parsed safely by the API.
+## D1 Migration
 
-## Endpoints
+If the table already exists, run only the missing statements from:
+
+```text
+db/migrations/3d_portfolio_r2_uploads.sql
+```
+
+Current migration:
+
+```sql
+ALTER TABLE portfolio_3d_projects ADD COLUMN categories_json TEXT;
+ALTER TABLE portfolio_3d_projects ADD COLUMN tags_json TEXT;
+ALTER TABLE portfolio_3d_projects ADD COLUMN published_at TEXT;
+```
+
+Cloudflare D1/SQLite may fail if a column already exists, so run only the statements for columns that are missing.
+
+## Project Endpoints
 
 Public:
 
@@ -197,25 +259,18 @@ Admin:
 - `DELETE /api/admin/3d/projects/:id`
 - `PATCH /api/admin/3d/projects/:id/publish`
 - `PATCH /api/admin/3d/projects/:id/featured`
+- `POST /api/admin/3d/uploads`
+- `DELETE /api/admin/3d/uploads`
 
-Public endpoints only return published projects. Admin endpoints require the bearer token.
+Public project endpoints only return published projects. Admin endpoints require the bearer token.
 
-## Storage Notes
+## Future R2 Improvements
 
-This version does not use Cloudflare R2 yet.
+Possible next steps:
 
-Do not store:
-
-- binary images in D1
-- base64 images in D1
-- private files in public folders
-
-A future R2 version could add authenticated uploads, image metadata, signed admin upload URLs and image deletion workflows.
-
-## Security Notes
-
-- Keep `ADMIN_API_TOKEN` only in Cloudflare backend environment variables/secrets.
-- Do not expose admin tokens in frontend code.
-- The admin route is intentionally not linked anywhere publicly.
-- Draft projects are not returned by public endpoints.
-- The 3D portfolio remains separate from the main software portfolio.
+- image replacement with automatic old-object deletion
+- R2 asset browser
+- generated thumbnails
+- image size metadata
+- signed upload URLs
+- bulk media cleanup for deleted projects

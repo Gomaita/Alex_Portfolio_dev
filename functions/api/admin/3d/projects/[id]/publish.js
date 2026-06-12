@@ -10,11 +10,28 @@ export async function onRequestPatch(context) {
   const data = await request.json().catch(() => null)
   if (!data) return errorResponse('Invalid JSON payload.', 400)
 
-  const result = await env.DB.prepare(
-    'UPDATE portfolio_3d_projects SET published = ?, updated_at = ? WHERE id = ?',
-  )
-    .bind(data.published ? 1 : 0, new Date().toISOString(), params.id)
-    .run()
+  const now = new Date().toISOString()
+  let result
+  try {
+    result = await env.DB.prepare(
+      `UPDATE portfolio_3d_projects
+       SET published = ?,
+           published_at = CASE
+             WHEN ? = 1 AND (published_at IS NULL OR published_at = '') THEN ?
+             ELSE published_at
+           END,
+           updated_at = ?
+       WHERE id = ?`,
+    )
+      .bind(data.published ? 1 : 0, data.published ? 1 : 0, now, now, params.id)
+      .run()
+  } catch (error) {
+    const message = String(error?.message || '')
+    if (message.includes('no such column') || message.includes('has no column')) {
+      return errorResponse('D1 schema is missing published_at. Run the 3D R2 migration first.', 500)
+    }
+    return errorResponse('Could not update published state.', 500)
+  }
 
   if (!result.meta?.changes) return errorResponse('3D project not found.', 404)
 

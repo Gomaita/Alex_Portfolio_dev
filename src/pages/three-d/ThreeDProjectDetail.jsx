@@ -47,9 +47,10 @@ function ThreeDProjectDetail() {
   const galleryImages = useMemo(() => {
     if (!project) return []
     const hero = project.heroImageUrl || project.thumbnailUrl
+    const legacyImages = project.contentBlocks?.length ? [] : project.images || []
     const images = [
       ...(hero ? [{ url: hero, alt: `${project.title} hero render`, caption: 'Hero render', section: 'Final renders' }] : []),
-      ...(project.images || []),
+      ...legacyImages,
     ]
     return images.filter((image) => image?.url)
   }, [project])
@@ -73,12 +74,24 @@ function ThreeDProjectDetail() {
 
   const hero = project.heroImageUrl || project.thumbnailUrl
   const meta = [
-    ['Category', project.category],
-    ['Year', project.year || project.date],
+    ['Category', project.categories?.length ? project.categories.join(', ') : project.category],
+    ['Published', project.publishedAt ? new Date(project.publishedAt).getFullYear() : project.year || project.date],
     ['Role', project.role],
     ['Engine', project.engine],
     ['Asset type', project.assetType],
   ].filter(([, value]) => value)
+  const contentBlockImages = (project.contentBlocks || []).flatMap((block) => block.images || []).filter((image) => image?.url)
+  const textureLightboxImages = (project.textureMaps || []).filter((map) => map.url).map((map) => ({
+    url: map.url,
+    alt: map.alt || `${project.title} ${map.label || 'texture map'}`,
+    caption: map.label || map.caption,
+  }))
+  const lightboxImages = [
+    ...galleryImages,
+    ...textureLightboxImages,
+    ...contentBlockImages,
+  ]
+  const hasContentBlocks = Boolean(project.contentBlocks?.length)
   const galleryGroups = galleryImages.reduce((groups, image, index) => {
     const section = image.section || 'Gallery'
     if (!groups[section]) groups[section] = []
@@ -146,6 +159,12 @@ function ThreeDProjectDetail() {
               <Section title="Tools">
                 <PillList items={[...(project.tools || []), ...(project.softwareUsed || [])]} />
               </Section>
+              <Section title="Categories">
+                <PillList items={project.categories || [project.category].filter(Boolean)} />
+              </Section>
+              <Section title="Tags">
+                <PillList items={project.tags || []} />
+              </Section>
               <Section title="Techniques">
                 <PillList items={project.techniques || []} />
               </Section>
@@ -155,7 +174,17 @@ function ThreeDProjectDetail() {
             </aside>
 
             <div className="space-y-8">
-              {galleryImages.length > 0 && (
+              {hasContentBlocks && (
+                <ContentBlockRenderer
+                  blocks={project.contentBlocks || []}
+                  onImageClick={(image) => {
+                    const index = lightboxImages.findIndex((item) => item.url === image.url)
+                    if (index >= 0) setLightboxIndex(index)
+                  }}
+                />
+              )}
+
+              {!hasContentBlocks && galleryImages.length > 0 && (
                 <Section eyebrow="Renders" title="Gallery">
                   <div className="space-y-7">
                     {Object.entries(galleryGroups).map(([section, images]) => (
@@ -213,19 +242,6 @@ function ThreeDProjectDetail() {
                 if (!textureImages.length) return
                 setLightboxIndex(offset + index)
               }} />
-
-              <ContentBlockRenderer
-                blocks={project.contentBlocks || []}
-                onImageClick={(image) => {
-                  const allImages = [
-                    ...galleryImages,
-                    ...(project.textureMaps || []).filter((map) => map.url),
-                    ...((project.contentBlocks || []).flatMap((block) => block.images || [])),
-                  ]
-                  const index = allImages.findIndex((item) => item.url === image.url)
-                  if (index >= 0) setLightboxIndex(index)
-                }}
-              />
             </div>
           </div>
         </section>
@@ -233,24 +249,14 @@ function ThreeDProjectDetail() {
 
       {lightboxIndex !== null && (
         <ThreeDLightbox
-          images={[
-            ...galleryImages,
-            ...(project.textureMaps || []).filter((map) => map.url).map((map) => ({
-              url: map.url,
-              alt: map.alt || `${project.title} ${map.label || 'texture map'}`,
-              caption: map.label || map.caption,
-            })),
-            ...((project.contentBlocks || []).flatMap((block) => block.images || [])),
-          ]}
+          images={lightboxImages}
           activeIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
           onNext={() => setLightboxIndex((current) => {
-            const total = galleryImages.length + (project.textureMaps || []).filter((map) => map.url).length + (project.contentBlocks || []).flatMap((block) => block.images || []).length
-            return total ? (current + 1) % total : null
+            return lightboxImages.length ? (current + 1) % lightboxImages.length : null
           })}
           onPrevious={() => setLightboxIndex((current) => {
-            const total = galleryImages.length + (project.textureMaps || []).filter((map) => map.url).length + (project.contentBlocks || []).flatMap((block) => block.images || []).length
-            return total ? (current - 1 + total) % total : null
+            return lightboxImages.length ? (current - 1 + lightboxImages.length) % lightboxImages.length : null
           })}
         />
       )}

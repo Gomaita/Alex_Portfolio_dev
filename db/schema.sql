@@ -88,6 +88,8 @@ CREATE TABLE IF NOT EXISTS portfolio_3d_projects (
   target_platform TEXT,
   time_spent TEXT,
   software_used_json TEXT,
+  categories_json TEXT,
+  tags_json TEXT,
   materials_json TEXT,
   shader_notes TEXT,
   optimization_notes TEXT,
@@ -100,7 +102,8 @@ CREATE TABLE IF NOT EXISTS portfolio_3d_projects (
   featured INTEGER DEFAULT 0,
   sort_order INTEGER DEFAULT 0,
   created_at TEXT NOT NULL,
-  updated_at TEXT NOT NULL
+  updated_at TEXT NOT NULL,
+  published_at TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_portfolio_3d_projects_published
