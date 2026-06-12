@@ -12,6 +12,7 @@ export function errorResponse(message, status = 400, details = null) {
   return jsonResponse(
     {
       ok: false,
+      error: message,
       message,
       ...(details ? { details } : {}),
     },

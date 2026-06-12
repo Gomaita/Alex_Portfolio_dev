@@ -12,10 +12,10 @@ import { getPublished3DProjectBySlug } from '../../services/threeDProjectsServic
 
 function Section({ eyebrow, title, children }) {
   return (
-    <section className="rounded-[2rem] border border-white/10 bg-[#12161c]/85 p-5 shadow-2xl shadow-black/20 sm:p-7">
-      {eyebrow && <p className="text-xs font-black uppercase tracking-[0.28em] text-sky-300">{eyebrow}</p>}
-      <h2 className="mt-1 text-2xl font-black tracking-tight text-white">{title}</h2>
-      <div className="mt-5">{children}</div>
+    <section className="rounded-xl bg-[#15181d] p-4">
+      {eyebrow && <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#13aff0]">{eyebrow}</p>}
+      <h2 className="mt-1 text-lg font-bold tracking-tight text-zinc-100">{title}</h2>
+      <div className="mt-4">{children}</div>
     </section>
   )
 }
@@ -26,7 +26,7 @@ function PillList({ items }) {
   return (
     <div className="flex flex-wrap gap-2">
       {items.map((item) => (
-        <span key={item} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-black text-zinc-200">
+        <span key={item} className="rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-zinc-300">
           {item}
         </span>
       ))}
@@ -63,7 +63,7 @@ function ThreeDProjectDetail() {
     return (
       <ThreeDLayout>
         <section className="px-5 py-24">
-          <div className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[#12161c] p-8 text-center shadow-2xl shadow-black/30">
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/10 bg-[#15181d] p-8 text-center">
             <p className="text-sm font-bold text-zinc-400">Loading 3D project...</p>
           </div>
         </section>
@@ -75,11 +75,11 @@ function ThreeDProjectDetail() {
     return (
       <ThreeDLayout>
         <section className="px-5 py-24">
-          <div className="mx-auto max-w-2xl rounded-[2rem] border border-white/10 bg-[#12161c] p-8 text-center shadow-2xl shadow-black/30">
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-sky-300">Project not found</p>
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/10 bg-[#15181d] p-8 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#13aff0]">Project not found</p>
             <h1 className="mt-4 text-3xl font-black text-white">This project is not available.</h1>
             <p className="mt-3 text-zinc-400">This project is not available or has not been published yet.</p>
-            <Link to="/3d/projects" className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-sky-300 px-5 text-sm font-black text-slate-950">
+            <Link to="/3d/projects" className="mt-6 inline-flex min-h-10 items-center justify-center rounded-lg bg-[#13aff0] px-5 text-sm font-bold text-slate-950">
               Back to 3D projects
             </Link>
           </div>
@@ -118,12 +118,36 @@ function ThreeDProjectDetail() {
   return (
     <ThreeDLayout>
       <article>
-        <section className="px-5 pb-8 pt-10">
-          <div className="mx-auto max-w-7xl">
-            <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-black text-sky-300 hover:text-sky-200">
-              <ArrowLeft size={16} /> Back to 3D Projects
+        <section className="px-4 pb-6 pt-8 sm:px-5">
+          <div className="mx-auto max-w-[92rem]">
+            <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-bold text-[#13aff0] hover:text-sky-200">
+              <ArrowLeft size={16} /> Back to projects
             </Link>
-            <div className="mt-8 overflow-hidden rounded-[2.25rem] border border-white/10 bg-[#181d24] shadow-2xl shadow-black/40">
+
+            <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-teal-300">{project.category || '3D project'}</p>
+                <h1 className="mt-3 max-w-4xl text-3xl font-black tracking-tight text-zinc-50 sm:text-5xl">
+                  {project.title}
+                </h1>
+                {project.subtitle && <p className="mt-3 max-w-3xl text-lg font-semibold leading-7 text-zinc-300">{project.subtitle}</p>}
+                {project.description && <p className="mt-4 max-w-4xl text-sm leading-7 text-zinc-400">{project.description}</p>}
+              </div>
+
+              <aside className="rounded-xl border border-white/10 bg-[#15181d]/90 p-4">
+                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">Artwork info</p>
+                <dl className="mt-3 grid gap-3">
+                  {meta.map(([label, value]) => (
+                    <div key={label}>
+                      <dt className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-600">{label}</dt>
+                      <dd className="mt-0.5 text-sm font-bold text-zinc-100">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </aside>
+            </div>
+
+            <div className="mt-7 overflow-hidden rounded-xl bg-[#15181d]">
               <button
                 type="button"
                 onClick={() => galleryImages.length && setLightboxIndex(0)}
@@ -132,64 +156,12 @@ function ThreeDProjectDetail() {
                 <ThreeDImageFrame src={hero} alt={`${project.title} hero render`} priority />
               </button>
             </div>
-
-            <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_22rem] lg:items-start">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.34em] text-teal-300">{project.category || '3D project'}</p>
-                <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight text-white sm:text-6xl">
-                  {project.title}
-                </h1>
-                {project.subtitle && <p className="mt-4 max-w-3xl text-xl font-semibold leading-8 text-zinc-300">{project.subtitle}</p>}
-                {project.description && <p className="mt-5 max-w-4xl leading-8 text-zinc-400">{project.description}</p>}
-              </div>
-              <aside className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur">
-                <dl className="grid gap-4">
-                  {meta.map(([label, value]) => (
-                    <div key={label}>
-                      <dt className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500">{label}</dt>
-                      <dd className="mt-1 text-sm font-black text-white">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
-                {(project.externalLinks || []).length > 0 && (
-                  <div className="mt-5 border-t border-white/10 pt-5">
-                    <p className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500">External links</p>
-                    <div className="mt-3 grid gap-2">
-                      {project.externalLinks.map((link) => (
-                        <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-black text-sky-300">
-                          {link.label} <ExternalLink size={15} />
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </aside>
-            </div>
           </div>
         </section>
 
-        <section className="px-5 py-10">
-          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[22rem_1fr]">
-            <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
-              <ProjectSpecsPanel project={project} />
-              <Section title="Tools">
-                <PillList items={[...(project.tools || []), ...(project.softwareUsed || [])]} />
-              </Section>
-              <Section title="Categories">
-                <PillList items={project.categories || [project.category].filter(Boolean)} />
-              </Section>
-              <Section title="Tags">
-                <PillList items={project.tags || []} />
-              </Section>
-              <Section title="Techniques">
-                <PillList items={project.techniques || []} />
-              </Section>
-              <Section title="Materials">
-                <PillList items={project.materials || []} />
-              </Section>
-            </aside>
-
-            <div className="space-y-8">
+        <section className="px-4 py-8 sm:px-5">
+          <div className="mx-auto grid max-w-[92rem] gap-8 lg:grid-cols-[minmax(0,1fr)_19rem]">
+            <div className="space-y-7">
               {hasContentBlocks && (
                 <ContentBlockRenderer
                   blocks={project.contentBlocks || []}
@@ -202,17 +174,17 @@ function ThreeDProjectDetail() {
 
               {!hasContentBlocks && galleryImages.length > 0 && (
                 <Section eyebrow="Renders" title="Gallery">
-                  <div className="space-y-7">
+                  <div className="space-y-6">
                     {Object.entries(galleryGroups).map(([section, images]) => (
                       <div key={section}>
-                        <h3 className="text-sm font-black uppercase tracking-[0.22em] text-zinc-500">{section}</h3>
-                        <div className="mt-3 grid gap-4 md:grid-cols-2">
+                        <h3 className="text-[11px] font-bold uppercase tracking-[0.22em] text-zinc-500">{section}</h3>
+                        <div className="mt-3 grid gap-3 md:grid-cols-2">
                           {images.map((image) => (
-                            <figure key={`${image.url}-${image.originalIndex}`} className="overflow-hidden rounded-2xl border border-white/10 bg-[#181d24]">
+                            <figure key={`${image.url}-${image.originalIndex}`} className="overflow-hidden rounded-lg bg-black/25">
                               <button type="button" onClick={() => setLightboxIndex(image.originalIndex)} className="block aspect-[4/3] w-full text-left">
                                 <ThreeDImageFrame src={image.url} alt={image.alt || `${project.title} render ${image.originalIndex + 1}`} />
                               </button>
-                              {image.caption && <figcaption className="border-t border-white/10 p-3 text-sm text-zinc-400">{image.caption}</figcaption>}
+                              {image.caption && <figcaption className="px-3 py-2 text-xs text-zinc-500">{image.caption}</figcaption>}
                             </figure>
                           ))}
                         </div>
@@ -224,27 +196,27 @@ function ThreeDProjectDetail() {
 
               {project.breakdown && (
                 <Section eyebrow="Process" title="Project breakdown">
-                  <p className="whitespace-pre-line leading-8 text-zinc-400">{project.breakdown}</p>
+                  <p className="whitespace-pre-line text-sm leading-7 text-zinc-400">{project.breakdown}</p>
                 </Section>
               )}
 
               {project.technicalNotes && (
                 <Section eyebrow="Technical" title="Technical notes">
-                  <p className="whitespace-pre-line leading-8 text-zinc-400">{project.technicalNotes}</p>
+                  <p className="whitespace-pre-line text-sm leading-7 text-zinc-400">{project.technicalNotes}</p>
                 </Section>
               )}
 
               {(project.shaderNotes || project.optimizationNotes || project.substancePainterNotes || project.substanceDesignerNotes) && (
                 <Section eyebrow="Production" title="Material and optimization notes">
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="grid gap-3 md:grid-cols-2">
                     {[
                       ['Shader notes', project.shaderNotes],
                       ['Optimization notes', project.optimizationNotes],
                       ['Substance Painter', project.substancePainterNotes],
                       ['Substance Designer', project.substanceDesignerNotes],
                     ].filter(([, value]) => value).map(([label, value]) => (
-                      <div key={label} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                        <h3 className="font-black text-white">{label}</h3>
+                      <div key={label} className="rounded-lg bg-black/25 p-3">
+                        <h3 className="text-sm font-bold text-zinc-100">{label}</h3>
                         <p className="mt-2 whitespace-pre-line text-sm leading-6 text-zinc-400">{value}</p>
                       </div>
                     ))}
@@ -259,6 +231,36 @@ function ThreeDProjectDetail() {
                 setLightboxIndex(offset + index)
               }} />
             </div>
+
+            <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+              <ProjectSpecsPanel project={project} />
+              <Section title="Software used">
+                <PillList items={[...(project.tools || []), ...(project.softwareUsed || [])]} />
+              </Section>
+              <Section title="Categories">
+                <PillList items={project.categories || [project.category].filter(Boolean)} />
+              </Section>
+              <Section title="Tags">
+                <PillList items={project.tags || []} />
+              </Section>
+              <Section title="Techniques">
+                <PillList items={project.techniques || []} />
+              </Section>
+              <Section title="Materials">
+                <PillList items={project.materials || []} />
+              </Section>
+              {(project.externalLinks || []).length > 0 && (
+                <Section title="External links">
+                  <div className="grid gap-2">
+                    {project.externalLinks.map((link) => (
+                      <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-[#13aff0]">
+                        {link.label} <ExternalLink size={15} />
+                      </a>
+                    ))}
+                  </div>
+                </Section>
+              )}
+            </aside>
           </div>
         </section>
       </article>

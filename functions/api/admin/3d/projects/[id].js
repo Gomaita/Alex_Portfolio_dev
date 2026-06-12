@@ -63,16 +63,25 @@ export async function onRequestDelete(context) {
   const { env, params } = context
   if (!env.DB) return errorResponse('Database binding is not configured.', 500)
 
+  const projectId = String(params.id || '').trim()
+  if (!projectId) return errorResponse('Project id is required.', 400)
+
   let result
   try {
+    const existingProject = await env.DB.prepare('SELECT id FROM portfolio_3d_projects WHERE id = ?')
+      .bind(projectId)
+      .first()
+
+    if (!existingProject) return errorResponse('Project not found.', 404)
+
     result = await env.DB.prepare('DELETE FROM portfolio_3d_projects WHERE id = ?')
-      .bind(params.id)
+      .bind(projectId)
       .run()
   } catch {
-    return errorResponse('Could not delete 3D project.', 500)
+    return errorResponse('Failed to delete project.', 500)
   }
 
-  if (!result.meta?.changes) return errorResponse('3D project not found.', 404)
+  if (!result.meta?.changes) return errorResponse('Project not found.', 404)
 
-  return jsonResponse({ ok: true, message: '3D project deleted.' })
+  return jsonResponse({ ok: true, deletedId: projectId })
 }

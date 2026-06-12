@@ -507,10 +507,29 @@ function ThreeDAdmin() {
   }
 
   async function deleteProject(project) {
-    if (!window.confirm(`Delete "${project.title}"?`)) return
-    await delete3DProject(token, project.id)
-    await loadProjects(token)
-    if (selectedProject?.id === project.id) newProject()
+    if (!project?.id) {
+      setError('Project id is missing. Reload the admin list and try again.')
+      return
+    }
+
+    const confirmed = window.confirm('Are you sure you want to permanently delete this project? This action cannot be undone.')
+    if (!confirmed) return
+
+    setError('')
+    setStatus('')
+
+    try {
+      const result = await delete3DProject(token, project.id)
+      if (!result?.ok) {
+        throw new Error(result?.message || result?.error || 'Project was not deleted.')
+      }
+
+      await loadProjects(token)
+      if (selectedProject?.id === project.id) newProject()
+      setStatus('Project permanently deleted.')
+    } catch (err) {
+      setError(err.message || 'Could not delete project.')
+    }
   }
 
   async function unpublishSelected() {
@@ -554,8 +573,8 @@ function ThreeDAdmin() {
         <div className="mx-auto max-w-[92rem]">
           <div className="flex flex-col gap-3 border-b border-white/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.28em] text-sky-300">Artwork editor</p>
-              <h1 className="mt-1 text-3xl font-black text-white">3D Project Admin</h1>
+              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#13aff0]">Manage Portfolio / Create New Artwork</p>
+              <h1 className="mt-1 text-3xl font-black text-white">Artwork editor</h1>
             </div>
             <button type="button" onClick={logout} className="w-fit rounded-full border border-white/10 px-4 py-2 text-xs font-bold text-zinc-300 hover:border-red-300/50">
               Log out
@@ -568,8 +587,8 @@ function ThreeDAdmin() {
             </div>
           )}
 
-          <div className="mt-5 grid gap-5 xl:grid-cols-[18rem_minmax(0,1fr)_20rem]">
-            <aside className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+          <div className="mt-5 grid gap-5 xl:grid-cols-[17rem_minmax(0,1fr)_20rem]">
+            <aside className="rounded-xl border border-white/10 bg-[#15181d] p-4">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-sm font-black text-white">Projects</h2>
                 <button type="button" onClick={newProject} className="rounded-full bg-sky-300 px-3 py-1.5 text-xs font-black text-slate-950">
@@ -595,7 +614,7 @@ function ThreeDAdmin() {
             </aside>
 
             <main className="space-y-5">
-              <section className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <section className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <div className="grid gap-4 lg:grid-cols-[1fr_15rem]">
                   <CompactInput
                     label="Artwork title"
@@ -621,11 +640,11 @@ function ThreeDAdmin() {
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <section className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <h2 className="text-base font-black text-white">Media builder</h2>
-                    <p className="mt-1 text-xs text-zinc-500">Build the project like an artwork post: images, grids and text between renders.</p>
+                    <h2 className="text-base font-black text-white">Upload media files</h2>
+                    <p className="mt-1 text-xs text-zinc-500">Add renders, grids and notes, then arrange them like an artwork post.</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button type="button" onClick={() => addBlock('image')} className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-3 py-2 text-xs font-bold text-zinc-200"><Image size={14} /> Add image</button>
@@ -635,9 +654,18 @@ function ThreeDAdmin() {
                   </div>
                 </div>
 
+                {!form.contentBlocks.length && (
+                  <div className="mt-4 rounded-xl border border-dashed border-white/15 bg-black/20 p-6 text-center">
+                    <p className="text-sm font-bold text-white">Start with your main render.</p>
+                    <p className="mx-auto mt-1 max-w-lg text-xs leading-5 text-zinc-500">
+                      Images are stored in Cloudflare R2. Add an image block or image grid, upload media, then place text or technical notes between renders.
+                    </p>
+                  </div>
+                )}
+
                 <div className="mt-4 space-y-3">
                   {form.contentBlocks.map((block, index) => (
-                    <article key={block.id || index} className="rounded-xl border border-white/10 bg-black/20 p-3">
+                    <article key={block.id || index} className="rounded-lg border border-white/10 bg-black/20 p-3">
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                           <span className="rounded-full bg-white/10 px-2 py-1 text-[11px] font-black uppercase text-zinc-300">{block.type}</span>
@@ -742,16 +770,10 @@ function ThreeDAdmin() {
                       </div>
                     </article>
                   ))}
-                  {!form.contentBlocks.length && (
-                    <div className="rounded-xl border border-dashed border-white/15 p-8 text-center">
-                      <p className="text-sm font-bold text-white">No media blocks yet.</p>
-                      <p className="mt-1 text-xs text-zinc-500">Start with a main render, then add text or breakdown images between blocks.</p>
-                    </div>
-                  )}
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <section className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <h2 className="text-base font-black text-white">Categories</h2>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {categoryOptions.map((category) => (
@@ -762,7 +784,7 @@ function ThreeDAdmin() {
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <section className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <h2 className="text-base font-black text-white">Software used</h2>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
                   {softwareOptions.map((software) => (
@@ -777,11 +799,11 @@ function ThreeDAdmin() {
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <section className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <CompactInput label="Tags" value={form.tagsText} onChange={(value) => updateForm('tagsText', value)} placeholder="PBR, game-ready, low poly, UVs, baking" />
               </section>
 
-              <details open={advancedOpen} onToggle={(event) => setAdvancedOpen(event.currentTarget.open)} className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <details open={advancedOpen} onToggle={(event) => setAdvancedOpen(event.currentTarget.open)} className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <summary className="cursor-pointer text-base font-black text-white">Technical details</summary>
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
                   {[
@@ -808,7 +830,7 @@ function ThreeDAdmin() {
             </main>
 
             <aside className="space-y-4 xl:sticky xl:top-20 xl:self-start">
-              <section className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <section className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <h2 className="text-base font-black text-white">Project thumbnail</h2>
                 <p className="mt-1 text-xs text-zinc-500">Recommended: 1200x900 WebP or JPG, under 1 MB.</p>
                 <div className="mt-3 overflow-hidden rounded-xl border border-white/10">
@@ -838,7 +860,7 @@ function ThreeDAdmin() {
                 </div>
               </section>
 
-              <section className="rounded-2xl border border-white/10 bg-[#12161c] p-4">
+              <section className="rounded-xl border border-white/10 bg-[#15181d] p-4">
                 <h2 className="text-base font-black text-white">Publishing</h2>
                 <p className="mt-2 text-sm text-zinc-400">Status: <span className="font-black text-white">{form.published ? 'Published' : 'Draft'}</span></p>
                 <label className="mt-3 flex items-center gap-2 text-sm font-semibold text-zinc-300">
