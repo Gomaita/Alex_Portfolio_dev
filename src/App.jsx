@@ -8,6 +8,7 @@ import CheatsheetDetail from './pages/CheatsheetDetail'
 import Cheatsheets from './pages/Cheatsheets'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
+import NovaAIChat from './pages/NovaAIChat'
 import Portfolio from './pages/Portfolio'
 import ProjectDetail from './pages/ProjectDetail'
 import SecurityLab from './pages/SecurityLab'
@@ -48,6 +49,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/:slug" element={<ProjectDetail />} />
+          <Route path="/ai-chat" element={<NovaAIChat />} />
           <Route path="/security-lab" element={<SecurityLab />} />
           <Route path="/blockchain-lab" element={<BlockchainLab />} />
           <Route path="/about" element={<About />} />

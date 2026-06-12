@@ -38,6 +38,19 @@ function ProjectDemo({ project }) {
     )
   }
 
+  if (project.demoComponentKey === 'nova-ai-chat') {
+    return (
+      <DemoContainer note="Nova AI Chat lives as a full standalone app so the conversation interface can use the whole screen.">
+        <Link
+          to="/ai-chat"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+        >
+          Open Nova AI Chat
+        </Link>
+      </DemoContainer>
+    )
+  }
+
   return demos[project.demoComponentKey] ? (
     <DemoContainer>{demos[project.demoComponentKey]}</DemoContainer>
   ) : null

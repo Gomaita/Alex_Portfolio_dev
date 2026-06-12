@@ -8,9 +8,54 @@ export const projectCategories = [
   'Learning',
   'Database',
   'Security',
+  'AI',
 ]
 
 export const projects = [
+  {
+    id: 'nova-ai-chat',
+    slug: 'ai-chatbot',
+    title: 'Nova AI Chat',
+    subtitle: 'General-purpose AI chatbot with secure backend integration and demo fallback mode.',
+    summary:
+      'A conversational chatbot demo built with React and Cloudflare Pages Functions, featuring response modes, session history and a secure backend layer for AI API integration.',
+    description:
+      'Nova AI Chat is a general-purpose conversational AI demo. It supports multiple response modes, quick prompts, copy/regenerate actions and session-based chat history, while keeping private AI credentials on the backend.',
+    type: 'AI Chat Demo',
+    status: 'Completed',
+    technologies: [
+      'React',
+      'JavaScript',
+      'Cloudflare Pages Functions',
+      'REST API',
+      'Session Storage',
+      'AI API Integration',
+      'Tailwind CSS',
+    ],
+    featured: true,
+    category: 'AI',
+    skillsDemonstrated: [
+      'General-purpose chat UI',
+      'Secure backend API layer',
+      'Response mode prompting',
+      'Session chat history',
+      'Demo fallback mode',
+      'Copy and regenerate actions',
+      'Error handling',
+    ],
+    technicalNotes:
+      'The frontend never receives AI provider secrets. Requests go through `/api/ai-chat`, which validates payload size, limits history, supports demo mode when no API key is configured and can be extended for multiple providers.',
+    improvements: [
+      'Persistent chat history',
+      'Authentication',
+      'Streaming responses',
+      'File uploads',
+      'Provider switcher',
+      'Rate limiting',
+    ],
+    demoComponentKey: 'nova-ai-chat',
+    githubUrl: '',
+  },
   {
     id: 'auth-flow-simulator',
     slug: 'auth-flow-simulator',
