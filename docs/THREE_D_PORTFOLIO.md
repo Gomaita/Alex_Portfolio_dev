@@ -244,6 +244,19 @@ ALTER TABLE portfolio_3d_projects ADD COLUMN published_at TEXT;
 
 Cloudflare D1/SQLite may fail if a column already exists, so run only the statements for columns that are missing.
 
+## Deleting Projects
+
+Deleting a project from `/3d/admin` permanently removes two things:
+
+- the project metadata row from D1
+- the uploaded media stored in R2 under `3d/projects/{slug}/`
+
+R2 folders are visual prefixes, not real folders. Once every object under `3d/projects/{slug}/` is deleted, the folder disappears from the Cloudflare R2 dashboard automatically.
+
+Project deletion is protected by `ADMIN_API_TOKEN`. The backend builds a safe prefix from the project slug and only deletes objects whose keys start with `3d/projects/{slug}/`. It never deletes outside `3d/projects/`.
+
+Unpublish only hides the project from public routes. It does not delete D1 metadata or R2 media.
+
 ## Project Endpoints
 
 Public:
@@ -273,4 +286,3 @@ Possible next steps:
 - generated thumbnails
 - image size metadata
 - signed upload URLs
-- bulk media cleanup for deleted projects

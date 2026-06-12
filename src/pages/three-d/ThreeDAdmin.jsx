@@ -512,7 +512,7 @@ function ThreeDAdmin() {
       return
     }
 
-    const confirmed = window.confirm('Are you sure you want to permanently delete this project? This action cannot be undone.')
+    const confirmed = window.confirm('Are you sure you want to permanently delete this project and all uploaded media from R2? This action cannot be undone.')
     if (!confirmed) return
 
     setError('')
@@ -526,7 +526,7 @@ function ThreeDAdmin() {
 
       await loadProjects(token)
       if (selectedProject?.id === project.id) newProject()
-      setStatus('Project permanently deleted.')
+      setStatus(result.warning ? 'Project deleted, but some media could not be removed from R2.' : 'Project and media deleted successfully.')
     } catch (err) {
       setError(err.message || 'Could not delete project.')
     }
