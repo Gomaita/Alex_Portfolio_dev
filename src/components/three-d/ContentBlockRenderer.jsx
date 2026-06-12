@@ -5,29 +5,29 @@ function ContentBlockRenderer({ blocks = [], onImageClick }) {
   if (!validBlocks.length) return null
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-6">
       {validBlocks.map((block, index) => {
         if (block.type === 'image') {
           const image = block.images?.[0] || block.image
           if (!image?.url) return null
 
           return (
-            <figure key={block.id || index} className="overflow-hidden rounded-xl bg-[#15181d]">
-              <button
-                type="button"
-                onClick={() => onImageClick?.(image)}
-                className="block aspect-[16/10] w-full text-left"
-              >
-                <ThreeDImageFrame src={image.url} alt={image.alt || block.title || '3D project image'} />
-              </button>
+            <section key={block.id || index} className="rounded-xl bg-[#15181d] p-4">
               {(block.title || block.text || image.caption || block.category) && (
-                <figcaption className="border-t border-white/10 px-4 py-3">
+                <div className="mb-4 max-w-3xl">
                   {block.category && <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#13aff0]">{block.category}</p>}
                   {block.title && <h2 className="mt-1 text-base font-bold text-zinc-100">{block.title}</h2>}
                   {(block.text || image.caption) && <p className="mt-1 text-sm leading-6 text-zinc-400">{block.text || image.caption}</p>}
-                </figcaption>
+                </div>
               )}
-            </figure>
+              <button
+                type="button"
+                onClick={() => onImageClick?.(image)}
+                className="block aspect-[16/10] w-full overflow-hidden rounded-lg text-left"
+              >
+                <ThreeDImageFrame src={image.url} alt={image.alt || block.title || '3D project image'} />
+              </button>
+            </section>
           )
         }
 

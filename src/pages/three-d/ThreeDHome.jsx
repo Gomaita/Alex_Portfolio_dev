@@ -87,7 +87,7 @@ function ThreeDHome() {
             </Link>
           </div>
           {projects.length ? (
-            <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {projects.map((project) => (
                 <ThreeDProjectCard key={project.id} project={project} />
               ))}
