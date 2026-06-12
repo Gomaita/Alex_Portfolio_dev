@@ -15,6 +15,13 @@ export const threeDTools = [
   'Real-time Optimization',
 ]
 
+const sharedTextureMaps = [
+  { label: 'Base Color', url: '', note: 'PBR albedo map placeholder' },
+  { label: 'Normal', url: '', note: 'Baked normal detail placeholder' },
+  { label: 'Roughness', url: '', note: 'Surface response placeholder' },
+  { label: 'AO', url: '', note: 'Ambient occlusion placeholder' },
+]
+
 export const threeDProjectsFallback = [
   {
     id: '3d_fallback_forest_shrine',
@@ -22,7 +29,7 @@ export const threeDProjectsFallback = [
     title: 'Forest Shrine Study',
     subtitle: 'Real-time environment mood study',
     description:
-      'A placeholder 3D environment project structure for testing the gallery layout before adding final renders.',
+      'Editable placeholder for an environment art project. It is structured to show final renders, technical notes and the real-time pipeline before adding final images.',
     date: '2026',
     year: '2026',
     category: 'Environment',
@@ -30,13 +37,44 @@ export const threeDProjectsFallback = [
     thumbnailUrl: '',
     heroImageUrl: '',
     images: [],
-    tools: ['Blender', 'Substance Painter', 'Unreal Engine'],
-    techniques: ['Blockout', 'PBR Texturing', 'Lighting', 'Set dressing'],
+    tools: ['Blender', 'Substance Painter', 'Substance Designer', 'Unreal Engine'],
+    softwareUsed: ['Blender', 'Substance Painter', 'Substance Designer', 'Unreal Engine'],
+    techniques: ['Blockout', 'PBR Texturing', 'Lighting', 'Set dressing', 'Engine presentation'],
+    materials: ['Stone', 'Moss', 'Wood', 'Ground blend'],
     externalLinks: [],
     breakdown:
-      'This entry is a safe editable placeholder. Replace it with real images and production notes from the admin panel.',
+      'This entry is a safe editable placeholder. Replace it with real renders and production notes from the admin panel.',
     technicalNotes:
       'Recommended image paths: /3d/projects/forest-shrine-study/thumbnail.jpg and /3d/projects/forest-shrine-study/hero.jpg.',
+    engine: 'Unreal Engine',
+    assetType: 'Environment',
+    polycount: 'Scene dependent',
+    textureResolution: '2K PBR',
+    texelDensity: 'Consistent across hero assets',
+    targetPlatform: 'Real-time / VR-friendly study',
+    timeSpent: 'Editable',
+    textureWorkflow: 'Hybrid PBR / procedural',
+    substancePainterNotes: 'Hero props can be textured in Painter for wear, dirt and edge detail.',
+    substanceDesignerNotes: 'Ground, moss and stone materials can be expanded with procedural graphs.',
+    shaderNotes: 'Material instances should stay simple and readable for engine presentation.',
+    optimizationNotes: 'Separate hero assets from background dressing and keep collision/proxy meshes simple.',
+    textureMaps: sharedTextureMaps,
+    contentBlocks: [
+      {
+        type: 'note',
+        title: 'Pipeline focus',
+        text: 'This project is prepared to show both final mood and the technical steps behind a real-time environment.',
+      },
+      {
+        type: 'specs',
+        title: 'Environment goals',
+        data: [
+          ['Focus', 'Composition, set dressing, PBR materials'],
+          ['Engine', 'Unreal Engine'],
+          ['Target', 'Real-time presentation'],
+        ],
+      },
+    ],
     published: true,
     featured: true,
     createdAt: '2026-01-01T00:00:00.000Z',
@@ -48,21 +86,48 @@ export const threeDProjectsFallback = [
     title: 'Sci-Fi Crate Prop',
     subtitle: 'Hard-surface prop presentation',
     description:
-      'A prop-focused placeholder for testing project cards, tool chips and technical breakdown sections.',
+      'Editable prop placeholder for testing project cards, specs, texture maps and breakdown sections.',
     date: '2026',
     year: '2026',
     category: 'Prop',
-    role: 'Modeling, UVs, texturing, presentation',
+    role: 'Modeling, UVs, baking, texturing, presentation',
     thumbnailUrl: '',
     heroImageUrl: '',
     images: [],
-    tools: ['Maya', 'Substance Painter', 'Marmoset Toolbag'],
-    techniques: ['High poly', 'Low poly', 'Baking', 'PBR Texturing'],
+    tools: ['Maya', 'ZBrush', 'Substance Painter', 'Marmoset Toolbag'],
+    softwareUsed: ['Maya', 'ZBrush', 'Substance Painter', 'Marmoset Toolbag'],
+    techniques: ['High poly', 'Low poly', 'Baking', 'PBR Texturing', 'Presentation lighting'],
+    materials: ['Painted metal', 'Rubber', 'Panel trims'],
     externalLinks: [],
     breakdown:
       'Use this structure for a real prop breakdown: blockout, high poly, low poly, UVs, baking, texturing and final presentation.',
     technicalNotes:
       'No binary images are stored in D1. Add images to public/3d/projects/sci-fi-crate-prop/ or paste external URLs.',
+    engine: 'Marmoset Toolbag',
+    assetType: 'Hero prop',
+    polycount: '18k tris target',
+    textureResolution: '2K PBR',
+    texelDensity: 'Consistent hard-surface UV density',
+    targetPlatform: 'Game-ready prop',
+    timeSpent: 'Editable',
+    textureWorkflow: 'PBR',
+    substancePainterNotes: 'Layered wear, masks and edge breakup are prepared for Painter.',
+    substanceDesignerNotes: 'Reusable panel/grunge patterns can be moved to Designer later.',
+    shaderNotes: 'Opaque PBR material with optional emissive accents.',
+    optimizationNotes: 'Keep bevels readable while preserving a clean low-poly silhouette.',
+    textureMaps: sharedTextureMaps,
+    contentBlocks: [
+      {
+        type: 'technicalBreakdown',
+        title: 'Prop workflow',
+        data: [
+          ['Blockout', 'Check proportions and silhouette'],
+          ['High poly', 'Define bevels and panel detail'],
+          ['Low poly', 'Keep clean topology for baking'],
+          ['Texturing', 'Painter layers for material breakup'],
+        ],
+      },
+    ],
     published: true,
     featured: false,
     createdAt: '2026-01-02T00:00:00.000Z',

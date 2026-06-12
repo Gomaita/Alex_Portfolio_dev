@@ -46,9 +46,13 @@ export async function onRequestPost(context) {
       `INSERT INTO portfolio_3d_projects (
         id, slug, title, subtitle, description, date, year, category, role,
         thumbnail_url, hero_image_url, images_json, tools_json, techniques_json,
-        external_links_json, breakdown, technical_notes, published, featured,
-        sort_order, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        external_links_json, breakdown, technical_notes, engine, asset_type,
+        polycount, texture_resolution, texel_density, target_platform, time_spent,
+        software_used_json, materials_json, shader_notes, optimization_notes,
+        texture_workflow, substance_painter_notes, substance_designer_notes,
+        texture_maps_json, content_blocks_json, published, featured, sort_order,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     )
       .bind(id, ...bind3DProjectValues(project), now, now)
       .run()

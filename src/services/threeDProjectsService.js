@@ -5,7 +5,7 @@ export async function getPublished3DProjects() {
   try {
     const data = await apiGet('/api/3d/projects')
     const projects = data?.projects || []
-    return projects.length ? projects : threeDProjectsFallback
+    return projects
   } catch {
     return threeDProjectsFallback
   }
