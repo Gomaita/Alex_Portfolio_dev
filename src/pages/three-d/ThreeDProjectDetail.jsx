@@ -39,6 +39,41 @@ function PillList({ items }) {
   )
 }
 
+function getImageCandidate(value) {
+  if (!value) return null
+  if (typeof value === 'string') return value
+  return value.src || value.url || null
+}
+
+function getProjectSummaryThumbnail(project) {
+  const candidates = [
+    project.thumbnail,
+    project.thumbnailUrl,
+    project.coverImage,
+    project.heroImage,
+    project.heroImageUrl,
+    project.mainImage,
+    project.image,
+    project.images?.[0]?.src,
+    project.images?.[0],
+  ]
+
+  return candidates.map(getImageCandidate).find(Boolean)
+}
+
+function SummaryThumbnail({ project }) {
+  const thumbnail = getProjectSummaryThumbnail(project)
+  if (!thumbnail) return null
+
+  return (
+    <figure className="overflow-hidden rounded-2xl border border-white/10 bg-[#12161c]/95 p-2 shadow-2xl shadow-black/20">
+      <div className="aspect-[16/9] overflow-hidden rounded-xl bg-black/30">
+        <ThreeDImageFrame src={thumbnail} alt={`${project.title} project thumbnail`} className="h-full w-full object-cover" />
+      </div>
+    </figure>
+  )
+}
+
 function ThreeDProjectDetail() {
   const { slug } = useParams()
   const [project, setProject] = useState(null)
@@ -163,8 +198,6 @@ function ThreeDProjectDetail() {
                 </section>
               )}
 
-              <ProjectGallery images={galleryShowcaseImages} title={project.title} onOpenLightbox={setLightboxIndex} />
-
               <TechnicalHighlights project={project} />
 
               {hasContentBlocks && (
@@ -216,6 +249,7 @@ function ThreeDProjectDetail() {
             </div>
 
             <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+              <SummaryThumbnail project={project} />
               <ProjectInfoCard project={project} tools={allToolLikeItems} />
               <ProjectSpecsPanel project={project} />
               <Section title="Skills / Pipeline">
@@ -245,6 +279,12 @@ function ThreeDProjectDetail() {
                 </Section>
               )}
             </aside>
+          </div>
+        </section>
+
+        <section className="px-4 py-8 sm:px-5">
+          <div className="mx-auto max-w-[98rem]">
+            <ProjectGallery images={galleryShowcaseImages} title={project.title} onOpenLightbox={setLightboxIndex} />
           </div>
         </section>
       </article>
