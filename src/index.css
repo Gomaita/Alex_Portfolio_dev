@@ -63,6 +63,48 @@ html {
     text-decoration-color: rgba(125, 211, 252, 0.75);
   }
 
+  .tool-badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .tool-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 24px;
+    padding: 0.25rem 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    background: #404044;
+    color: #f3f4f6;
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+  }
+
+  .tool-badge__icon {
+    display: block;
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    object-fit: contain;
+  }
+
+  .tool-badge__label {
+    line-height: 1;
+  }
+
+  .tool-badge:hover {
+    background: #4b4b50;
+    border-color: rgba(255, 255, 255, 0.16);
+    transform: translateY(-1px);
+  }
+
   .nutricore-app {
     --nc-bg: #0b1220;
     --nc-surface: rgba(15, 23, 42, 0.78);

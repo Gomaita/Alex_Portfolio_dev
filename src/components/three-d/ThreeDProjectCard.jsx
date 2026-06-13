@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import ThreeDImageFrame from './ThreeDImageFrame'
+import { ToolBadge } from './ToolBadges'
 
 function ThreeDProjectCard({ project }) {
   const tools = (project.softwareUsed?.length ? project.softwareUsed : project.tools || []).slice(0, 3)
@@ -39,9 +40,7 @@ function ThreeDProjectCard({ project }) {
           {tools.length > 0 && (
             <div className="mt-2 flex flex-wrap justify-center gap-1.5">
               {tools.map((tool) => (
-                <span key={tool} className="rounded bg-white/[0.06] px-2 py-1 text-[11px] font-semibold text-zinc-400">
-                  {tool}
-                </span>
+                <ToolBadge key={tool} tool={tool} />
               ))}
             </div>
           )}
