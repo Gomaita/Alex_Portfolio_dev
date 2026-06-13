@@ -1,4 +1,4 @@
-import { sanitizeText } from './sanitize.js'
+import { sanitizeMultilineText, sanitizeText } from './sanitize.js'
 
 export function slugify(value) {
   return String(value || '')
@@ -90,7 +90,7 @@ export function validate3DProjectPayload(data) {
       slug,
       title,
       subtitle: sanitizeText(data?.subtitle, 180),
-      description: sanitizeText(data?.description, 2000),
+      description: sanitizeMultilineText(data?.description, 4000),
       date: sanitizeText(data?.date, 80),
       year: sanitizeText(data?.year, 20),
       category: sanitizeText(data?.category, 80) || 'Personal Project',
@@ -101,8 +101,8 @@ export function validate3DProjectPayload(data) {
       tools: cleanArray(data?.tools),
       techniques: cleanArray(data?.techniques),
       externalLinks: cleanObjectArray(data?.externalLinks),
-      breakdown: sanitizeText(data?.breakdown, 3000),
-      technicalNotes: sanitizeText(data?.technicalNotes, 3000),
+      breakdown: sanitizeMultilineText(data?.breakdown, 4000),
+      technicalNotes: sanitizeMultilineText(data?.technicalNotes, 4000),
       engine: sanitizeText(data?.engine, 120),
       assetType: sanitizeText(data?.assetType, 120),
       polycount: sanitizeText(data?.polycount, 80),
@@ -114,11 +114,11 @@ export function validate3DProjectPayload(data) {
       categories: cleanArray(data?.categories),
       tags: cleanArray(data?.tags),
       materials: cleanArray(data?.materials),
-      shaderNotes: sanitizeText(data?.shaderNotes, 3000),
-      optimizationNotes: sanitizeText(data?.optimizationNotes, 3000),
+      shaderNotes: sanitizeMultilineText(data?.shaderNotes, 4000),
+      optimizationNotes: sanitizeMultilineText(data?.optimizationNotes, 4000),
       textureWorkflow: sanitizeText(data?.textureWorkflow, 120),
-      substancePainterNotes: sanitizeText(data?.substancePainterNotes, 3000),
-      substanceDesignerNotes: sanitizeText(data?.substanceDesignerNotes, 3000),
+      substancePainterNotes: sanitizeMultilineText(data?.substancePainterNotes, 4000),
+      substanceDesignerNotes: sanitizeMultilineText(data?.substanceDesignerNotes, 4000),
       textureMaps: cleanObjectArray(data?.textureMaps),
       contentBlocks: cleanObjectArray(data?.contentBlocks),
       published: data?.published ? 1 : 0,

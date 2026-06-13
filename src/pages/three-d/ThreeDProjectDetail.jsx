@@ -2,18 +2,22 @@ import { ArrowLeft, ExternalLink } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ContentBlockRenderer from '../../components/three-d/ContentBlockRenderer'
+import ProjectGallery from '../../components/three-d/ProjectGallery'
+import ProjectInfoCard from '../../components/three-d/ProjectInfoCard'
 import ProjectSpecsPanel from '../../components/three-d/ProjectSpecsPanel'
 import RichTextDescription from '../../components/three-d/RichTextDescription'
+import TechnicalHighlights from '../../components/three-d/TechnicalHighlights'
 import TextureMapsGrid from '../../components/three-d/TextureMapsGrid'
 import ThreeDImageFrame from '../../components/three-d/ThreeDImageFrame'
 import ThreeDLayout from '../../components/three-d/ThreeDLayout'
 import ThreeDLightbox from '../../components/three-d/ThreeDLightbox'
+import { SkillChipList, splitSoftwareAndSkills } from '../../components/three-d/ToolBadges'
 import usePageTitle from '../../hooks/usePageTitle'
 import { getPublished3DProjectBySlug } from '../../services/threeDProjectsService'
 
 function Section({ eyebrow, title, children }) {
   return (
-    <section className="rounded-xl bg-[#15181d] p-4">
+    <section className="rounded-2xl border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10">
       {eyebrow && <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#13aff0]">{eyebrow}</p>}
       <h2 className="mt-1 text-lg font-bold tracking-tight text-zinc-100">{title}</h2>
       <div className="mt-4">{children}</div>
@@ -54,10 +58,10 @@ function ThreeDProjectDetail() {
     const hero = project.heroImageUrl || project.thumbnailUrl
     const legacyImages = project.contentBlocks?.length ? [] : project.images || []
     const images = [
-      ...(hero ? [{ url: hero, alt: `${project.title} hero render`, caption: 'Hero render', section: 'Final renders' }] : []),
+      ...(hero ? [{ url: hero, alt: `${project.title} hero render`, caption: 'Hero render', section: 'Final renders', label: 'Beauty Render' }] : []),
       ...legacyImages,
     ]
-    return images.filter((image) => image?.url)
+    return images.filter((image) => image?.url).map((image, index) => ({ ...image, originalIndex: index }))
   }, [project])
 
   if (loading) {
@@ -90,14 +94,18 @@ function ThreeDProjectDetail() {
   }
 
   const hero = project.heroImageUrl || project.thumbnailUrl
-  const meta = [
-    ['Category', project.categories?.length ? project.categories.join(', ') : project.category],
-    ['Published', project.publishedAt ? new Date(project.publishedAt).getFullYear() : project.year || project.date],
-    ['Role', project.role],
-    ['Engine', project.engine],
-    ['Asset type', project.assetType],
-  ].filter(([, value]) => value)
-  const contentBlockImages = (project.contentBlocks || []).flatMap((block) => block.images || []).filter((image) => image?.url)
+  const allToolLikeItems = [...(project.softwareUsed || []), ...(project.tools || [])]
+  const allSkillLikeItems = [...(project.techniques || []), ...(project.tags || [])]
+  const { skills: skillFallbacks } = splitSoftwareAndSkills(allToolLikeItems)
+  const skillItems = [...allSkillLikeItems, ...skillFallbacks]
+  const contentBlockImages = (project.contentBlocks || [])
+    .flatMap((block) => (block.images || []).map((image) => ({
+      ...image,
+      label: image.label || block.category || block.title,
+      section: image.section || block.category || 'Breakdown',
+    })))
+    .filter((image) => image?.url)
+    .map((image, index) => ({ ...image, originalIndex: galleryImages.length + index }))
   const textureLightboxImages = (project.textureMaps || []).filter((map) => map.url).map((map) => ({
     url: map.url,
     alt: map.alt || `${project.title} ${map.label || 'texture map'}`,
@@ -105,64 +113,54 @@ function ThreeDProjectDetail() {
   }))
   const lightboxImages = [
     ...galleryImages,
-    ...textureLightboxImages,
     ...contentBlockImages,
+    ...textureLightboxImages,
   ]
   const hasContentBlocks = Boolean(project.contentBlocks?.length)
-  const galleryGroups = galleryImages.reduce((groups, image, index) => {
-    const section = image.section || 'Gallery'
-    if (!groups[section]) groups[section] = []
-    groups[section].push({ ...image, originalIndex: index })
-    return groups
-  }, {})
+  const galleryShowcaseImages = [...galleryImages, ...contentBlockImages]
 
   return (
     <ThreeDLayout>
-      <article>
-        <section className="px-4 pb-6 pt-8 sm:px-5">
-          <div className="mx-auto max-w-[92rem]">
-            <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-bold text-[#13aff0] hover:text-sky-200">
-              <ArrowLeft size={16} /> Back to projects
-            </Link>
-
-            <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end">
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-teal-300">{project.category || '3D project'}</p>
-                <h1 className="mt-3 max-w-4xl text-3xl font-black tracking-tight text-zinc-50 sm:text-5xl">
-                  {project.title}
-                </h1>
-                {project.subtitle && <p className="mt-3 max-w-3xl text-lg font-semibold leading-7 text-zinc-300">{project.subtitle}</p>}
-                {project.description && <RichTextDescription text={project.description} className="mt-4 max-w-4xl text-sm text-zinc-400" />}
-              </div>
-
-              <aside className="rounded-xl border border-white/10 bg-[#15181d]/90 p-4">
-                <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-zinc-500">Artwork info</p>
-                <dl className="mt-3 grid gap-3">
-                  {meta.map(([label, value]) => (
-                    <div key={label}>
-                      <dt className="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-600">{label}</dt>
-                      <dd className="mt-0.5 text-sm font-bold text-zinc-100">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </aside>
+      <article className="pb-10">
+        <section className="px-4 pb-8 pt-6 sm:px-5">
+          <div className="mx-auto max-w-[98rem]">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-bold text-[#13aff0] hover:text-sky-200">
+                <ArrowLeft size={16} /> Back to projects
+              </Link>
+              <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-zinc-400">
+                {project.assetType || project.category || '3D project'}
+              </span>
             </div>
 
-            <div className="mt-7 overflow-hidden rounded-xl bg-[#15181d]">
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#15181d] shadow-2xl shadow-black/30">
               <button
                 type="button"
                 onClick={() => galleryImages.length && setLightboxIndex(0)}
-                className="block aspect-[16/9] w-full text-left"
+                className="block h-[62vh] min-h-[32rem] w-full text-left max-lg:h-[58vh] max-lg:min-h-[25rem] max-sm:h-[70vh] max-sm:min-h-[28rem]"
               >
                 <ThreeDImageFrame src={hero} alt={`${project.title} hero render`} priority />
               </button>
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.36)_38%,rgba(0,0,0,0.86))]" />
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10">
+                <p className="text-[11px] font-black uppercase tracking-[0.32em] text-sky-200">{project.category || '3D project'}</p>
+                <h1 className="mt-3 max-w-5xl text-4xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
+                  {project.title}
+                </h1>
+                {project.subtitle && <p className="mt-4 max-w-3xl text-lg font-semibold leading-8 text-zinc-200 sm:text-xl">{project.subtitle}</p>}
+                {project.description && <RichTextDescription text={project.description} className="mt-5 max-w-4xl text-sm text-zinc-300 sm:text-base" />}
+              </div>
             </div>
           </div>
         </section>
 
         <section className="px-4 py-8 sm:px-5">
-          <div className="mx-auto grid max-w-[92rem] gap-8 lg:grid-cols-[minmax(0,1fr)_19rem]">
-            <div className="space-y-7">
+          <div className="mx-auto grid max-w-[98rem] gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
+            <div className="space-y-8">
+              <ProjectGallery images={galleryShowcaseImages} title={project.title} onOpenLightbox={setLightboxIndex} />
+
+              <TechnicalHighlights project={project} />
+
               {hasContentBlocks && (
                 <ContentBlockRenderer
                   blocks={project.contentBlocks || []}
@@ -171,32 +169,6 @@ function ThreeDProjectDetail() {
                     if (index >= 0) setLightboxIndex(index)
                   }}
                 />
-              )}
-
-              {!hasContentBlocks && galleryImages.length > 0 && (
-                <Section eyebrow="Renders" title="Gallery">
-                  <div className="space-y-6">
-                    {Object.entries(galleryGroups).map(([section, images]) => (
-                      <div key={section}>
-                        <h3 className="text-[11px] font-bold uppercase tracking-[0.22em] text-zinc-500">{section}</h3>
-                        <div className="mt-3 grid gap-3 md:grid-cols-2">
-                          {images.map((image) => (
-                            <figure key={`${image.url}-${image.originalIndex}`} className="overflow-hidden rounded-lg bg-black/25">
-                              <button type="button" onClick={() => setLightboxIndex(image.originalIndex)} className="block aspect-[4/3] w-full text-left">
-                                <ThreeDImageFrame src={image.url} alt={image.alt || `${project.title} render ${image.originalIndex + 1}`} />
-                              </button>
-                              {image.caption && (
-                                <figcaption className="px-3 py-2">
-                                  <RichTextDescription text={image.caption} className="text-xs text-zinc-500" />
-                                </figcaption>
-                              )}
-                            </figure>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </Section>
               )}
 
               {project.breakdown && (
@@ -230,7 +202,7 @@ function ThreeDProjectDetail() {
               )}
 
               <TextureMapsGrid maps={project.textureMaps || []} onImageClick={(index) => {
-                const offset = galleryImages.length
+                const offset = galleryImages.length + contentBlockImages.length
                 const textureImages = (project.textureMaps || []).filter((map) => map.url)
                 if (!textureImages.length) return
                 setLightboxIndex(offset + index)
@@ -238,9 +210,10 @@ function ThreeDProjectDetail() {
             </div>
 
             <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+              <ProjectInfoCard project={project} tools={allToolLikeItems} />
               <ProjectSpecsPanel project={project} />
-              <Section title="Software used">
-                <PillList items={[...(project.tools || []), ...(project.softwareUsed || [])]} />
+              <Section title="Skills / Pipeline">
+                <SkillChipList items={skillItems} />
               </Section>
               <Section title="Categories">
                 <PillList items={project.categories || [project.category].filter(Boolean)} />
