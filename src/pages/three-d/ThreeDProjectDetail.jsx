@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import ContentBlockRenderer from '../../components/three-d/ContentBlockRenderer'
 import ProjectSpecsPanel from '../../components/three-d/ProjectSpecsPanel'
+import RichTextDescription from '../../components/three-d/RichTextDescription'
 import TextureMapsGrid from '../../components/three-d/TextureMapsGrid'
 import ThreeDImageFrame from '../../components/three-d/ThreeDImageFrame'
 import ThreeDLayout from '../../components/three-d/ThreeDLayout'
@@ -131,7 +132,7 @@ function ThreeDProjectDetail() {
                   {project.title}
                 </h1>
                 {project.subtitle && <p className="mt-3 max-w-3xl text-lg font-semibold leading-7 text-zinc-300">{project.subtitle}</p>}
-                {project.description && <p className="mt-4 max-w-4xl text-sm leading-7 text-zinc-400">{project.description}</p>}
+                {project.description && <RichTextDescription text={project.description} className="mt-4 max-w-4xl text-sm text-zinc-400" />}
               </div>
 
               <aside className="rounded-xl border border-white/10 bg-[#15181d]/90 p-4">
@@ -184,7 +185,11 @@ function ThreeDProjectDetail() {
                               <button type="button" onClick={() => setLightboxIndex(image.originalIndex)} className="block aspect-[4/3] w-full text-left">
                                 <ThreeDImageFrame src={image.url} alt={image.alt || `${project.title} render ${image.originalIndex + 1}`} />
                               </button>
-                              {image.caption && <figcaption className="px-3 py-2 text-xs text-zinc-500">{image.caption}</figcaption>}
+                              {image.caption && (
+                                <figcaption className="px-3 py-2">
+                                  <RichTextDescription text={image.caption} className="text-xs text-zinc-500" />
+                                </figcaption>
+                              )}
                             </figure>
                           ))}
                         </div>
@@ -196,13 +201,13 @@ function ThreeDProjectDetail() {
 
               {project.breakdown && (
                 <Section eyebrow="Process" title="Project breakdown">
-                  <p className="whitespace-pre-line text-sm leading-7 text-zinc-400">{project.breakdown}</p>
+                  <RichTextDescription text={project.breakdown} className="text-sm text-zinc-400" />
                 </Section>
               )}
 
               {project.technicalNotes && (
                 <Section eyebrow="Technical" title="Technical notes">
-                  <p className="whitespace-pre-line text-sm leading-7 text-zinc-400">{project.technicalNotes}</p>
+                  <RichTextDescription text={project.technicalNotes} className="text-sm text-zinc-400" />
                 </Section>
               )}
 
@@ -217,7 +222,7 @@ function ThreeDProjectDetail() {
                     ].filter(([, value]) => value).map(([label, value]) => (
                       <div key={label} className="rounded-lg bg-black/25 p-3">
                         <h3 className="text-sm font-bold text-zinc-100">{label}</h3>
-                        <p className="mt-2 whitespace-pre-line text-sm leading-6 text-zinc-400">{value}</p>
+                        <RichTextDescription text={value} className="mt-2 text-sm text-zinc-400" />
                       </div>
                     ))}
                   </div>

@@ -1,4 +1,5 @@
 import ThreeDImageFrame from './ThreeDImageFrame'
+import RichTextDescription from './RichTextDescription'
 
 function TextureMapsGrid({ maps = [], onImageClick }) {
   if (!maps.length) return null
@@ -14,7 +15,7 @@ function TextureMapsGrid({ maps = [], onImageClick }) {
             </button>
             <figcaption className="px-3 py-2">
               <p className="text-sm font-bold text-zinc-100">{map.label}</p>
-              {map.note && <p className="mt-1 text-xs leading-5 text-zinc-500">{map.note}</p>}
+              {map.note && <RichTextDescription text={map.note} className="mt-1 text-xs text-zinc-500" />}
             </figcaption>
           </figure>
         ))}

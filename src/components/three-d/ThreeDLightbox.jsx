@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useEffect } from 'react'
+import RichTextDescription from './RichTextDescription'
 
 function ThreeDLightbox({ images, activeIndex, onClose, onNext, onPrevious }) {
   const activeImage = images[activeIndex]
@@ -58,7 +59,7 @@ function ThreeDLightbox({ images, activeIndex, onClose, onNext, onPrevious }) {
         />
         <div className="max-w-3xl text-center">
           <p className="text-sm font-bold text-zinc-300">{activeIndex + 1} / {images.length}</p>
-          {activeImage.caption && <p className="mt-2 text-sm text-zinc-400">{activeImage.caption}</p>}
+          {activeImage.caption && <RichTextDescription text={activeImage.caption} className="mt-2 text-sm text-zinc-400" />}
         </div>
       </div>
     </div>

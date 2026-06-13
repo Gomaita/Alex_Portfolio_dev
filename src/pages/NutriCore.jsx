@@ -1,4 +1,22 @@
-import { Activity, Apple, Dumbbell, LineChart as LineChartIcon, Plus, RotateCcw, Search, ShieldCheck, UserRound, Users } from 'lucide-react'
+import {
+  Activity,
+  Apple,
+  BarChart3,
+  ClipboardList,
+  Dumbbell,
+  Home,
+  LineChart as LineChartIcon,
+  Moon,
+  Plus,
+  RotateCcw,
+  Search,
+  Settings,
+  ShieldCheck,
+  Sparkles,
+  Sun,
+  UserRound,
+  Users,
+} from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import {
@@ -22,34 +40,48 @@ import usePageTitle from '../hooks/usePageTitle'
 
 const userTabs = ['Dashboard', 'Perfil', 'Dieta', 'Entrenamiento', 'Progreso']
 const adminTabs = ['Admin Dashboard', 'Usuarios', 'Editor de dieta', 'Editor de rutina', 'Plantillas']
+const userTabMeta = {
+  Dashboard: { icon: Home, label: 'Inicio', description: 'Tu resumen diario' },
+  Perfil: { icon: UserRound, label: 'Perfil', description: 'Actualiza tus datos y peso actual' },
+  Dieta: { icon: Apple, label: 'Dieta', description: 'Consulta tus 5 comidas del día' },
+  Entrenamiento: { icon: Dumbbell, label: 'Entrenamiento', description: 'Sigue tu siguiente sesión' },
+  Progreso: { icon: BarChart3, label: 'Progreso', description: 'Revisa tu evolución de peso' },
+}
+const adminTabMeta = {
+  'Admin Dashboard': { icon: ShieldCheck, label: 'Admin', description: 'Resumen de la plataforma' },
+  Usuarios: { icon: Users, label: 'Usuarios', description: 'Gestiona perfiles y asignaciones' },
+  'Editor de dieta': { icon: Apple, label: 'Dietas', description: 'Edita comidas y alimentos' },
+  'Editor de rutina': { icon: Dumbbell, label: 'Rutinas', description: 'Edita días y ejercicios' },
+  Plantillas: { icon: ClipboardList, label: 'Plantillas', description: 'Biblioteca de planes' },
+}
 
 function cx(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 function Card({ children, className = '' }) {
-  return <section className={cx('rounded-3xl border border-white/10 bg-white/[0.07] p-5 shadow-2xl shadow-slate-950/20 backdrop-blur', className)}>{children}</section>
+  return <section className={cx('nutricore-card rounded-3xl p-5', className)}>{children}</section>
 }
 
 function Badge({ children, tone = 'slate' }) {
   const tones = {
-    green: 'bg-emerald-300/15 text-emerald-100 border-emerald-300/25',
-    amber: 'bg-amber-300/15 text-amber-100 border-amber-300/25',
-    cyan: 'bg-cyan-300/15 text-cyan-100 border-cyan-300/25',
-    slate: 'bg-white/10 text-slate-200 border-white/10',
+    green: 'nutricore-badge-green',
+    amber: 'nutricore-badge-amber',
+    cyan: 'nutricore-badge-cyan',
+    slate: 'nutricore-badge',
   }
   return <span className={cx('rounded-full border px-2.5 py-1 text-xs font-bold', tones[tone])}>{children}</span>
 }
 
 function Field({ label, value, onChange, type = 'text' }) {
   return (
-    <label className="grid gap-1.5 text-sm font-semibold text-slate-200">
+    <label className="grid gap-1.5 text-sm font-semibold text-[var(--nc-muted)]">
       {label}
       <input
         type={type}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="min-h-11 rounded-xl border border-white/10 bg-slate-950/40 px-3 text-sm text-white outline-none focus:border-emerald-300"
+        className="nutricore-input min-h-11 rounded-xl px-3 text-sm outline-none focus:border-emerald-400"
       />
     </label>
   )
@@ -57,9 +89,9 @@ function Field({ label, value, onChange, type = 'text' }) {
 
 function SelectField({ label, value, onChange, children }) {
   return (
-    <label className="grid gap-1.5 text-sm font-semibold text-slate-200">
+    <label className="grid gap-1.5 text-sm font-semibold text-[var(--nc-muted)]">
       {label}
-      <select value={value} onChange={(event) => onChange(event.target.value)} className="min-h-11 rounded-xl border border-white/10 bg-slate-950/40 px-3 text-sm text-white outline-none focus:border-emerald-300">
+      <select value={value} onChange={(event) => onChange(event.target.value)} className="nutricore-input min-h-11 rounded-xl px-3 text-sm outline-none focus:border-emerald-400">
         {children}
       </select>
     </label>
@@ -108,9 +140,42 @@ function WeightChart({ logs }) {
   )
 }
 
+function AppShortcutCard({ title, description, Icon, indicator, onClick, tone = 'green' }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="nutricore-shortcut group rounded-[1.65rem] p-4 text-left transition duration-200 hover:-translate-y-1 active:scale-[0.98]"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <span className={cx('nutricore-icon-bubble', tone === 'cyan' && 'nutricore-icon-cyan', tone === 'amber' && 'nutricore-icon-amber')}>
+          <Icon size={26} />
+        </span>
+        {indicator && <span className="nutricore-pill text-[11px] font-black">{indicator}</span>}
+      </div>
+      <h3 className="mt-4 text-lg font-black text-[var(--nc-text)]">{title}</h3>
+      <p className="mt-1 text-sm leading-5 text-[var(--nc-muted)]">{description}</p>
+    </button>
+  )
+}
+
+function MetricCard({ label, value, Icon, tone = 'green' }) {
+  return (
+    <div className="nutricore-metric rounded-[1.4rem] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <span className={cx('nutricore-mini-icon', tone === 'cyan' && 'nutricore-icon-cyan', tone === 'amber' && 'nutricore-icon-amber')}>
+          <Icon size={18} />
+        </span>
+      </div>
+      <p className="mt-3 text-xs font-bold uppercase tracking-[0.12em] text-[var(--nc-muted)]">{label}</p>
+      <p className="mt-1 text-lg font-black text-[var(--nc-text)]">{value}</p>
+    </div>
+  )
+}
+
 function MealOption({ option }) {
   return (
-    <div className="rounded-2xl bg-slate-950/35 p-4">
+    <div className="rounded-2xl bg-slate-950/35 p-4 transition hover:-translate-y-0.5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h4 className="font-black text-white">{option.name}</h4>
         <div className="flex flex-wrap gap-2 text-xs text-slate-300">
@@ -122,8 +187,9 @@ function MealOption({ option }) {
       </div>
       <div className="mt-3 grid gap-2">
         {option.foods.map((item) => (
-          <div key={`${option.name}-${item.name}`} className="flex flex-col justify-between gap-1 rounded-xl border border-white/10 px-3 py-2 text-sm sm:flex-row">
-            <span className="font-semibold text-slate-100">{item.quantity} {item.unit} {item.name} · <span className="text-emerald-200">{item.prep}</span></span>
+          <div key={`${option.name}-${item.name}`} className="flex flex-col justify-between gap-2 rounded-xl border border-white/10 px-3 py-2 text-sm sm:flex-row sm:items-center">
+            <span className="font-semibold text-slate-100">{item.quantity} {item.unit} {item.name}</span>
+            <span className="inline-flex w-fit rounded-full border border-emerald-400/25 bg-emerald-400/10 px-2 py-0.5 text-xs font-black text-emerald-100">{item.prep}</span>
             <span className="text-xs text-slate-400">{item.kcal} kcal · {item.protein}p/{item.carbs}c/{item.fat}g</span>
           </div>
         ))}
@@ -182,11 +248,19 @@ function WorkoutView({ plan, onUpdatePlan }) {
               <h3 className="text-xl font-black text-white">{day.name}</h3>
               <p className="mt-1 text-sm text-slate-400">{day.muscles} · {day.duration} · {day.difficulty}</p>
             </div>
-            <select value={day.status} onChange={(event) => updateDayStatus(day.id, event.target.value)} className="rounded-xl border border-white/10 bg-slate-950/40 px-3 py-2 text-sm text-white">
-              <option>Pendiente</option>
-              <option>Completado</option>
-              <option>Saltado</option>
-            </select>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge tone={day.status === 'Completado' ? 'green' : day.status === 'Saltado' ? 'amber' : 'slate'}>{day.status}</Badge>
+              <select value={day.status} onChange={(event) => updateDayStatus(day.id, event.target.value)} className="nutricore-input rounded-xl px-3 py-2 text-sm">
+                <option>Pendiente</option>
+                <option>Completado</option>
+                <option>Saltado</option>
+              </select>
+              {day.status !== 'Completado' && (
+                <button type="button" onClick={() => updateDayStatus(day.id, 'Completado')} className="rounded-xl bg-emerald-300 px-3 py-2 text-sm font-black text-slate-950 transition active:scale-95">
+                  Marcar completado
+                </button>
+              )}
+            </div>
           </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {day.exercises.map((exercise) => (
@@ -206,35 +280,78 @@ function WorkoutView({ plan, onUpdatePlan }) {
   )
 }
 
-function UserDashboard({ user, mealPlan, workoutPlan, logs }) {
+function UserDashboard({ user, mealPlan, workoutPlan, logs, onNavigate }) {
   const stats = weightStats(logs)
-  const cards = [
-    ['Peso actual', `${user.weight} kg`, Activity],
-    ['Cambio total', `${stats.diff > 0 ? '+' : ''}${stats.diff} kg`, LineChartIcon],
-    ['Objetivo', user.goal, UserRound],
-    ['Próximo entrenamiento', getNextWorkoutDay(workoutPlan), Dumbbell],
-    ['Dieta', mealPlan?.name || 'Sin asignar', Apple],
-    ['Adherencia semanal', '82%', ShieldCheck],
+  const nextWorkout = getNextWorkoutDay(workoutPlan)
+  const metrics = [
+    ['Peso actual', `${user.weight} kg`, Activity, 'green'],
+    ['Cambio total', `${stats.diff > 0 ? '+' : ''}${stats.diff} kg`, LineChartIcon, 'cyan'],
+    ['Siguiente sesión', nextWorkout, Dumbbell, 'amber'],
+    ['Dieta asignada', mealPlan?.name || 'Sin asignar', Apple, 'green'],
+  ]
+  const shortcuts = [
+    ['Perfil', 'Actualiza tus datos y peso actual', UserRound, 'Editar', 'Perfil', 'green'],
+    ['Dieta', 'Consulta tus 5 comidas del día', Apple, `${mealPlan?.meals?.length || 0} comidas`, 'Dieta', 'cyan'],
+    ['Entrenamiento', `Siguiente sesión: ${nextWorkout}`, Dumbbell, 'Pendiente', 'Entrenamiento', 'amber'],
+    ['Progreso', 'Revisa tu evolución de peso', BarChart3, `${logs.length} registros`, 'Progreso', 'green'],
+    ['Coach notes', 'Lee la última nota del admin', ClipboardList, 'Nueva', 'Perfil', 'cyan'],
+    ['Resumen', 'Objetivo, adherencia y estado general', Settings, '82%', 'Progreso', 'amber'],
   ]
 
   return (
     <div className="grid gap-4">
-      <Card className="bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.18),transparent_35%),rgba(255,255,255,0.07)]">
-        <p className="text-sm font-bold uppercase tracking-[0.24em] text-emerald-200">Dashboard</p>
-        <h1 className="mt-3 text-4xl font-black text-white">Hola, {getFirstName(user.name)}</h1>
-        <p className="mt-2 max-w-3xl text-slate-300">Tu objetivo actual es {user.goal.toLowerCase()}. Última nota del admin: {user.adminNote}</p>
+      <Card className="nutricore-hero-card overflow-hidden">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-[var(--nc-accent)]">Inicio</p>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-[var(--nc-text)]">Hola, {getFirstName(user.name)}</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--nc-muted)]">Listo para continuar tu plan. Tu objetivo actual es {user.goal.toLowerCase()}.</p>
+          </div>
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-emerald-400 text-2xl font-black text-emerald-950 shadow-lg shadow-emerald-500/20">
+            {getFirstName(user.name).slice(0, 1)}
+          </div>
+        </div>
       </Card>
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {cards.map(([label, value, Icon]) => (
-          <Card key={label} className="p-4">
-            <Icon className="text-emerald-200" size={22} />
-            <p className="mt-3 text-sm text-slate-400">{label}</p>
-            <p className="mt-1 text-xl font-black text-white">{value}</p>
-          </Card>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map(([label, value, Icon, tone]) => (
+          <MetricCard key={label} label={label} value={value} Icon={Icon} tone={tone} />
         ))}
       </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {shortcuts.map(([title, description, Icon, indicator, target, tone]) => (
+          <AppShortcutCard
+            key={title}
+            title={title}
+            description={description}
+            Icon={Icon}
+            indicator={indicator}
+            tone={tone}
+            onClick={() => onNavigate(target)}
+          />
+        ))}
+      </div>
+
+      <Card className="grid gap-4 lg:grid-cols-[1fr_22rem] lg:items-center">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--nc-accent)]">Coach note</p>
+          <h2 className="mt-2 text-xl font-black text-[var(--nc-text)]">Siguiente acción recomendada</h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--nc-muted)]">{user.adminNote}</p>
+        </div>
+        <div className="nutricore-progress-card rounded-3xl p-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-bold text-[var(--nc-muted)]">Adherencia semanal</span>
+            <span className="text-2xl font-black text-[var(--nc-text)]">82%</span>
+          </div>
+          <div className="mt-4 h-3 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+            <div className="h-full w-[82%] rounded-full bg-emerald-400" />
+          </div>
+        </div>
+      </Card>
+
       <Card>
-        <h2 className="text-xl font-black text-white">Evolución rápida</h2>
+        <h2 className="text-xl font-black text-[var(--nc-text)]">Evolución rápida</h2>
         <WeightChart logs={logs} />
       </Card>
     </div>
@@ -588,11 +705,16 @@ function NutriCore() {
   const [role, setRole] = useState('user')
   const [selectedUserId, setSelectedUserId] = useState(state.users[0]?.id)
   const [activeTab, setActiveTab] = useState('Dashboard')
+  const [theme, setTheme] = useState(() => localStorage.getItem('nutricore-theme') || 'dark')
   const [toast, setToast] = useState('')
 
   useEffect(() => {
     saveNutriCoreState(state)
   }, [state])
+
+  useEffect(() => {
+    localStorage.setItem('nutricore-theme', theme)
+  }, [theme])
 
   const selectedUser = state.users.find((user) => user.id === selectedUserId) || state.users[0]
   const selectedMealPlan = state.mealPlans.find((plan) => plan.id === selectedUser?.dietId)
@@ -666,7 +788,7 @@ function NutriCore() {
   }
 
   function renderUserView() {
-    if (activeTab === 'Dashboard') return <UserDashboard user={selectedUser} mealPlan={selectedMealPlan} workoutPlan={selectedWorkoutPlan} logs={selectedLogs} />
+    if (activeTab === 'Dashboard') return <UserDashboard user={selectedUser} mealPlan={selectedMealPlan} workoutPlan={selectedWorkoutPlan} logs={selectedLogs} onNavigate={setActiveTab} />
     if (activeTab === 'Perfil') return <ProfileView user={selectedUser} logs={selectedLogs} onSave={(form) => saveUserPatch(selectedUser.id, form)} onAddWeight={(log) => applyState(addWeightLog(state, selectedUser.id, log), 'Peso registrado')} />
     if (activeTab === 'Dieta') return <DietView plan={selectedMealPlan} />
     if (activeTab === 'Entrenamiento') return <WorkoutView plan={selectedWorkoutPlan} onUpdatePlan={(plan) => saveWorkoutPlan(plan.id, plan)} />
@@ -692,17 +814,18 @@ function NutriCore() {
   }
 
   const tabs = role === 'user' ? userTabs : adminTabs
+  const tabMeta = role === 'user' ? userTabMeta : adminTabMeta
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.20),transparent_30%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.18),transparent_28%),#07111f] text-white">
+    <main data-theme={theme} className="nutricore-app min-h-screen text-[var(--nc-text)]">
       <div className="mx-auto flex min-h-screen max-w-[96rem] flex-col px-4 py-5 sm:px-6">
-        <header className="grid gap-4 rounded-[2rem] border border-white/10 bg-white/[0.07] p-5 backdrop-blur lg:grid-cols-[1fr_auto] lg:items-center">
+        <header className="nutricore-topbar grid gap-4 rounded-[2rem] p-5 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.28em] text-emerald-200">Nutrition & Training SaaS Demo</p>
-            <h1 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">NutriCore</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-300">Personalized nutrition and training platform with user and admin views, structured meal plans, flexible workout days and localStorage persistence.</p>
+            <p className="text-xs font-black uppercase tracking-[0.28em] text-[var(--nc-accent)]">Nutrition & Training SaaS Demo</p>
+            <h1 className="mt-2 text-4xl font-black tracking-tight text-[var(--nc-text)] sm:text-5xl">NutriCore</h1>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--nc-muted)]">Personalized nutrition and training platform with user and admin views, structured meal plans, flexible workout days and localStorage persistence.</p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:min-w-[28rem]">
+          <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] lg:min-w-[32rem]">
             <SelectField label="Demo user" value={selectedUserId} onChange={setSelectedUserId}>
               {state.users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}
             </SelectField>
@@ -710,35 +833,49 @@ function NutriCore() {
               <option value="user">Vista usuario</option>
               <option value="admin">Vista administrador</option>
             </SelectField>
+            <button
+              type="button"
+              onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
+              className="nutricore-theme-toggle mt-auto inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-sm font-black"
+            >
+              {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+              {theme === 'dark' ? 'Light' : 'Dark'}
+            </button>
           </div>
         </header>
 
         <div className="mt-5 grid flex-1 gap-5 lg:grid-cols-[16rem_minmax(0,1fr)]">
-          <aside className="hidden rounded-[2rem] border border-white/10 bg-white/[0.07] p-4 lg:block">
+          <aside className="nutricore-sidebar hidden rounded-[2rem] p-4 lg:block">
             <nav className="grid gap-2">
-              {tabs.map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={cx('rounded-2xl px-3 py-3 text-left text-sm font-bold transition', activeTab === tab ? 'bg-emerald-300 text-slate-950' : 'text-slate-300 hover:bg-white/10')}>
-                  {tab}
+              {tabs.map((tab) => {
+                const Icon = tabMeta[tab]?.icon || Sparkles
+                return (
+                <button key={tab} onClick={() => setActiveTab(tab)} className={cx('nutricore-nav-item flex items-center gap-3 rounded-2xl px-3 py-3 text-left text-sm font-bold transition', activeTab === tab && 'is-active')}>
+                  <Icon size={18} />
+                  <span>{tabMeta[tab]?.label || tab}</span>
                 </button>
-              ))}
+              )})}
             </nav>
-            <button onClick={() => applyState(resetNutriCoreState(), 'Demo reiniciada')} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 px-3 py-3 text-sm font-bold text-slate-300">
+            <button onClick={() => applyState(resetNutriCoreState(), 'Demo reiniciada')} className="nutricore-ghost-button mt-4 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-3 py-3 text-sm font-bold">
               <RotateCcw size={16} /> Reset demo
             </button>
           </aside>
 
           <section className="min-w-0 pb-24 lg:pb-0">
-            {toast && <p className="mb-4 rounded-2xl border border-emerald-300/30 bg-emerald-300/10 px-4 py-3 text-sm font-bold text-emerald-100">{toast}</p>}
+            {toast && <p className="nutricore-toast mb-4 rounded-2xl px-4 py-3 text-sm font-bold">{toast}</p>}
             {role === 'user' ? renderUserView() : renderAdminView()}
           </section>
         </div>
 
-        <nav className="fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 gap-1 rounded-3xl border border-white/10 bg-slate-950/90 p-2 shadow-2xl shadow-black/40 backdrop-blur lg:hidden">
-          {tabs.slice(0, 5).map((tab) => (
-            <button key={tab} onClick={() => setActiveTab(tab)} className={cx('rounded-2xl px-2 py-2 text-[11px] font-black', activeTab === tab ? 'bg-emerald-300 text-slate-950' : 'text-slate-400')}>
-              {tab.replace('Admin ', '').replace('Entrenamiento', 'Training')}
+        <nav className="nutricore-bottom-nav fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 gap-1 rounded-3xl p-2 lg:hidden">
+          {tabs.slice(0, 5).map((tab) => {
+            const Icon = tabMeta[tab]?.icon || Sparkles
+            return (
+            <button key={tab} onClick={() => setActiveTab(tab)} className={cx('flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl px-2 py-2 text-[10px] font-black transition active:scale-95', activeTab === tab && 'is-active')}>
+              <Icon size={18} />
+              <span>{tabMeta[tab]?.label || tab.replace('Admin ', '')}</span>
             </button>
-          ))}
+          )})}
         </nav>
       </div>
     </main>
