@@ -4,8 +4,9 @@ import ThreeDLayout from '../../components/three-d/ThreeDLayout'
 import ThreeDProjectCard from '../../components/three-d/ThreeDProjectCard'
 import usePageTitle from '../../hooks/usePageTitle'
 import { getPublished3DProjects } from '../../services/threeDProjectsService'
+import { moveRenderCategoryLast } from '../../utils/threeDCategoryOrder'
 
-const filters = ['All', 'Environments', 'Props', 'Materials', 'Procedural', 'VR', 'Real-time']
+const filters = moveRenderCategoryLast(['All', 'Environments', 'Props', 'Materials', 'Procedural', 'VR', 'Real-time', 'Projects Render'])
 
 const sortOptions = [
   { value: 'featured', label: 'Featured' },
@@ -35,6 +36,7 @@ function projectMatchesFilter(project, filter) {
     Procedural: ['procedural', 'substance designer', 'substance 3d designer'],
     VR: ['vr'],
     'Real-time': ['real-time', 'realtime', 'game-ready', 'game ready', 'engine'],
+    'Projects Render': ['projects render', 'project renders', 'renders', 'render projects', 'render'],
   }
 
   return (aliases[filter] || [filter.toLowerCase()]).some((alias) => haystack.includes(alias))

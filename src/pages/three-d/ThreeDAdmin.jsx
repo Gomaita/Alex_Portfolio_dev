@@ -12,6 +12,7 @@ import {
   update3DProject,
   upload3DMedia,
 } from '../../services/adminThreeDProjectsService'
+import { moveRenderCategoryLast } from '../../utils/threeDCategoryOrder'
 
 const softwareOptions = [
   'Blender',
@@ -25,7 +26,7 @@ const softwareOptions = [
   'ZBrush',
 ]
 
-const categoryOptions = [
+const categoryOptions = moveRenderCategoryLast([
   'Environment',
   'Prop',
   'Material',
@@ -36,7 +37,8 @@ const categoryOptions = [
   'Render',
   'Breakdown',
   'Personal Project',
-]
+  'Projects Render',
+])
 
 const imageCategories = [
   'Main render',

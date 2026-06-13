@@ -148,7 +148,6 @@ function ThreeDProjectDetail() {
                   {project.title}
                 </h1>
                 {project.subtitle && <p className="mt-4 max-w-3xl text-lg font-semibold leading-8 text-zinc-200 sm:text-xl">{project.subtitle}</p>}
-                {project.description && <RichTextDescription text={project.description} className="mt-5 max-w-4xl text-sm text-zinc-300 sm:text-base" />}
               </div>
             </div>
           </div>
@@ -157,6 +156,13 @@ function ThreeDProjectDetail() {
         <section className="px-4 py-8 sm:px-5">
           <div className="mx-auto grid max-w-[98rem] gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-8">
+              {project.description && (
+                <section className="rounded-[1.5rem] border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10 sm:p-7">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#13aff0]">Project Description</p>
+                  <RichTextDescription text={project.description} className="mt-4 max-w-4xl text-sm text-zinc-300 sm:text-base" />
+                </section>
+              )}
+
               <ProjectGallery images={galleryShowcaseImages} title={project.title} onOpenLightbox={setLightboxIndex} />
 
               <TechnicalHighlights project={project} />
