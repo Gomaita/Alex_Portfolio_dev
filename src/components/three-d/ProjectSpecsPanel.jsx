@@ -1,3 +1,12 @@
+const emptyLabels = new Set(['not specified', 'not specified yet', 'no especificado', 'n/a', 'na', 'none', '-'])
+
+function hasProjectValue(value) {
+  if (value === null || value === undefined) return false
+  const text = String(value).trim()
+  if (!text) return false
+  return !emptyLabels.has(text.toLowerCase())
+}
+
 function ProjectSpecsPanel({ project }) {
   const specs = [
     ['Engine', project.engine],
@@ -8,7 +17,7 @@ function ProjectSpecsPanel({ project }) {
     ['Target', project.targetPlatform],
     ['Time spent', project.timeSpent],
     ['Workflow', project.textureWorkflow],
-  ].filter(([, value]) => value)
+  ].filter(([, value]) => hasProjectValue(value))
 
   if (!specs.length) return null
 

@@ -136,7 +136,7 @@ export function ToolBadge({ tool }) {
 
 export function ToolBadgeGrid({ tools = [] }) {
   const items = [...new Set(tools.filter(Boolean))]
-  if (!items.length) return <p className="text-sm text-zinc-500">Not specified yet.</p>
+  if (!items.length) return null
 
   return (
     <div className="tool-badge-list">
@@ -149,7 +149,7 @@ export function ToolBadgeGrid({ tools = [] }) {
 
 export function SkillChipList({ items = [] }) {
   const cleanItems = [...new Set(items.filter(Boolean))]
-  if (!cleanItems.length) return <p className="text-sm text-zinc-500">Not specified yet.</p>
+  if (!cleanItems.length) return null
 
   return (
     <div className="flex flex-wrap gap-2">

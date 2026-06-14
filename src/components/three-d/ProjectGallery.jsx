@@ -25,14 +25,9 @@ function ProjectGallery({ images = [], title = '3D project', onOpenLightbox }) {
         <button type="button" onClick={() => onOpenLightbox?.(activeImage.originalIndex ?? activeIndex)} className="block aspect-[16/10] w-full text-left sm:aspect-[16/9]">
           <ThreeDImageFrame src={activeImage.url} alt={activeImage.alt || `${title} render ${activeIndex + 1}`} />
         </button>
-        {(activeImage.label || activeImage.section || activeImage.caption) && (
-          <figcaption className="flex flex-wrap items-center gap-2 px-4 py-3">
-            {(activeImage.label || activeImage.section) && (
-              <span className="rounded-full border border-white/[0.08] bg-white/[0.055] px-2.5 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-zinc-200">
-                {activeImage.label || activeImage.section}
-              </span>
-            )}
-            {activeImage.caption && <span className="text-xs text-zinc-500">{activeImage.caption}</span>}
+        {activeImage.caption && (
+          <figcaption className="px-4 py-3">
+            <span className="text-xs leading-5 text-zinc-500">{activeImage.caption}</span>
           </figcaption>
         )}
       </figure>
@@ -50,11 +45,6 @@ function ProjectGallery({ images = [], title = '3D project', onOpenLightbox }) {
               <div className="aspect-[4/3]">
                 <ThreeDImageFrame src={image.url} alt={image.alt || `${title} thumbnail ${index + 1}`} className="transition group-hover:scale-105" />
               </div>
-              {(image.label || image.section) && (
-                <span className="block truncate px-2 py-1 text-[10px] font-bold text-zinc-400">
-                  {image.label || image.section}
-                </span>
-              )}
             </button>
           ))}
         </div>

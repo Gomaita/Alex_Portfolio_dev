@@ -1,5 +1,6 @@
-import { SlidersHorizontal } from 'lucide-react'
+import { ArrowLeft, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import ThreeDLayout from '../../components/three-d/ThreeDLayout'
 import ThreeDProjectCard from '../../components/three-d/ThreeDProjectCard'
 import usePageTitle from '../../hooks/usePageTitle'
@@ -91,6 +92,12 @@ function ThreeDProjects() {
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(20,184,166,0.08),transparent_34%),radial-gradient(circle_at_88%_20%,rgba(249,115,22,0.035),transparent_28%)]" />
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
+              <Link
+                to="/3d"
+                className="mb-4 inline-flex min-h-9 items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.045] px-3 text-xs font-bold text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.075] hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-200/40"
+              >
+                <ArrowLeft size={14} /> Home Page
+              </Link>
               <p className="text-[11px] font-black uppercase tracking-[0.32em] text-teal-200/80">Artwork gallery</p>
               <h1 className="mt-3 text-4xl font-black tracking-tight text-zinc-50 sm:text-6xl">Projects</h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">

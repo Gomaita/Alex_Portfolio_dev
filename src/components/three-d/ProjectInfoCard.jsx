@@ -1,6 +1,16 @@
 import { Calendar, Cpu, Layers3, Target, UserRound } from 'lucide-react'
 import { ToolBadgeGrid } from './ToolBadges'
 
+const emptyLabels = new Set(['not specified', 'not specified yet', 'no especificado', 'n/a', 'na', 'none', '-'])
+
+function hasProjectValue(value) {
+  if (value === null || value === undefined) return false
+  if (Array.isArray(value)) return value.some(hasProjectValue)
+  const text = String(value).trim()
+  if (!text) return false
+  return !emptyLabels.has(text.toLowerCase())
+}
+
 function ProjectInfoCard({ project, tools = [] }) {
   const rows = [
     ['Project Type', project.assetType || project.category, Layers3],
@@ -9,7 +19,10 @@ function ProjectInfoCard({ project, tools = [] }) {
     ['Engine', project.engine, Cpu],
     ['Status', project.published ? 'Published' : '', Target],
     ['Year', project.publishedAt ? new Date(project.publishedAt).getFullYear() : project.year || project.date, Calendar],
-  ].filter(([, value]) => value)
+  ].filter(([, value]) => hasProjectValue(value))
+  const hasTools = hasProjectValue(tools)
+
+  if (!rows.length && !hasTools) return null
 
   return (
     <section className="overflow-hidden rounded-2xl border border-white/[0.07] bg-[#111214]/95 shadow-2xl shadow-black/20">
@@ -30,10 +43,12 @@ function ProjectInfoCard({ project, tools = [] }) {
         </dl>
       )}
 
-      <div className="border-t border-white/[0.07] px-5 py-5">
-        <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">Software Used</h3>
-        <ToolBadgeGrid tools={tools} />
-      </div>
+      {hasTools && (
+        <div className="border-t border-white/[0.07] px-5 py-5">
+          <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">Software Used</h3>
+          <ToolBadgeGrid tools={tools} />
+        </div>
+      )}
     </section>
   )
 }

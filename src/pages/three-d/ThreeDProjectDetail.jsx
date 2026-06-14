@@ -25,12 +25,27 @@ function Section({ eyebrow, title, children }) {
   )
 }
 
+const emptyLabels = new Set(['not specified', 'not specified yet', 'no especificado', 'n/a', 'na', 'none', '-'])
+
+function hasProjectValue(value) {
+  if (value === null || value === undefined) return false
+  if (Array.isArray(value)) return value.some(hasProjectValue)
+  const text = String(value).trim()
+  if (!text) return false
+  return !emptyLabels.has(text.toLowerCase())
+}
+
+function cleanList(items = []) {
+  return [...new Set(items.filter(hasProjectValue))]
+}
+
 function PillList({ items }) {
-  if (!items?.length) return <p className="text-sm text-zinc-500">Not specified yet.</p>
+  const cleanItems = cleanList(items)
+  if (!cleanItems.length) return null
 
   return (
     <div className="flex flex-wrap gap-2">
-      {items.map((item) => (
+      {cleanItems.map((item) => (
         <span key={item} className="rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-zinc-300">
           {item}
         </span>
@@ -160,9 +175,17 @@ function ThreeDProjectDetail() {
         <section className="px-4 pb-8 pt-6 sm:px-5">
           <div className="mx-auto max-w-[98rem]">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-bold text-zinc-300 hover:text-white">
-                <ArrowLeft size={16} /> Back to projects
-              </Link>
+              <div className="flex flex-wrap items-center gap-2">
+                <Link
+                  to="/3d"
+                  className="inline-flex min-h-9 items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.045] px-3 text-xs font-bold text-zinc-300 transition hover:border-white/20 hover:bg-white/[0.075] hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-200/40"
+                >
+                  <ArrowLeft size={14} /> Home Page
+                </Link>
+                <Link to="/3d/projects" className="inline-flex min-h-9 items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.025] px-3 text-xs font-bold text-zinc-400 transition hover:border-white/18 hover:bg-white/[0.055] hover:text-white focus:outline-none focus:ring-2 focus:ring-teal-200/40">
+                  Back to projects
+                </Link>
+              </div>
               <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-zinc-400">
                 {project.assetType || project.category || '3D project'}
               </span>
@@ -252,21 +275,31 @@ function ThreeDProjectDetail() {
               <SummaryThumbnail project={project} />
               <ProjectInfoCard project={project} tools={allToolLikeItems} />
               <ProjectSpecsPanel project={project} />
-              <Section title="Skills / Pipeline">
-                <SkillChipList items={skillItems} />
-              </Section>
-              <Section title="Categories">
-                <PillList items={project.categories || [project.category].filter(Boolean)} />
-              </Section>
-              <Section title="Tags">
-                <PillList items={project.tags || []} />
-              </Section>
-              <Section title="Techniques">
-                <PillList items={project.techniques || []} />
-              </Section>
-              <Section title="Materials">
-                <PillList items={project.materials || []} />
-              </Section>
+              {hasProjectValue(skillItems) && (
+                <Section title="Skills / Pipeline">
+                  <SkillChipList items={cleanList(skillItems)} />
+                </Section>
+              )}
+              {hasProjectValue(project.categories || [project.category]) && (
+                <Section title="Categories">
+                  <PillList items={project.categories || [project.category]} />
+                </Section>
+              )}
+              {hasProjectValue(project.tags) && (
+                <Section title="Tags">
+                  <PillList items={project.tags || []} />
+                </Section>
+              )}
+              {hasProjectValue(project.techniques) && (
+                <Section title="Techniques">
+                  <PillList items={project.techniques || []} />
+                </Section>
+              )}
+              {hasProjectValue(project.materials) && (
+                <Section title="Materials">
+                  <PillList items={project.materials || []} />
+                </Section>
+              )}
               {(project.externalLinks || []).length > 0 && (
                 <Section title="External links">
                   <div className="grid gap-2">
