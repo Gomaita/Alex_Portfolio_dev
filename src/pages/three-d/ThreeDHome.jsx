@@ -4,11 +4,38 @@ import { Link } from 'react-router-dom'
 import ThreeDLayout from '../../components/three-d/ThreeDLayout'
 import ThreeDProjectCard from '../../components/three-d/ThreeDProjectCard'
 import { ToolBadge } from '../../components/three-d/ToolBadges'
-import { contact } from '../../data/socialLinks'
 import usePageTitle from '../../hooks/usePageTitle'
 import { getPublished3DProjects } from '../../services/threeDProjectsService'
 
 const heroBadges = ['Props', 'Environments', 'PBR Texturing', 'Unreal Engine', 'Unity', 'Substance Tools']
+const artStationUrl = 'https://www.artstation.com/gomaita'
+
+const profileBlocks = [
+  {
+    title: 'What I do',
+    text: 'I create 3D props, environments and real-time scenes with a focus on clean assets, believable materials and optimized workflows for games.',
+  },
+  {
+    title: 'My workflow',
+    text: 'I enjoy working through the full pipeline: modeling, retopology, UVs, baking, texturing, lighting, rendering and engine integration.',
+  },
+  {
+    title: 'Technical side',
+    text: 'Thanks to my background in Multimedia Engineering, I feel comfortable working with technical constraints, optimization, real-time engines and procedural tools.',
+  },
+  {
+    title: 'Procedural materials',
+    text: 'I am especially interested in Substance 3D Designer and procedural texturing, using it to create flexible materials that add depth and personality to my environments.',
+  },
+  {
+    title: 'How I work',
+    text: 'I am communicative, organized and comfortable working in a team. I like improving every project step by step and learning from other professionals.',
+  },
+  {
+    title: 'Tools',
+    text: 'Blender / 3ds Max / Maya / ZBrush / Marmoset Toolbag / Substance 3D Painter / Substance 3D Designer / Unreal Engine',
+  },
+]
 
 const skillGroups = [
   {
@@ -25,156 +52,215 @@ const skillGroups = [
   },
 ]
 
-function ThreeDHome() {
-  usePageTitle('Alex Gómez | 3D Environment & Prop Artist')
+export default function ThreeDHome() {
+  usePageTitle('Alex G\u00f3mez | 3D Environment & Prop Artist')
+
   const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getPublished3DProjects().then((items) => setProjects(items.slice(0, 8)))
+    let active = true
+
+    getPublished3DProjects()
+      .then((items) => {
+        if (active) {
+          setProjects(items)
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      active = false
+    }
   }, [])
 
   const featuredProjects = useMemo(() => {
-    const featured = projects.filter((item) => item.featured)
-    return (featured.length ? featured : projects).slice(0, 4)
+    const featured = projects.filter((project) => project.featured)
+    const source = featured.length > 0 ? featured : projects
+    return source.slice(0, 4)
   }, [projects])
 
   return (
     <ThreeDLayout>
-      <section className="relative overflow-hidden border-b border-white/[0.07] bg-[#070809]">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(20,184,166,0.09),transparent_34%),radial-gradient(circle_at_18%_70%,rgba(249,115,22,0.04),transparent_30%),radial-gradient(circle_at_82%_65%,rgba(255,255,255,0.035),transparent_28%),linear-gradient(180deg,rgba(255,255,255,0.025),transparent_48%)]" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px max-w-5xl bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-        <div className="mx-auto max-w-[92rem] px-4 py-16 text-center sm:px-5 sm:py-24 lg:py-28">
-          <div className="relative mx-auto max-w-5xl">
-            <h1 className="mx-auto max-w-4xl text-5xl font-black tracking-tight text-white sm:text-7xl">
-              3D Environment & Prop Artist
+      <section className="relative overflow-hidden border-b border-white/5 bg-[#090a0d]">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-0 h-96 w-[44rem] -translate-x-1/2 rounded-full bg-white/[0.055] blur-3xl" />
+          <div className="absolute bottom-0 left-1/2 h-72 w-[34rem] -translate-x-1/2 rounded-full bg-[#13aff0]/[0.07] blur-3xl" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_34%),linear-gradient(180deg,rgba(255,255,255,0.025),transparent_42%)]" />
+        </div>
+
+        <div className="relative mx-auto flex min-h-[520px] max-w-6xl items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl text-center">
+            <h1 className="text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl lg:text-6xl">
+              Hi, I&apos;m Alex G&oacute;mez.
             </h1>
-            <p className="mx-auto mt-5 max-w-3xl text-lg font-semibold leading-8 text-zinc-200">
-              Game-ready props, environments and real-time assets focused on PBR texturing, clean topology, optimized workflows and cinematic presentation.
+            <p className="mx-auto mt-5 max-w-3xl text-xl font-medium leading-relaxed text-zinc-100 sm:text-2xl">
+              I create 3D environments and props for games, combining artistic detail with a technical mindset.
             </p>
-            <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-zinc-400">
-              I enjoy creating assets that look polished on screen while staying clean, organized and ready for real-time engines.
+            <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-zinc-400 sm:text-lg">
+              My background in Multimedia Engineering helps me understand both the creative and technical sides of digital projects. After specializing in AAA environment and prop creation, I now focus on modeling, texturing, optimization and real-time scenes.
             </p>
 
-            <div className="mt-7 flex flex-wrap justify-center gap-2">
+            <div className="mt-8 flex flex-wrap justify-center gap-2.5">
               {heroBadges.map((badge) => (
-                <span key={badge} className="rounded-full border border-white/[0.08] bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-zinc-300">
+                <span
+                  key={badge}
+                  className="rounded-full border border-white/10 bg-white/[0.055] px-3.5 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-zinc-300"
+                >
                   {badge}
                 </span>
               ))}
             </div>
 
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              <Link to="/3d/projects" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-zinc-100 px-5 text-sm font-black text-[#070809] shadow-lg shadow-white/10 transition hover:-translate-y-0.5 hover:bg-white">
-                View Projects <ArrowRight size={16} />
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/3d/projects"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-50 px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:-translate-y-0.5 hover:bg-white"
+              >
+                View Projects
+                <ArrowRight size={16} />
               </Link>
-              <Link to="/3d/contact" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.035] px-5 text-sm font-bold text-zinc-200 transition hover:-translate-y-0.5 hover:border-white/18 hover:bg-white/[0.065]">
-                Contact <Mail size={15} />
-              </Link>
-              <a href={contact.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.035] px-5 text-sm font-bold text-zinc-200 transition hover:-translate-y-0.5 hover:border-white/18 hover:bg-white/[0.065]">
-                LinkedIn <ExternalLink size={15} />
+              <a
+                href={artStationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#13aff0]/35 bg-[#13aff0]/10 px-5 py-3 text-sm font-semibold text-[#8bdcff] transition hover:-translate-y-0.5 hover:border-[#13aff0]/60 hover:bg-[#13aff0]/15"
+              >
+                View ArtStation
+                <ExternalLink size={15} />
               </a>
+              <Link
+                to="/3d/contact"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-zinc-100 transition hover:-translate-y-0.5 hover:bg-white/[0.075]"
+              >
+                Contact Me
+                <Mail size={15} />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="border-b border-white/[0.07] bg-[#090a0c]/95 backdrop-blur">
-        <div className="mx-auto flex max-w-[92rem] justify-center gap-6 overflow-x-auto px-4 sm:px-5">
-          {[
-            ['Portfolio', 'portfolio'],
-            ['About', 'about'],
-            ['Skills', 'skills'],
-            ['Contact', 'contact-cta'],
-          ].map(([tab, id], index) => (
-            <a key={tab} href={`#${id}`} className={`whitespace-nowrap border-b-2 py-3 text-sm font-bold ${index === 0 ? 'border-zinc-300 text-white' : 'border-transparent text-zinc-500 hover:text-zinc-300'}`}>
-              {tab}
-            </a>
+      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-7 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">Featured work</p>
+            <h2 className="mt-2 text-2xl font-semibold text-zinc-50 sm:text-3xl">Selected 3D projects</h2>
+          </div>
+          <Link
+            to="/3d/projects"
+            className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-[#8bdcff] transition hover:text-zinc-50"
+          >
+            View all projects
+            <ArrowRight size={15} />
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="rounded-3xl border border-white/8 bg-white/[0.035] p-8 text-center text-sm text-zinc-400">
+            Loading published projects...
+          </div>
+        ) : featuredProjects.length > 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {featuredProjects.map((project) => (
+              <ThreeDProjectCard key={project.id || project.slug} project={project} compact />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-3xl border border-white/8 bg-white/[0.035] p-8 text-center">
+            <h3 className="text-lg font-semibold text-zinc-100">No 3D projects published yet.</h3>
+            <p className="mt-2 text-sm text-zinc-400">New work is being prepared.</p>
+          </div>
+        )}
+      </section>
+
+      <section id="about" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">About</p>
+          <h2 className="mt-2 text-2xl font-semibold text-zinc-50 sm:text-3xl">About my 3D work</h2>
+          <p className="mt-5 text-base leading-8 text-zinc-400">
+            I studied Multimedia Engineering at the University of Alicante, where I built a strong foundation in app development, programming and videogames. After finishing my degree, I moved to Madrid to study the Advanced Master in 3D Modeling and Texturing of Environments & Props for AAA Games at Voxel School.
+          </p>
+          <p className="mt-4 text-base leading-8 text-zinc-400">
+            There, I learned the full production pipeline used in game studios: high and low poly modeling, retopology, baking, UVs, PBR texturing, lighting, set dressing, rendering and real-time scene creation in Unreal Engine.
+          </p>
+          <p className="mt-4 text-base leading-8 text-zinc-400">
+            During this process, I became especially interested in procedural workflows. Substance 3D Designer opened a new way for me to create materials, build richer surfaces and push my scenes further with more control and flexibility.
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          {profileBlocks.map((block) => (
+            <article
+              key={block.title}
+              className="rounded-3xl border border-white/8 bg-[#14161b]/80 p-6 shadow-[0_22px_70px_rgba(0,0,0,0.28)]"
+            >
+              <h3 className="text-base font-semibold text-zinc-50">{block.title}</h3>
+              <p className="mt-3 text-sm leading-7 text-zinc-400">{block.text}</p>
+            </article>
           ))}
         </div>
-      </div>
-
-      <section id="portfolio" className="px-4 py-14 sm:px-5">
-        <div className="mx-auto max-w-[92rem]">
-          <div className="flex flex-col gap-3 text-center">
-            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-teal-200/80">Selected work</p>
-            <h2 className="text-3xl font-black text-white">Featured Projects</h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-zinc-500">
-              Selected environments, props and real-time material studies with visual presentation and technical breakdowns.
-            </p>
-          </div>
-
-          {featuredProjects.length ? (
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-              {featuredProjects.map((project) => (
-                <ThreeDProjectCard key={project.id} project={project} />
-              ))}
-            </div>
-          ) : (
-            <div className="mx-auto mt-8 max-w-xl rounded-2xl border border-white/[0.08] bg-[#15181d] p-8 text-center">
-              <p className="text-sm font-bold text-white">No 3D projects published yet.</p>
-            </div>
-          )}
-
-          <div className="mt-8 text-center">
-            <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-bold text-zinc-200 hover:text-white">
-              Explore all projects <ArrowRight size={15} />
-            </Link>
-          </div>
-        </div>
       </section>
 
-      <section id="about" className="px-4 py-14 sm:px-5">
-        <div className="mx-auto max-w-4xl rounded-[2rem] border border-white/[0.07] bg-[#111214]/90 p-6 text-center shadow-2xl shadow-black/20 sm:p-9">
-          <p className="text-[11px] font-black uppercase tracking-[0.28em] text-teal-200/80">Artist profile</p>
-          <h2 className="mt-2 text-3xl font-black text-white">About my 3D work</h2>
-          <p className="mt-5 text-sm leading-7 text-zinc-400">
-            I mainly work on environment art, props and PBR texturing. I like building assets from the early blockout stage to the final presentation, paying attention to clean topology, UVs, baking, material definition and real-time optimization.
-          </p>
-          <p className="mt-4 text-sm leading-7 text-zinc-400">
-            Texturing is one of the parts I enjoy the most, especially combining Substance 3D Painter with procedural material work in Substance 3D Designer.
-          </p>
-        </div>
-      </section>
-
-      <section id="skills" className="px-4 py-14 sm:px-5">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center">
-            <p className="text-[11px] font-black uppercase tracking-[0.28em] text-teal-200/80">Pipeline mindset</p>
-            <h2 className="mt-2 text-3xl font-black text-white">Skills & Tools</h2>
+      <section id="skills" className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
+        <div className="rounded-[2rem] border border-white/8 bg-[#111318] p-6 shadow-[0_28px_90px_rgba(0,0,0,0.3)] sm:p-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-zinc-500">Skills & Tools</p>
+            <h2 className="mt-2 text-2xl font-semibold text-zinc-50">Focused on real-time asset creation</h2>
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
             {skillGroups.map((group) => (
-              <article key={group.title} className="rounded-2xl border border-white/[0.07] bg-[#111214] p-5 text-center shadow-xl shadow-black/10">
-                <h3 className="text-sm font-black text-white">{group.title}</h3>
-                <div className="mt-4 flex flex-wrap justify-center gap-2">
+              <div key={group.title} className="rounded-2xl border border-white/8 bg-white/[0.035] p-5">
+                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-400">{group.title}</h3>
+                <div className="mt-4 flex flex-wrap gap-2">
                   {group.title === 'Software'
                     ? group.items.map((item) => <ToolBadge key={item} tool={item} />)
                     : group.items.map((item) => (
-                      <span key={item} className="rounded bg-white/[0.06] px-2.5 py-1.5 text-xs font-semibold text-zinc-300">
-                        {item}
-                      </span>
-                    ))}
+                        <span
+                          key={item}
+                          className="rounded-full border border-white/8 bg-white/[0.055] px-3 py-1.5 text-xs font-medium text-zinc-300"
+                        >
+                          {item}
+                        </span>
+                      ))}
                 </div>
-              </article>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="contact-cta" className="px-4 py-16 sm:px-5">
-        <div className="mx-auto max-w-3xl rounded-[2rem] border border-white/[0.07] bg-[radial-gradient(circle_at_top_left,rgba(20,184,166,0.08),transparent_36%),#111214] p-8 text-center shadow-2xl shadow-black/25">
-          <h2 className="text-3xl font-black text-white">Interested in my 3D work?</h2>
+      <section className="mx-auto max-w-5xl px-4 pb-20 sm:px-6 lg:px-8">
+        <div className="rounded-[2rem] border border-white/8 bg-gradient-to-br from-[#161920] to-[#0d0f12] p-8 text-center shadow-[0_28px_90px_rgba(0,0,0,0.34)] sm:p-10">
+          <h2 className="text-2xl font-semibold text-zinc-50">Interested in my 3D work?</h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-zinc-400">
             If you want to know more about my projects, ask about my 3D work or contact me for an opportunity, feel free to send me a message.
           </p>
-          <Link to="/3d/contact" className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-zinc-100 px-5 text-sm font-black text-[#070809] shadow-lg shadow-white/10 transition hover:-translate-y-0.5 hover:bg-white">
-            Contact me <Mail size={15} />
-          </Link>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link
+              to="/3d/contact"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-50 px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:-translate-y-0.5 hover:bg-white"
+            >
+              Contact Me
+              <Mail size={15} />
+            </Link>
+            <a
+              href={artStationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-zinc-100 transition hover:-translate-y-0.5 hover:bg-white/[0.075]"
+            >
+              ArtStation Portfolio
+              <ExternalLink size={15} />
+            </a>
+          </div>
         </div>
       </section>
     </ThreeDLayout>
   )
 }
-
-export default ThreeDHome
