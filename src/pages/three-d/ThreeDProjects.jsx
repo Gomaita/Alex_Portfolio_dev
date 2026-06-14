@@ -6,7 +6,7 @@ import usePageTitle from '../../hooks/usePageTitle'
 import { getPublished3DProjects } from '../../services/threeDProjectsService'
 import { moveRenderCategoryLast } from '../../utils/threeDCategoryOrder'
 
-const filters = moveRenderCategoryLast(['All', 'Environments', 'Props', 'Materials', 'Procedural', 'VR', 'Real-time', 'Projects Render'])
+const filters = moveRenderCategoryLast(['All', 'Props', 'Environments', 'Materials', 'Game Ready', 'Projects Render'])
 
 const sortOptions = [
   { value: 'featured', label: 'Featured' },
@@ -35,7 +35,7 @@ function projectMatchesFilter(project, filter) {
     Materials: ['material', 'pbr'],
     Procedural: ['procedural', 'substance designer', 'substance 3d designer'],
     VR: ['vr'],
-    'Real-time': ['real-time', 'realtime', 'game-ready', 'game ready', 'engine'],
+    'Game Ready': ['real-time', 'realtime', 'game-ready', 'game ready', 'engine', 'optimized'],
     'Projects Render': ['projects render', 'project renders', 'renders', 'render projects', 'render'],
   }
 
@@ -85,18 +85,20 @@ function ThreeDProjects() {
 
   return (
     <ThreeDLayout>
-      <section className="px-4 py-8 sm:px-5 sm:py-10">
+      <section className="px-4 py-10 sm:px-5 sm:py-14">
         <div className="mx-auto max-w-[92rem]">
-          <div className="flex flex-col gap-5 border-b border-white/10 pb-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-[#111419] px-5 py-8 shadow-2xl shadow-black/30 sm:px-8 lg:px-10">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(19,175,240,0.18),transparent_34%),radial-gradient(circle_at_88%_20%,rgba(249,115,22,0.08),transparent_28%)]" />
+            <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#13aff0]">Artwork gallery</p>
-              <h1 className="mt-2 text-3xl font-black tracking-tight text-zinc-50 sm:text-5xl">Projects</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
-                Environment art, props and real-time material work.
+              <p className="text-[11px] font-black uppercase tracking-[0.32em] text-[#13aff0]">Artwork gallery</p>
+              <h1 className="mt-3 text-4xl font-black tracking-tight text-zinc-50 sm:text-6xl">Projects</h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
+                Props, environments, material studies and real-time presentation work built around clean game-art workflows.
               </p>
             </div>
 
-            <div className="w-full rounded-xl border border-white/10 bg-[#15181d]/90 p-3 lg:max-w-2xl">
+            <div className="w-full rounded-2xl border border-white/10 bg-black/30 p-3 shadow-xl backdrop-blur lg:max-w-2xl">
               <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
                 <label className="sr-only" htmlFor="three-d-search">Search artworks</label>
                 <input
@@ -104,9 +106,9 @@ function ThreeDProjects() {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search by artwork, tool or tag"
-                  className="min-h-10 rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-[#13aff0]/70"
+                  className="min-h-10 rounded-xl border border-white/10 bg-[#0b0d10] px-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-[#13aff0]/70"
                 />
-                <label className="flex min-h-10 items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 text-xs font-bold text-zinc-300">
+                <label className="flex min-h-10 items-center gap-2 rounded-xl border border-white/10 bg-[#0b0d10] px-3 text-xs font-bold text-zinc-300">
                   <SlidersHorizontal size={15} />
                   <select
                     value={sortMode}
@@ -127,10 +129,10 @@ function ThreeDProjects() {
                     key={filter}
                     type="button"
                     onClick={() => setActiveFilter(filter)}
-                    className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-bold transition ${
+                    className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-bold transition ${
                       activeFilter === filter
-                        ? 'bg-[#13aff0] text-slate-950'
-                        : 'bg-white/[0.04] text-zinc-400 hover:bg-white/[0.08] hover:text-zinc-100'
+                        ? 'border-[#13aff0] bg-[#13aff0] text-slate-950 shadow-lg shadow-sky-500/15'
+                        : 'border-white/10 bg-white/[0.045] text-zinc-400 hover:border-white/20 hover:bg-white/[0.08] hover:text-zinc-100'
                     }`}
                   >
                     {filter}
@@ -138,10 +140,11 @@ function ThreeDProjects() {
                 ))}
               </div>
             </div>
+            </div>
           </div>
 
           {filteredProjects.length ? (
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
               {filteredProjects.map((project) => (
                 <ThreeDProjectCard key={project.id} project={project} />
               ))}

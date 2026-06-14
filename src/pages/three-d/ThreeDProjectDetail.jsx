@@ -17,7 +17,7 @@ import { getPublished3DProjectBySlug } from '../../services/threeDProjectsServic
 
 function Section({ eyebrow, title, children }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10">
+    <section className="rounded-[1.5rem] border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10">
       {eyebrow && <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#13aff0]">{eyebrow}</p>}
       <h2 className="mt-1 text-lg font-bold tracking-tight text-zinc-100">{title}</h2>
       <div className="mt-4">{children}</div>
@@ -67,7 +67,7 @@ function SummaryThumbnail({ project }) {
 
   return (
     <figure className="overflow-hidden rounded-2xl border border-white/10 bg-[#12161c]/95 p-2 shadow-2xl shadow-black/20">
-      <div className="aspect-[16/9] overflow-hidden rounded-xl bg-black/30">
+      <div className="aspect-[4/3] overflow-hidden rounded-xl bg-black/30 sm:aspect-[16/10] lg:aspect-[4/3]">
         <ThreeDImageFrame src={thumbnail} alt={`${project.title} project thumbnail`} className="h-full w-full object-cover" />
       </div>
     </figure>
@@ -168,7 +168,7 @@ function ThreeDProjectDetail() {
               </span>
             </div>
 
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#15181d] shadow-2xl shadow-black/30">
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#15181d] shadow-2xl shadow-black/35">
               <button
                 type="button"
                 onClick={() => galleryImages.length && setLightboxIndex(0)}
@@ -176,7 +176,7 @@ function ThreeDProjectDetail() {
               >
                 <ThreeDImageFrame src={hero} alt={`${project.title} hero render`} priority />
               </button>
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.36)_38%,rgba(0,0,0,0.86))]" />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.28)_38%,rgba(0,0,0,0.88))]" />
               <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10">
                 <p className="text-[11px] font-black uppercase tracking-[0.32em] text-sky-200">{project.category || '3D project'}</p>
                 <h1 className="mt-3 max-w-5xl text-4xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
@@ -192,7 +192,7 @@ function ThreeDProjectDetail() {
           <div className="mx-auto grid max-w-[98rem] gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-8">
               {project.description && (
-                <section className="rounded-[1.5rem] border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10 sm:p-7">
+                <section className="rounded-[1.6rem] border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10 sm:p-7">
                   <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#13aff0]">Project Description</p>
                   <RichTextDescription text={project.description} className="mt-4 max-w-4xl text-sm text-zinc-300 sm:text-base" />
                 </section>

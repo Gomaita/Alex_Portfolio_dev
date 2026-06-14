@@ -9,10 +9,10 @@ function ThreeDNavbar() {
     }`
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#101216]/92 backdrop-blur-xl">
-      <nav className="mx-auto flex h-12 max-w-[92rem] items-center justify-between px-4 sm:px-5">
+    <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#0b0d10]/88 backdrop-blur-xl">
+      <nav className="mx-auto flex h-14 max-w-[92rem] items-center justify-between px-4 sm:px-5">
         <Link to="/3d" className="text-sm font-black tracking-tight text-white">
-          Alex Gómez
+          Alex Gómez 3D
         </Link>
         <div className="flex items-center gap-1">
           <NavLink to="/3d/projects" className={linkClass}>
@@ -48,8 +48,8 @@ function ThreeDFooter() {
 
 function ThreeDLayout({ children }) {
   return (
-    <div className="min-h-screen bg-[#0d0f12] text-zinc-100">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(19,175,240,0.10),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(20,184,166,0.07),transparent_28%),linear-gradient(180deg,#0d0f12,#0b0d10)]" />
+    <div className="min-h-screen bg-[#0b0d10] text-zinc-100">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(19,175,240,0.11),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(249,115,22,0.06),transparent_28%),linear-gradient(180deg,#0d0f12,#0b0d10)]" />
       <div className="relative">
         <ThreeDNavbar />
         <main>{children}</main>
