@@ -87,18 +87,18 @@ function ThreeDProjects() {
     <ThreeDLayout>
       <section className="px-4 py-10 sm:px-5 sm:py-14">
         <div className="mx-auto max-w-[92rem]">
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] bg-[#111419] px-5 py-8 shadow-2xl shadow-black/30 sm:px-8 lg:px-10">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(19,175,240,0.18),transparent_34%),radial-gradient(circle_at_88%_20%,rgba(249,115,22,0.08),transparent_28%)]" />
+          <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.07] bg-[#111214] px-5 py-8 shadow-2xl shadow-black/30 sm:px-8 lg:px-10">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(20,184,166,0.08),transparent_34%),radial-gradient(circle_at_88%_20%,rgba(249,115,22,0.035),transparent_28%)]" />
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.32em] text-[#13aff0]">Artwork gallery</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.32em] text-teal-200/80">Artwork gallery</p>
               <h1 className="mt-3 text-4xl font-black tracking-tight text-zinc-50 sm:text-6xl">Projects</h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
                 Props, environments, material studies and real-time presentation work built around clean game-art workflows.
               </p>
             </div>
 
-            <div className="w-full rounded-2xl border border-white/10 bg-black/30 p-3 shadow-xl backdrop-blur lg:max-w-2xl">
+            <div className="w-full rounded-2xl border border-white/[0.08] bg-black/35 p-3 shadow-xl backdrop-blur lg:max-w-2xl">
               <div className="grid gap-2 sm:grid-cols-[1fr_auto]">
                 <label className="sr-only" htmlFor="three-d-search">Search artworks</label>
                 <input
@@ -106,9 +106,9 @@ function ThreeDProjects() {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search by artwork, tool or tag"
-                  className="min-h-10 rounded-xl border border-white/10 bg-[#0b0d10] px-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-[#13aff0]/70"
+                  className="min-h-10 rounded-xl border border-white/[0.08] bg-[#070809] px-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-teal-200/45"
                 />
-                <label className="flex min-h-10 items-center gap-2 rounded-xl border border-white/10 bg-[#0b0d10] px-3 text-xs font-bold text-zinc-300">
+                <label className="flex min-h-10 items-center gap-2 rounded-xl border border-white/[0.08] bg-[#070809] px-3 text-xs font-bold text-zinc-300">
                   <SlidersHorizontal size={15} />
                   <select
                     value={sortMode}
@@ -131,8 +131,8 @@ function ThreeDProjects() {
                     onClick={() => setActiveFilter(filter)}
                     className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-bold transition ${
                       activeFilter === filter
-                        ? 'border-[#13aff0] bg-[#13aff0] text-slate-950 shadow-lg shadow-sky-500/15'
-                        : 'border-white/10 bg-white/[0.045] text-zinc-400 hover:border-white/20 hover:bg-white/[0.08] hover:text-zinc-100'
+                        ? 'border-zinc-200 bg-zinc-100 text-[#070809] shadow-lg shadow-white/10'
+                        : 'border-white/[0.08] bg-white/[0.035] text-zinc-400 hover:border-white/18 hover:bg-white/[0.065] hover:text-zinc-100'
                     }`}
                   >
                     {filter}

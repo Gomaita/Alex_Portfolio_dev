@@ -17,8 +17,8 @@ import { getPublished3DProjectBySlug } from '../../services/threeDProjectsServic
 
 function Section({ eyebrow, title, children }) {
   return (
-    <section className="rounded-[1.5rem] border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10">
-      {eyebrow && <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#13aff0]">{eyebrow}</p>}
+    <section className="rounded-[1.5rem] border border-white/[0.07] bg-[#111214] p-5 shadow-2xl shadow-black/10">
+      {eyebrow && <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-teal-200/80">{eyebrow}</p>}
       <h2 className="mt-1 text-lg font-bold tracking-tight text-zinc-100">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -66,7 +66,7 @@ function SummaryThumbnail({ project }) {
   if (!thumbnail) return null
 
   return (
-    <figure className="overflow-hidden rounded-2xl border border-white/10 bg-[#12161c]/95 p-2 shadow-2xl shadow-black/20">
+    <figure className="overflow-hidden rounded-2xl border border-white/[0.07] bg-[#111214]/95 p-2 shadow-2xl shadow-black/20">
       <div className="aspect-[4/3] overflow-hidden rounded-xl bg-black/30 sm:aspect-[16/10] lg:aspect-[4/3]">
         <ThreeDImageFrame src={thumbnail} alt={`${project.title} project thumbnail`} className="h-full w-full object-cover" />
       </div>
@@ -116,10 +116,10 @@ function ThreeDProjectDetail() {
       <ThreeDLayout>
         <section className="px-5 py-24">
           <div className="mx-auto max-w-2xl rounded-xl border border-white/10 bg-[#15181d] p-8 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#13aff0]">Project not found</p>
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-teal-200/80">Project not found</p>
             <h1 className="mt-4 text-3xl font-black text-white">This project is not available.</h1>
             <p className="mt-3 text-zinc-400">This project is not available or has not been published yet.</p>
-            <Link to="/3d/projects" className="mt-6 inline-flex min-h-10 items-center justify-center rounded-lg bg-[#13aff0] px-5 text-sm font-bold text-slate-950">
+            <Link to="/3d/projects" className="mt-6 inline-flex min-h-10 items-center justify-center rounded-lg bg-zinc-100 px-5 text-sm font-bold text-[#070809]">
               Back to 3D projects
             </Link>
           </div>
@@ -160,7 +160,7 @@ function ThreeDProjectDetail() {
         <section className="px-4 pb-8 pt-6 sm:px-5">
           <div className="mx-auto max-w-[98rem]">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-bold text-[#13aff0] hover:text-sky-200">
+              <Link to="/3d/projects" className="inline-flex items-center gap-2 text-sm font-bold text-zinc-300 hover:text-white">
                 <ArrowLeft size={16} /> Back to projects
               </Link>
               <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-zinc-400">
@@ -168,7 +168,7 @@ function ThreeDProjectDetail() {
               </span>
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#15181d] shadow-2xl shadow-black/35">
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/[0.07] bg-[#111214] shadow-2xl shadow-black/35">
               <button
                 type="button"
                 onClick={() => galleryImages.length && setLightboxIndex(0)}
@@ -178,7 +178,7 @@ function ThreeDProjectDetail() {
               </button>
               <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.28)_38%,rgba(0,0,0,0.88))]" />
               <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10">
-                <p className="text-[11px] font-black uppercase tracking-[0.32em] text-sky-200">{project.category || '3D project'}</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.32em] text-teal-100/85">{project.category || '3D project'}</p>
                 <h1 className="mt-3 max-w-5xl text-4xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
                   {project.title}
                 </h1>
@@ -192,8 +192,8 @@ function ThreeDProjectDetail() {
           <div className="mx-auto grid max-w-[98rem] gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] xl:grid-cols-[minmax(0,1fr)_24rem]">
             <div className="space-y-8">
               {project.description && (
-                <section className="rounded-[1.6rem] border border-white/10 bg-[#15181d] p-5 shadow-2xl shadow-black/10 sm:p-7">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#13aff0]">Project Description</p>
+                <section className="rounded-[1.6rem] border border-white/[0.07] bg-[#111214] p-5 shadow-2xl shadow-black/10 sm:p-7">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-teal-200/80">Project Description</p>
                   <RichTextDescription text={project.description} className="mt-4 max-w-4xl text-sm text-zinc-300 sm:text-base" />
                 </section>
               )}
@@ -271,7 +271,7 @@ function ThreeDProjectDetail() {
                 <Section title="External links">
                   <div className="grid gap-2">
                     {project.externalLinks.map((link) => (
-                      <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-[#13aff0]">
+                      <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-zinc-200 hover:text-white">
                         {link.label} <ExternalLink size={15} />
                       </a>
                     ))}

@@ -11,8 +11,8 @@ function ThreeDProjectCard({ project }) {
       to={`/3d/projects/${project.slug}`}
       className="group block focus:outline-none focus:ring-2 focus:ring-sky-300/60"
     >
-      <article className="overflow-hidden rounded-2xl border border-white/[0.07] bg-[#15181d] shadow-2xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-white/15 hover:bg-[#1b1f26]">
-        <div className="relative aspect-[4/3] overflow-hidden bg-[#1b1f26]">
+      <article className="overflow-hidden rounded-2xl border border-white/[0.065] bg-[#111214] shadow-2xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-white/14 hover:bg-[#17181b]">
+        <div className="relative aspect-[4/3] overflow-hidden bg-[#17181b]">
           <ThreeDImageFrame
             src={project.thumbnailUrl || project.thumbnail_url}
             alt={`${project.title} thumbnail`}
@@ -22,7 +22,7 @@ function ThreeDProjectCard({ project }) {
           <div className="absolute inset-0 bg-black/30 opacity-0 transition duration-300 group-hover:opacity-100" />
 
           {project.featured && (
-            <span className="absolute left-3 top-3 rounded-full bg-[#13aff0] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-[#061018] shadow-lg shadow-sky-500/20">
+            <span className="absolute left-3 top-3 rounded-full bg-zinc-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-[#070809] shadow-lg shadow-white/10">
               Featured
             </span>
           )}
@@ -34,7 +34,7 @@ function ThreeDProjectCard({ project }) {
           </div>
 
           <div className="absolute inset-x-0 bottom-0 p-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-200">{category || '3D Artwork'}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-100/85">{category || '3D Artwork'}</p>
             <h2 className="mt-1 line-clamp-2 text-base font-black leading-tight text-white">{project.title}</h2>
           </div>
         </div>
