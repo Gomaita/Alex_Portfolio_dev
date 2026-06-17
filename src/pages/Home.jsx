@@ -26,6 +26,16 @@ const techStack = [
   ['Vite', 'Vite_PNG.png'],
 ]
 
+const softwareIconModules = import.meta.glob('../assets/icons/software/*.png', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+})
+
+const softwareIcons = Object.fromEntries(
+  Object.entries(softwareIconModules).map(([path, url]) => [path.split('/').pop(), url]),
+)
+
 const capabilities = [
   {
     title: 'Interfaces',
@@ -94,17 +104,11 @@ const hubCards = [
 ]
 
 function TechIconChip({ label, file }) {
+  const icon = softwareIcons[file]
+
   return (
     <span className="group inline-flex h-9 items-center gap-2 rounded-full border border-white/10 bg-white/[0.055] px-3 text-xs font-semibold text-slate-200 shadow-sm shadow-black/10 backdrop-blur transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.085]">
-      <img
-        src={`/icons/software/${file}`}
-        alt=""
-        aria-hidden="true"
-        className="h-4 w-4 object-contain"
-        onError={(event) => {
-          event.currentTarget.style.display = 'none'
-        }}
-      />
+      {icon && <img src={icon} alt="" aria-hidden="true" className="h-4 w-4 object-contain" />}
       {label}
     </span>
   )
