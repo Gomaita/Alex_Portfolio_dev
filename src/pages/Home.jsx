@@ -1,204 +1,407 @@
-import { ArrowRight } from 'lucide-react'
-import Button from '../components/ui/Button'
-import Card from '../components/ui/Card'
-import Badge from '../components/ui/Badge'
-import PageHeader from '../components/ui/PageHeader'
-import Section from '../components/ui/Section'
-import CVDownloads from '../components/ui/CVDownloads'
-import FlagshipLabCard from '../components/home/FlagshipLabCard'
-import ProjectCard from '../components/project/ProjectCard'
+import { ArrowRight, Code2, Contact, Database, Download, ExternalLink, Layers3, LockKeyhole, MonitorSmartphone, Palette, Sparkles } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import ProjectPreviewFrame from '../components/software/ProjectPreviewFrame'
+import StackBadge from '../components/software/StackBadge'
+import { cvOptions } from '../components/ui/CVDownloads'
 import { projects } from '../data/projects'
 import usePageTitle from '../hooks/usePageTitle'
 
-const buildCards = [
+const techStack = [
+  ['React', 'React_PNG.png'],
+  ['JavaScript', 'JavaScript_PNG.png'],
+  ['TypeScript', 'TypeScript_PNG.png'],
+  ['HTML5', 'HTML5_PNG.png'],
+  ['CSS3', 'CSS3_PNG.png'],
+  ['Node.js', 'Node_PNG.png'],
+  ['SQL', 'SQL_PNG.png'],
+  ['Oracle', 'Oracle_PNG.png'],
+  ['Java', 'Java_PNG.png'],
+  ['C#', 'CSharp_PNG.png'],
+  ['Git', 'Git_PNG.png'],
+  ['GitHub', 'GitHub_PNG.png'],
+  ['Cloudflare', 'Cloudflare_PNG.png'],
+  ['APIs', 'API_PNG.png'],
+  ['Vite', 'Vite_PNG.png'],
+]
+
+const capabilities = [
   {
-    title: 'API-driven interfaces',
-    text: 'Small dashboards and tools that fetch, format and display external data.',
+    title: 'Interfaces',
+    text: 'Clean React layouts with polished responsive interactions.',
+    icon: MonitorSmartphone,
   },
   {
-    title: 'CRUD and state-based tools',
-    text: 'Interactive demos with forms, filters, localStorage and predictable UI states.',
+    title: 'Data Apps',
+    text: 'CRUD flows, dashboards, SQL logic and structured UX.',
+    icon: Database,
   },
   {
-    title: 'Developer learning resources',
-    text: 'Cheatsheets and small utilities designed to reinforce programming concepts.',
+    title: 'Secure Flows',
+    text: 'Roles, permissions, validation and admin/user views.',
+    icon: LockKeyhole,
+  },
+  {
+    title: 'Creative Frontend',
+    text: 'Software development with a visual and 3D design eye.',
+    icon: Palette,
   },
 ]
 
-const focusGroups = [
+const featuredProjectData = [
   {
-    title: 'Frontend',
-    items: ['React', 'JavaScript', 'TypeScript', 'HTML', 'CSS', 'Tailwind'],
+    slug: 'nutricore',
+    line: 'Nutrition and workout platform with user/admin roles.',
+    accent: 'from-emerald-400/18 to-lime-300/6',
   },
   {
-    title: 'Data / backend basics',
-    items: ['SQL', 'Java', 'REST APIs', 'Data handling'],
+    slug: 'project-manager-crud',
+    line: 'CRUD-based project workflow with approval states.',
+    accent: 'from-orange-400/18 to-amber-300/6',
   },
   {
-    title: 'Tools',
-    items: ['Git', 'Vite', 'npm', 'VS Code'],
+    slug: 'secure-users-roles-demo',
+    line: 'Role-based interface for users, permissions and access control.',
+    accent: 'from-violet-400/18 to-fuchsia-300/6',
   },
   {
-    title: 'Creative technical background',
-    items: ['Unity', 'Unreal Engine', 'VR', 'Shaders', 'Real-time environments'],
+    slug: 'sql-query-playground',
+    line: 'Interactive SQL query interface with structured result previews.',
+    accent: 'from-cyan-400/18 to-blue-300/6',
   },
 ]
 
-function Home() {
-  usePageTitle('Alex Gómez | Junior Software Developer')
+const hubCards = [
+  {
+    title: 'Software Projects',
+    text: 'Interactive apps and technical demos.',
+    href: '/portfolio',
+    icon: Code2,
+  },
+  {
+    title: '3D Portfolio',
+    text: 'Props, environments and real-time assets.',
+    href: '/3d',
+    icon: Layers3,
+  },
+  {
+    title: 'Contact',
+    text: 'Open to junior developer opportunities.',
+    href: '/contact',
+    icon: Contact,
+  },
+]
 
-  const selectedProjectSlugs = [
-    'api-health-monitor',
-    'd1-database-metrics',
-    'secure-users-roles-demo',
-    'sql-query-playground',
-  ]
-  const selectedProjects = selectedProjectSlugs
-    .map((slug) => projects.find((project) => project.slug === slug))
-    .filter(Boolean)
+function TechIconChip({ label, file }) {
+  return (
+    <span className="group inline-flex h-9 items-center gap-2 rounded-full border border-white/10 bg-white/[0.055] px-3 text-xs font-semibold text-slate-200 shadow-sm shadow-black/10 backdrop-blur transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.085]">
+      <img
+        src={`/icons/software/${file}`}
+        alt=""
+        aria-hidden="true"
+        className="h-4 w-4 object-contain"
+        onError={(event) => {
+          event.currentTarget.style.display = 'none'
+        }}
+      />
+      {label}
+    </span>
+  )
+}
+
+function AnimatedTechBackground() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.055)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(circle_at_center,black,transparent_74%)]" />
+      <div className="motion-safe:animate-pulse absolute left-[12%] top-[16%] h-60 w-60 rounded-full bg-cyan-400/10 blur-3xl" />
+      <div className="motion-safe:animate-pulse absolute bottom-[10%] right-[10%] h-72 w-72 rounded-full bg-violet-400/10 blur-3xl" />
+      <div className="absolute left-1/2 top-0 h-px w-[70%] -translate-x-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+    </div>
+  )
+}
+
+function MiniChart() {
+  const bars = ['h-8', 'h-14', 'h-10', 'h-16', 'h-12', 'h-20']
+  return (
+    <div className="flex h-24 items-end gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
+      {bars.map((height, index) => (
+        <span
+          key={height + index}
+          className={`${height} flex-1 rounded-t-lg bg-gradient-to-t from-cyan-400/70 to-white/80`}
+        />
+      ))}
+    </div>
+  )
+}
+
+function FloatingInterfaceShowcase() {
+  const shouldReduceMotion = useReducedMotion()
+  const motionProps = shouldReduceMotion
+    ? { initial: false, animate: false, transition: { duration: 0 } }
+    : null
 
   return (
-    <>
-      <section className="bg-[#F6F8FB] px-5 py-16 sm:px-6 lg:px-8 dark:bg-slate-950">
-        <div className="mx-auto flex min-h-[calc(100svh-4rem)] max-w-6xl items-center py-8">
-          <div className="max-w-5xl">
-            <Badge tone="blue">
-              Junior Software Developer - Multimedia Engineering background
-            </Badge>
-            <h1 className="mt-7 max-w-5xl text-6xl font-bold tracking-normal text-slate-950 sm:text-7xl lg:text-8xl dark:text-white">
-              Welcome to my developer portfolio.
-            </h1>
-            <p className="mt-8 max-w-4xl text-xl leading-9 text-slate-600 sm:text-2xl sm:leading-10 dark:text-slate-300">
-              I am Alex Gomez, a junior software developer with a Multimedia
-              Engineering background. I built this portfolio to show practical
-              projects with React, APIs, SQL, Cloudflare backend functions,
-              security simulations and Web3 learning labs.
-            </p>
-            <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-500 dark:text-slate-400">
-              Before focusing on software, I worked around 3D environments, VR
-              and real-time tools. That background helps me care about visual
-              clarity, structure and how people interact with what I build.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button to="/portfolio" variant="primary">
-                View projects <ArrowRight size={17} />
-              </Button>
-              <Button to="/cheatsheets">Explore cheatsheets</Button>
+    <div className="relative mx-auto h-[28rem] max-w-xl lg:mx-0">
+      <motion.div
+        initial={motionProps ? false : { opacity: 0, y: 20, rotate: -2 }}
+        animate={motionProps ? false : { opacity: 1, y: 0, rotate: -2 }}
+        transition={motionProps ? { duration: 0 } : { duration: 0.7 }}
+        className="absolute left-2 top-6 w-72 rounded-[1.5rem] border border-white/12 bg-white/[0.075] p-4 shadow-2xl shadow-black/35 backdrop-blur-xl"
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <span className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Dashboard</span>
+          <span className="rounded-full bg-emerald-400/15 px-2 py-1 text-[10px] font-bold text-emerald-200">Live</span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="rounded-2xl bg-white/[0.07] p-3">
+            <p className="text-xs text-slate-400">API Status</p>
+            <p className="mt-1 text-lg font-black text-white">Connected</p>
+          </div>
+          <div className="rounded-2xl bg-white/[0.07] p-3">
+            <p className="text-xs text-slate-400">Latency</p>
+            <p className="mt-1 text-lg font-black text-white">82ms</p>
+          </div>
+        </div>
+        <div className="mt-3">
+          <MiniChart />
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={motionProps ? false : { opacity: 0, y: 18, rotate: 3 }}
+        animate={motionProps ? false : { opacity: 1, y: 0, rotate: 3 }}
+        transition={motionProps ? { duration: 0 } : { duration: 0.7, delay: 0.12 }}
+        className="absolute right-0 top-28 w-72 rounded-[1.5rem] border border-white/12 bg-[#111827]/90 p-4 shadow-2xl shadow-cyan-950/35 backdrop-blur-xl"
+      >
+        <div className="flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-rose-400" />
+          <span className="h-3 w-3 rounded-full bg-amber-300" />
+          <span className="h-3 w-3 rounded-full bg-emerald-400" />
+        </div>
+        <pre className="mt-4 overflow-hidden rounded-2xl bg-black/35 p-4 text-xs leading-6 text-slate-300">
+          <code>{`const app = buildUI({
+  stack: "React",
+  data: "SQL + APIs",
+  deploy: "Cloudflare"
+})`}</code>
+        </pre>
+      </motion.div>
+
+      <motion.div
+        initial={motionProps ? false : { opacity: 0, y: 18 }}
+        animate={motionProps ? false : { opacity: 1, y: 0 }}
+        transition={motionProps ? { duration: 0 } : { duration: 0.7, delay: 0.24 }}
+        className="absolute bottom-6 left-10 w-80 rounded-[1.35rem] border border-white/12 bg-white/[0.07] p-4 shadow-2xl shadow-black/30 backdrop-blur-xl"
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-sm font-bold text-white">Users & Roles</p>
+          <span className="rounded-full border border-violet-300/20 bg-violet-300/10 px-2 py-1 text-[10px] font-bold text-violet-100">Admin</span>
+        </div>
+        {['Alex / Developer', 'Client / Viewer', 'Coach / Editor'].map((row) => (
+          <div key={row} className="flex items-center justify-between border-t border-white/8 py-2 text-xs">
+            <span className="text-slate-300">{row}</span>
+            <span className="text-slate-500">Active</span>
+          </div>
+        ))}
+      </motion.div>
+
+      <div className="absolute right-8 top-4 rounded-full border border-white/12 bg-white/[0.07] px-4 py-2 text-xs font-bold text-slate-200 shadow-xl backdrop-blur">
+        Cloudflare Deploy
+      </div>
+      <div className="absolute bottom-0 right-16 rounded-full border border-white/12 bg-white/[0.07] px-4 py-2 text-xs font-bold text-slate-200 shadow-xl backdrop-blur">
+        SQL Query
+      </div>
+    </div>
+  )
+}
+
+function CapabilityCard({ capability }) {
+  const Icon = capability.icon
+  return (
+    <article className="group rounded-[1.5rem] border border-white/10 bg-white/[0.055] p-5 shadow-xl shadow-black/10 backdrop-blur transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.08]">
+      <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] text-cyan-100">
+        <Icon size={21} />
+      </span>
+      <h3 className="mt-4 text-lg font-bold text-white">{capability.title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-400">{capability.text}</p>
+    </article>
+  )
+}
+
+function FeaturedProjectPreview({ item, index }) {
+  const project = projects.find((entry) => entry.slug === item.slug)
+  if (!project) return null
+  const stack = (project.technologies || []).slice(0, 3)
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.25 }}
+      transition={{ duration: 0.36, delay: index * 0.04 }}
+      className="group overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#0f172a]/70 p-3 shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
+    >
+      <div className={`rounded-[1.25rem] bg-gradient-to-br ${item.accent} p-3`}>
+        <ProjectPreviewFrame project={project} />
+      </div>
+      <div className="p-3">
+        <h3 className="text-lg font-black text-white">{project.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-slate-400">{item.line}</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {stack.map((tech) => (
+            <StackBadge key={tech} project={project}>{tech}</StackBadge>
+          ))}
+        </div>
+        <Link
+          to={`/portfolio/${project.slug}`}
+          className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-cyan-100 transition hover:text-white"
+        >
+          View Project <ArrowRight size={15} />
+        </Link>
+      </div>
+    </motion.article>
+  )
+}
+
+function HubCard({ card }) {
+  const Icon = card.icon
+  return (
+    <Link
+      to={card.href}
+      className="group rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-5 shadow-xl shadow-black/10 transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.075]"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/[0.08] text-slate-100">
+          <Icon size={21} />
+        </span>
+        <ArrowRight className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-slate-200" size={18} />
+      </div>
+      <h3 className="mt-5 text-lg font-bold text-white">{card.title}</h3>
+      <p className="mt-2 text-sm leading-6 text-slate-400">{card.text}</p>
+    </Link>
+  )
+}
+
+function Home() {
+  usePageTitle('Alex G\u00f3mez | Junior Software Developer')
+
+  return (
+    <div className="bg-[#05070d] text-white">
+      <section className="relative overflow-hidden px-5 py-12 sm:px-6 lg:px-8">
+        <AnimatedTechBackground />
+        <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 py-8 lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-slate-300 backdrop-blur">
+              <Sparkles size={14} className="text-cyan-200" />
+              Creative Frontend Developer
             </div>
-            <CVDownloads layout="inline" className="mt-5" />
+            <h1 className="mt-7 text-5xl font-black tracking-tight text-white sm:text-7xl lg:text-8xl">
+              Alex G&oacute;mez
+              <span className="mt-2 block bg-gradient-to-r from-white via-slate-200 to-slate-500 bg-clip-text text-3xl text-transparent sm:text-5xl lg:text-6xl">
+                Junior Software Developer
+              </span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+              Building clean, interactive and visual web experiences with React, databases and product-focused interfaces.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link
+                to="/portfolio"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-black text-slate-950 shadow-xl shadow-white/10 transition hover:-translate-y-0.5 hover:bg-slate-100"
+              >
+                View Projects <ArrowRight size={16} />
+              </Link>
+              <Link
+                to="/3d"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-5 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/[0.1]"
+              >
+                View 3D Portfolio <Layers3 size={16} />
+              </Link>
+              <Link
+                to="/contact"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.035] px-5 text-sm font-bold text-slate-200 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/[0.08]"
+              >
+                Contact <ExternalLink size={15} />
+              </Link>
+              {cvOptions[0] && (
+                <a
+                  href={cvOptions[0].href}
+                  download
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.035] px-5 text-sm font-bold text-slate-200 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/[0.08]"
+                >
+                  Download CV <Download size={15} />
+                </a>
+              )}
+            </div>
+          </div>
+
+          <FloatingInterfaceShowcase />
+        </div>
+      </section>
+
+      <section className="relative border-y border-white/8 bg-[#070a12] px-5 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-2.5">
+          {techStack.map(([label, file]) => (
+            <TechIconChip key={label} label={label} file={file} />
+          ))}
+        </div>
+      </section>
+
+      <section className="px-5 py-14 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-4 md:grid-cols-4">
+            {capabilities.map((capability) => (
+              <CapabilityCard key={capability.title} capability={capability} />
+            ))}
           </div>
         </div>
       </section>
 
-      <Section>
-        <PageHeader
-          eyebrow="What I build"
-          title="Small projects with complete flows"
-          description="I use focused projects to practice the parts of frontend work that matter in real applications."
-        />
-        <div className="grid gap-5 md:grid-cols-3">
-          {buildCards.map((card) => (
-            <Card key={card.title} className="p-6" variant="interactive">
-              <h2 className="text-xl font-bold text-slate-950 dark:text-white">{card.title}</h2>
-              <p className="mt-3 leading-7 text-slate-600 dark:text-slate-300">{card.text}</p>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      <Section className="bg-white dark:bg-slate-900">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <PageHeader
-            eyebrow="Selected projects"
-            title="A few practical demos"
-            description="No full demos on the home page. Just a quick path into the project pages."
-          />
-          <Button to="/portfolio" className="mb-10 w-fit">
-            Browse portfolio <ArrowRight size={17} />
-          </Button>
-        </div>
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {selectedProjects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
-          ))}
-        </div>
-      </Section>
-
-      <Section>
-        <PageHeader
-          eyebrow="Flagship labs"
-          title="Two larger learning projects"
-          description="These sections have their own app-style interface, while the Home preview stays aligned with the rest of the portfolio."
-        />
-        <div className="grid gap-6 lg:grid-cols-2">
-          <FlagshipLabCard
-            title="Security Lab"
-            subtitle="Security Operations Center Lite"
-            description="A defensive security simulation focused on firewall-style rules, request analysis, incident review and risk scoring."
-            href="/security-lab"
-            label="Defensive security"
-            accent="cyan"
-            bullets={['Traffic monitor', 'Firewall rules', 'Request simulator', 'Incident workflow']}
-            metrics={['Simulated SOC', 'Privacy-safe data', 'Risk scoring']}
-          />
-          <FlagshipLabCard
-            title="Blockchain Lab"
-            subtitle="Smart Escrow & Contract Security"
-            description="A Web3 learning dashboard focused on escrow states, role permissions, transaction logs and smart contract security concepts."
-            href="/blockchain-lab"
-            label="Web3 learning"
-            accent="violet"
-            bullets={['Escrow simulator', 'Contract state machine', 'Solidity preview', 'Risk analyzer']}
-            metrics={['No real wallets', 'State machine', 'Contract notes']}
-          />
-        </div>
-      </Section>
-
-      <Section>
-        <PageHeader
-          eyebrow="Technical focus"
-          title="The areas I am practicing"
-          description="A mix of frontend fundamentals, data handling and the creative technical background I bring from 3D and VR."
-        />
-        <div className="grid gap-5 md:grid-cols-2">
-          {focusGroups.map((group) => (
-            <Card key={group.title} className="p-6" variant="interactive">
-              <h2 className="text-lg font-bold text-slate-950 dark:text-white">{group.title}</h2>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {group.items.map((item) => (
-                  <Badge key={item} tone="neutral">
-                    {item}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
-          ))}
-        </div>
-      </Section>
-
-      <Section className="bg-white dark:bg-slate-900">
-        <Card className="p-6 sm:p-8">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <section className="px-5 pb-14 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 className="text-3xl font-bold text-slate-950 dark:text-white">
-                Want to see how it works?
-              </h2>
-              <p className="mt-3 max-w-2xl leading-7 text-slate-600 dark:text-slate-300">
-                The portfolio includes small, complete demos focused on real
-                frontend problems: fetching data, handling errors, forms,
-                routing and reusable components.
-              </p>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-cyan-100/70">Featured Projects</p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">Product-style demos</h2>
             </div>
-            <div className="flex flex-wrap gap-3">
-              <Button to="/portfolio" variant="primary">
-                Browse portfolio
-              </Button>
-              <Button to="/contact">Contact me</Button>
-            </div>
+            <Link to="/portfolio" className="inline-flex w-fit items-center gap-2 text-sm font-bold text-cyan-100 transition hover:text-white">
+              Browse all projects <ArrowRight size={15} />
+            </Link>
           </div>
-        </Card>
-      </Section>
-    </>
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {featuredProjectData.map((item, index) => (
+              <FeaturedProjectPreview key={item.slug} item={item} index={index} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 pb-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 shadow-2xl shadow-black/20 backdrop-blur sm:p-6">
+          <div className="grid gap-4 md:grid-cols-4">
+            {hubCards.map((card) => (
+              <HubCard key={card.title} card={card} />
+            ))}
+            {cvOptions[0] && (
+              <a
+                href={cvOptions[0].href}
+                download
+                className="group rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-5 shadow-xl shadow-black/10 transition hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.075]"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-white/[0.08] text-slate-100">
+                    <Download size={21} />
+                  </span>
+                  <ArrowRight className="text-slate-500 transition group-hover:translate-x-1 group-hover:text-slate-200" size={18} />
+                </div>
+                <h3 className="mt-5 text-lg font-bold text-white">CV</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-400">Download my software developer CV.</p>
+              </a>
+            )}
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }
 
