@@ -1,6 +1,7 @@
 import { ArrowRight, Code2, Contact, Database, Download, ExternalLink, Layers3, LockKeyhole, MonitorSmartphone, Palette, Sparkles } from 'lucide-react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import InteractiveHomeBackground from '../components/home/InteractiveHomeBackground'
 import ProjectPreviewFrame from '../components/software/ProjectPreviewFrame'
 import StackBadge from '../components/software/StackBadge'
 import { cvOptions } from '../components/ui/CVDownloads'
@@ -106,17 +107,6 @@ function TechIconChip({ label, file }) {
       />
       {label}
     </span>
-  )
-}
-
-function AnimatedTechBackground() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.055)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:radial-gradient(circle_at_center,black,transparent_74%)]" />
-      <div className="motion-safe:animate-pulse absolute left-[12%] top-[16%] h-60 w-60 rounded-full bg-cyan-400/10 blur-3xl" />
-      <div className="motion-safe:animate-pulse absolute bottom-[10%] right-[10%] h-72 w-72 rounded-full bg-violet-400/10 blur-3xl" />
-      <div className="absolute left-1/2 top-0 h-px w-[70%] -translate-x-1/2 bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-    </div>
   )
 }
 
@@ -288,7 +278,7 @@ function Home() {
   return (
     <div className="bg-[#05070d] text-white">
       <section className="relative overflow-hidden px-5 py-12 sm:px-6 lg:px-8">
-        <AnimatedTechBackground />
+        <InteractiveHomeBackground />
         <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 py-8 lg:grid-cols-[0.92fr_1.08fr]">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-slate-300 backdrop-blur">
