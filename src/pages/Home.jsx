@@ -165,36 +165,33 @@ function Home() {
   usePageTitle('Alex G\u00f3mez | Junior Software Developer')
 
   return (
-    <div className="bg-[#05070d] text-white">
-      <section className="relative overflow-hidden px-5 py-12 sm:px-6 lg:px-8">
+    <div className="bg-[#030409] text-white">
+      <section className="relative overflow-hidden px-5 py-10 sm:px-6 lg:px-8">
         <InteractiveHomeBackground />
-        <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 py-8 lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 py-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="max-w-3xl">
             <h1 className="text-5xl font-black tracking-tight text-white sm:text-7xl lg:text-8xl">
               Alex G&oacute;mez
-              <span className="mt-2 block bg-gradient-to-r from-white via-slate-200 to-slate-500 bg-clip-text text-3xl text-transparent sm:text-5xl lg:text-6xl">
+              <span className="mt-3 block bg-gradient-to-r from-white via-slate-200 to-slate-500 bg-clip-text text-3xl text-transparent sm:text-5xl lg:text-6xl">
                 Junior Software Developer
               </span>
             </h1>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-              Building clean, interactive and visual web experiences with React, databases and product-focused interfaces.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-7 flex flex-wrap gap-3 sm:mt-8">
               <Link
                 to="/portfolio"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-black text-slate-950 shadow-xl shadow-white/10 transition hover:-translate-y-0.5 hover:bg-slate-100"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-5 text-sm font-black text-slate-950 shadow-xl shadow-white/10 transition hover:-translate-y-0.5 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
               >
                 View Projects <ArrowRight size={16} />
               </Link>
               <Link
                 to="/3d"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-5 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/[0.1]"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.055] px-5 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.095] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
               >
                 View 3D Portfolio <Layers3 size={16} />
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.035] px-5 text-sm font-bold text-slate-200 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/[0.08]"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.032] px-5 text-sm font-bold text-slate-200 backdrop-blur transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.075] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
               >
                 Contact <ExternalLink size={15} />
               </Link>
@@ -202,7 +199,7 @@ function Home() {
                 <a
                   href={cvOptions[0].href}
                   download
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.035] px-5 text-sm font-bold text-slate-200 backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/[0.08]"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.032] px-5 text-sm font-bold text-slate-200 backdrop-blur transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.075] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-200"
                 >
                   Download CV <Download size={15} />
                 </a>
@@ -210,15 +207,12 @@ function Home() {
             </div>
           </div>
 
-          <div className="mx-auto w-full max-w-xl rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl sm:p-6">
+          <div className="mx-auto w-full max-w-xl rounded-[2.2rem] border border-white/[0.08] bg-[#0a0d13]/70 p-5 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-100/70">Core stack</p>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-100/65">Core stack</p>
                 <h2 className="mt-2 text-2xl font-black tracking-tight text-white">Tools I build with</h2>
               </div>
-              <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-100">
-                Local PNG icons
-              </span>
             </div>
             <TechStackCloud />
           </div>
