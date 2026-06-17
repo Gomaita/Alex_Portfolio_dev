@@ -10,36 +10,41 @@ function InteractiveHomeBackground() {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reducedMotion) return undefined
 
-    let frame = 0
-    let targetX = 50
-    let targetY = 40
-    let currentX = 50
-    let currentY = 40
-    let currentScroll = 0
+    let frame = null
+    let mouseX = 50
+    let mouseY = 40
 
-    function update() {
-      currentX += (targetX - currentX) * 0.08
-      currentY += (targetY - currentY) * 0.08
-      currentScroll += ((window.scrollY || 0) - currentScroll) * 0.04
+    function applyVariables() {
+      frame = null
 
-      root.style.setProperty('--home-mouse-x', `${currentX}%`)
-      root.style.setProperty('--home-mouse-y', `${currentY}%`)
-      root.style.setProperty('--home-scroll', `${Math.min(currentScroll * 0.035, 34)}px`)
+      root.style.setProperty('--home-mouse-x', `${mouseX}%`)
+      root.style.setProperty('--home-mouse-y', `${mouseY}%`)
+      root.style.setProperty('--home-scroll', `${Math.min((window.scrollY || 0) * 0.025, 24)}px`)
+    }
 
-      frame = requestAnimationFrame(update)
+    function scheduleUpdate() {
+      if (frame !== null) return
+      frame = requestAnimationFrame(applyVariables)
     }
 
     function handlePointerMove(event) {
-      targetX = (event.clientX / window.innerWidth) * 100
-      targetY = (event.clientY / window.innerHeight) * 100
+      mouseX = (event.clientX / window.innerWidth) * 100
+      mouseY = (event.clientY / window.innerHeight) * 100
+      scheduleUpdate()
     }
 
+    function handleScroll() {
+      scheduleUpdate()
+    }
+
+    applyVariables()
     window.addEventListener('pointermove', handlePointerMove, { passive: true })
-    frame = requestAnimationFrame(update)
+    window.addEventListener('scroll', handleScroll, { passive: true })
 
     return () => {
       window.removeEventListener('pointermove', handlePointerMove)
-      cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', handleScroll)
+      if (frame !== null) cancelAnimationFrame(frame)
     }
   }, [])
 

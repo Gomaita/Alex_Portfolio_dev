@@ -134,15 +134,15 @@ html {
   }
 
   .interactive-home-background__aurora {
-    width: 46rem;
-    height: 46rem;
+    width: 38rem;
+    height: 38rem;
     inset: auto;
     border-radius: 9999px;
-    filter: blur(64px);
-    opacity: 0.34;
+    filter: blur(46px);
+    opacity: 0.28;
     mix-blend-mode: screen;
     transform: translate3d(0, var(--home-scroll), 0);
-    animation: home-aurora-drift 18s ease-in-out infinite alternate;
+    animation: home-aurora-drift 28s ease-in-out infinite alternate;
   }
 
   .interactive-home-background__aurora--cyan {
@@ -173,8 +173,8 @@ html {
         rgba(34, 211, 238, 0.08) 11rem,
         transparent 28rem
       );
-    opacity: 0.9;
-    transition: opacity 220ms ease;
+    opacity: 0.78;
+    transition: background-position 180ms ease, opacity 220ms ease;
   }
 
   .interactive-home-background__lines {
@@ -184,7 +184,7 @@ html {
       linear-gradient(115deg, transparent 18%, rgba(255, 255, 255, 0.09) 18.25%, transparent 18.65%),
       linear-gradient(145deg, transparent 55%, rgba(34, 211, 238, 0.08) 55.2%, transparent 55.55%),
       linear-gradient(35deg, transparent 74%, rgba(168, 85, 247, 0.075) 74.2%, transparent 74.55%);
-    opacity: 0.48;
+    opacity: 0.3;
     transform: translate3d(0, calc(var(--home-scroll) * -0.35), 0);
     mask-image: radial-gradient(circle at center, black, transparent 72%);
   }
@@ -212,8 +212,8 @@ html {
     }
 
     .interactive-home-background__aurora {
-      opacity: 0.24;
-      filter: blur(72px);
+      opacity: 0.18;
+      filter: blur(52px);
     }
 
     .interactive-home-background__lines {

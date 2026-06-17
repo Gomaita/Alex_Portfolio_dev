@@ -140,6 +140,13 @@ export default function ThreeDHome() {
                 Contact Me
                 <Mail size={15} />
               </Link>
+              <Link
+                to="/"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.025] px-5 py-3 text-sm font-semibold text-zinc-300 transition hover:-translate-y-0.5 hover:bg-white/[0.065] hover:text-zinc-50"
+              >
+                Software Portfolio
+                <ArrowRight size={15} />
+              </Link>
             </div>
           </div>
         </div>

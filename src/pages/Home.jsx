@@ -3,8 +3,6 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import InteractiveHomeBackground from '../components/home/InteractiveHomeBackground'
 import TechStackCloud from '../components/home/TechStackCloud'
-import ProjectPreviewFrame from '../components/software/ProjectPreviewFrame'
-import StackBadge from '../components/software/StackBadge'
 import { cvOptions } from '../components/ui/CVDownloads'
 import { projects } from '../data/projects'
 import usePageTitle from '../hooks/usePageTitle'
@@ -37,21 +35,25 @@ const featuredProjectData = [
     slug: 'nutricore',
     line: 'Nutrition and workout platform with user/admin roles.',
     accent: 'from-emerald-400/18 to-lime-300/6',
+    icon: MonitorSmartphone,
   },
   {
     slug: 'project-manager-crud',
     line: 'CRUD-based project workflow with approval states.',
     accent: 'from-orange-400/18 to-amber-300/6',
+    icon: Layers3,
   },
   {
     slug: 'secure-users-roles-demo',
     line: 'Role-based interface for users, permissions and access control.',
     accent: 'from-violet-400/18 to-fuchsia-300/6',
+    icon: LockKeyhole,
   },
   {
     slug: 'sql-query-playground',
     line: 'Interactive SQL query interface with structured result previews.',
     accent: 'from-cyan-400/18 to-blue-300/6',
+    icon: Database,
   },
 ]
 
@@ -93,6 +95,7 @@ function FeaturedProjectPreview({ item, index }) {
   const project = projects.find((entry) => entry.slug === item.slug)
   if (!project) return null
   const stack = (project.technologies || []).slice(0, 3)
+  const Icon = item.icon
 
   return (
     <motion.article
@@ -102,15 +105,30 @@ function FeaturedProjectPreview({ item, index }) {
       transition={{ duration: 0.36, delay: index * 0.04 }}
       className="group overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#0f172a]/70 p-3 shadow-2xl shadow-black/20 transition hover:-translate-y-1 hover:border-white/20"
     >
-      <div className={`rounded-[1.25rem] bg-gradient-to-br ${item.accent} p-3`}>
-        <ProjectPreviewFrame project={project} />
+      <div className={`relative aspect-[16/10] overflow-hidden rounded-[1.25rem] bg-gradient-to-br ${item.accent} p-5`}>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.18),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_55%)]" />
+        <div className="relative flex h-full flex-col justify-between">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.09] text-white shadow-xl shadow-black/10">
+            <Icon size={24} />
+          </span>
+          <div className="space-y-2">
+            <div className="h-2 w-3/4 rounded-full bg-white/25" />
+            <div className="h-2 w-1/2 rounded-full bg-white/15" />
+            <div className="flex gap-2 pt-2">
+              <span className="h-7 w-16 rounded-full bg-white/12" />
+              <span className="h-7 w-20 rounded-full bg-white/10" />
+            </div>
+          </div>
+        </div>
       </div>
       <div className="p-3">
         <h3 className="text-lg font-black text-white">{project.title}</h3>
         <p className="mt-2 text-sm leading-6 text-slate-400">{item.line}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {stack.map((tech) => (
-            <StackBadge key={tech} project={project}>{tech}</StackBadge>
+            <span key={tech} className="rounded-full border border-white/10 bg-white/[0.055] px-2.5 py-1 text-[11px] font-bold text-slate-300">
+              {tech}
+            </span>
           ))}
         </div>
         <Link
