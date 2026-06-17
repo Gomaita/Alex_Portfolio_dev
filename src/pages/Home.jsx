@@ -1,40 +1,13 @@
-import { ArrowRight, Code2, Contact, Database, Download, ExternalLink, Layers3, LockKeyhole, MonitorSmartphone, Palette, Sparkles } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { ArrowRight, Code2, Contact, Database, Download, ExternalLink, Layers3, LockKeyhole, MonitorSmartphone, Palette } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import InteractiveHomeBackground from '../components/home/InteractiveHomeBackground'
+import TechStackCloud from '../components/home/TechStackCloud'
 import ProjectPreviewFrame from '../components/software/ProjectPreviewFrame'
 import StackBadge from '../components/software/StackBadge'
 import { cvOptions } from '../components/ui/CVDownloads'
 import { projects } from '../data/projects'
 import usePageTitle from '../hooks/usePageTitle'
-
-const techStack = [
-  ['React', 'React_PNG.png'],
-  ['JavaScript', 'JavaScript_PNG.png'],
-  ['TypeScript', 'TypeScript_PNG.png'],
-  ['HTML5', 'HTML5_PNG.png'],
-  ['CSS3', 'CSS3_PNG.png'],
-  ['Node.js', 'Node_PNG.png'],
-  ['SQL', 'SQL_PNG.png'],
-  ['Oracle', 'Oracle_PNG.png'],
-  ['Java', 'Java_PNG.png'],
-  ['C#', 'CSharp_PNG.png'],
-  ['Git', 'Git_PNG.png'],
-  ['GitHub', 'GitHub_PNG.png'],
-  ['Cloudflare', 'Cloudflare_PNG.png'],
-  ['APIs', 'API_PNG.png'],
-  ['Vite', 'Vite_PNG.png'],
-]
-
-const softwareIconModules = import.meta.glob('../assets/icons/software/*.png', {
-  eager: true,
-  query: '?url',
-  import: 'default',
-})
-
-const softwareIcons = Object.fromEntries(
-  Object.entries(softwareIconModules).map(([path, url]) => [path.split('/').pop(), url]),
-)
 
 const capabilities = [
   {
@@ -102,112 +75,6 @@ const hubCards = [
     icon: Contact,
   },
 ]
-
-function TechIconChip({ label, file }) {
-  const icon = softwareIcons[file]
-
-  return (
-    <span className="group inline-flex h-9 items-center gap-2 rounded-full border border-white/10 bg-white/[0.055] px-3 text-xs font-semibold text-slate-200 shadow-sm shadow-black/10 backdrop-blur transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.085]">
-      {icon && <img src={icon} alt="" aria-hidden="true" className="h-4 w-4 object-contain" />}
-      {label}
-    </span>
-  )
-}
-
-function MiniChart() {
-  const bars = ['h-8', 'h-14', 'h-10', 'h-16', 'h-12', 'h-20']
-  return (
-    <div className="flex h-24 items-end gap-2 rounded-2xl border border-white/10 bg-black/20 p-4">
-      {bars.map((height, index) => (
-        <span
-          key={height + index}
-          className={`${height} flex-1 rounded-t-lg bg-gradient-to-t from-cyan-400/70 to-white/80`}
-        />
-      ))}
-    </div>
-  )
-}
-
-function FloatingInterfaceShowcase() {
-  const shouldReduceMotion = useReducedMotion()
-  const motionProps = shouldReduceMotion
-    ? { initial: false, animate: false, transition: { duration: 0 } }
-    : null
-
-  return (
-    <div className="relative mx-auto h-[28rem] max-w-xl lg:mx-0">
-      <motion.div
-        initial={motionProps ? false : { opacity: 0, y: 20, rotate: -2 }}
-        animate={motionProps ? false : { opacity: 1, y: 0, rotate: -2 }}
-        transition={motionProps ? { duration: 0 } : { duration: 0.7 }}
-        className="absolute left-2 top-6 w-72 rounded-[1.5rem] border border-white/12 bg-white/[0.075] p-4 shadow-2xl shadow-black/35 backdrop-blur-xl"
-      >
-        <div className="mb-4 flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-[0.22em] text-slate-400">Dashboard</span>
-          <span className="rounded-full bg-emerald-400/15 px-2 py-1 text-[10px] font-bold text-emerald-200">Live</span>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-white/[0.07] p-3">
-            <p className="text-xs text-slate-400">API Status</p>
-            <p className="mt-1 text-lg font-black text-white">Connected</p>
-          </div>
-          <div className="rounded-2xl bg-white/[0.07] p-3">
-            <p className="text-xs text-slate-400">Latency</p>
-            <p className="mt-1 text-lg font-black text-white">82ms</p>
-          </div>
-        </div>
-        <div className="mt-3">
-          <MiniChart />
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={motionProps ? false : { opacity: 0, y: 18, rotate: 3 }}
-        animate={motionProps ? false : { opacity: 1, y: 0, rotate: 3 }}
-        transition={motionProps ? { duration: 0 } : { duration: 0.7, delay: 0.12 }}
-        className="absolute right-0 top-28 w-72 rounded-[1.5rem] border border-white/12 bg-[#111827]/90 p-4 shadow-2xl shadow-cyan-950/35 backdrop-blur-xl"
-      >
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-rose-400" />
-          <span className="h-3 w-3 rounded-full bg-amber-300" />
-          <span className="h-3 w-3 rounded-full bg-emerald-400" />
-        </div>
-        <pre className="mt-4 overflow-hidden rounded-2xl bg-black/35 p-4 text-xs leading-6 text-slate-300">
-          <code>{`const app = buildUI({
-  stack: "React",
-  data: "SQL + APIs",
-  deploy: "Cloudflare"
-})`}</code>
-        </pre>
-      </motion.div>
-
-      <motion.div
-        initial={motionProps ? false : { opacity: 0, y: 18 }}
-        animate={motionProps ? false : { opacity: 1, y: 0 }}
-        transition={motionProps ? { duration: 0 } : { duration: 0.7, delay: 0.24 }}
-        className="absolute bottom-6 left-10 w-80 rounded-[1.35rem] border border-white/12 bg-white/[0.07] p-4 shadow-2xl shadow-black/30 backdrop-blur-xl"
-      >
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-sm font-bold text-white">Users & Roles</p>
-          <span className="rounded-full border border-violet-300/20 bg-violet-300/10 px-2 py-1 text-[10px] font-bold text-violet-100">Admin</span>
-        </div>
-        {['Alex / Developer', 'Client / Viewer', 'Coach / Editor'].map((row) => (
-          <div key={row} className="flex items-center justify-between border-t border-white/8 py-2 text-xs">
-            <span className="text-slate-300">{row}</span>
-            <span className="text-slate-500">Active</span>
-          </div>
-        ))}
-      </motion.div>
-
-      <div className="absolute right-8 top-4 rounded-full border border-white/12 bg-white/[0.07] px-4 py-2 text-xs font-bold text-slate-200 shadow-xl backdrop-blur">
-        Cloudflare Deploy
-      </div>
-      <div className="absolute bottom-0 right-16 rounded-full border border-white/12 bg-white/[0.07] px-4 py-2 text-xs font-bold text-slate-200 shadow-xl backdrop-blur">
-        SQL Query
-      </div>
-    </div>
-  )
-}
 
 function CapabilityCard({ capability }) {
   const Icon = capability.icon
@@ -285,11 +152,7 @@ function Home() {
         <InteractiveHomeBackground />
         <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 py-8 lg:grid-cols-[0.92fr_1.08fr]">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-slate-300 backdrop-blur">
-              <Sparkles size={14} className="text-cyan-200" />
-              Creative Frontend Developer
-            </div>
-            <h1 className="mt-7 text-5xl font-black tracking-tight text-white sm:text-7xl lg:text-8xl">
+            <h1 className="text-5xl font-black tracking-tight text-white sm:text-7xl lg:text-8xl">
               Alex G&oacute;mez
               <span className="mt-2 block bg-gradient-to-r from-white via-slate-200 to-slate-500 bg-clip-text text-3xl text-transparent sm:text-5xl lg:text-6xl">
                 Junior Software Developer
@@ -329,15 +192,18 @@ function Home() {
             </div>
           </div>
 
-          <FloatingInterfaceShowcase />
-        </div>
-      </section>
-
-      <section className="relative border-y border-white/8 bg-[#070a12] px-5 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-2.5">
-          {techStack.map(([label, file]) => (
-            <TechIconChip key={label} label={label} file={file} />
-          ))}
+          <div className="mx-auto w-full max-w-xl rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 shadow-2xl shadow-black/25 backdrop-blur-xl sm:p-6">
+            <div className="mb-5 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-100/70">Core stack</p>
+                <h2 className="mt-2 text-2xl font-black tracking-tight text-white">Tools I build with</h2>
+              </div>
+              <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-bold text-emerald-100">
+                Local PNG icons
+              </span>
+            </div>
+            <TechStackCloud />
+          </div>
         </div>
       </section>
 
