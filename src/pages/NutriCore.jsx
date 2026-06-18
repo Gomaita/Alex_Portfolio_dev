@@ -126,7 +126,7 @@ function WeightChart({ logs }) {
   }
 
   return (
-    <div className="h-64 w-full">
+    <div className="h-64 w-full min-w-0 overflow-hidden">
       <ResponsiveContainer>
         <LineChart data={logs}>
           <CartesianGrid stroke="rgba(255,255,255,0.08)" />
@@ -153,9 +153,9 @@ function AppShortcutCard({ title, description, Icon, indicator, onClick, tone = 
     <button
       type="button"
       onClick={onClick}
-      className="nutricore-shortcut group min-h-40 rounded-[1.7rem] p-4 text-left transition duration-200 hover:-translate-y-1 active:scale-[0.98]"
+      className="nutricore-shortcut group min-h-40 min-w-0 rounded-[1.7rem] p-4 text-left transition duration-200 hover:-translate-y-1 active:scale-[0.98]"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex min-w-0 items-start justify-between gap-3">
         <span className={cx('nutricore-icon-bubble', tone === 'cyan' && 'nutricore-icon-cyan', tone === 'amber' && 'nutricore-icon-amber')}>
           <Icon size={26} />
         </span>
@@ -169,7 +169,7 @@ function AppShortcutCard({ title, description, Icon, indicator, onClick, tone = 
 
 function MetricCard({ label, value, Icon, tone = 'green' }) {
   return (
-    <div className="nutricore-metric rounded-[1.4rem] p-4">
+    <div className="nutricore-metric min-w-0 rounded-[1.4rem] p-4">
       <div className="flex items-center justify-between gap-3">
         <span className={cx('nutricore-mini-icon', tone === 'cyan' && 'nutricore-icon-cyan', tone === 'amber' && 'nutricore-icon-amber')}>
           <Icon size={18} />
@@ -933,7 +933,7 @@ function NutriCore() {
           </section>
         </div>
 
-        <nav className="nutricore-bottom-nav fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 gap-1 rounded-3xl p-2 lg:hidden">
+        <nav className="nutricore-bottom-nav fixed bottom-3 z-40 grid grid-cols-5 gap-1 rounded-3xl p-2 lg:hidden">
           {tabs.slice(0, 5).map((tab) => {
             const Icon = tabMeta[tab]?.icon || Sparkles
             return (

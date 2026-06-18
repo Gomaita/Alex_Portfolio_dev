@@ -245,6 +245,7 @@ html {
     --nc-accent-2: #06b6d4;
     --nc-warning: #f59e0b;
     min-height: 100vh;
+    overflow-x: hidden;
     background:
       radial-gradient(circle at top left, rgba(16, 185, 129, 0.22), transparent 28%),
       radial-gradient(circle at top right, rgba(6, 182, 212, 0.16), transparent 26%),
@@ -271,6 +272,10 @@ html {
 
   .nutricore-app-shell {
     position: relative;
+    width: min(100%, 34rem);
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
   }
 
   .nutricore-app-shell > * {
@@ -280,7 +285,7 @@ html {
 
   @media (min-width: 768px) {
     .nutricore-app-shell {
-      padding-inline: 1.25rem;
+      padding-inline: clamp(0.75rem, 2vw, 1.25rem);
     }
 
     .nutricore-app-shell::before {
@@ -300,6 +305,14 @@ html {
       border-color: rgba(15, 23, 42, 0.1);
       background: rgba(255, 255, 255, 0.42);
       box-shadow: 0 34px 90px rgba(15, 23, 42, 0.14);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .nutricore-app-shell {
+      width: 100%;
+      padding-inline: 0;
+      overflow-x: hidden;
     }
   }
 
@@ -324,6 +337,10 @@ html {
   .nutricore-topbar,
   .nutricore-sidebar {
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
     border: 1px solid var(--nc-border);
     background: var(--nc-surface);
     color: var(--nc-text);
@@ -345,6 +362,9 @@ html {
   }
 
   .nutricore-input {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
     border: 1px solid var(--nc-border);
     background: var(--nc-surface-strong);
     color: var(--nc-text);
@@ -397,6 +417,10 @@ html {
   }
 
   .nutricore-bottom-nav {
+    left: 50%;
+    right: auto;
+    width: min(calc(100vw - 1.5rem), 32rem);
+    transform: translateX(-50%);
     border: 1px solid var(--nc-border);
     background: color-mix(in srgb, var(--nc-surface-strong) 94%, transparent);
     box-shadow: 0 18px 40px rgba(2, 6, 23, 0.24);
@@ -406,6 +430,11 @@ html {
   .nutricore-shortcut,
   .nutricore-metric,
   .nutricore-progress-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    overflow-wrap: anywhere;
     border: 1px solid var(--nc-border);
     background:
       radial-gradient(circle at top left, rgba(16, 185, 129, 0.08), transparent 42%),
@@ -417,6 +446,24 @@ html {
   .nutricore-shortcut:hover {
     border-color: rgba(16, 185, 129, 0.38);
     box-shadow: 0 18px 40px rgba(2, 6, 23, 0.14);
+  }
+
+  .nutricore-app :where(.grid, .flex, section, article, div, label) {
+    min-width: 0;
+  }
+
+  .nutricore-app :where(p, h1, h2, h3, h4, span, button, a, input, select, textarea) {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  .nutricore-app :where(svg, canvas) {
+    max-width: 100%;
+    flex-shrink: 0;
+  }
+
+  .nutricore-app :where(button) {
+    min-width: 0;
   }
 
   .nutricore-shortcut:focus-visible,
