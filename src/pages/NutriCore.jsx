@@ -141,11 +141,19 @@ function WeightChart({ logs }) {
 }
 
 function AppShortcutCard({ title, description, Icon, indicator, onClick, tone = 'green' }) {
+  const appDescriptions = {
+    Perfil: 'Datos, peso y objetivo',
+    Dieta: 'Tus 5 comidas',
+    Entrenamiento: 'Siguiente sesión',
+    Progreso: 'Evolución de peso',
+  }
+  const displayDescription = appDescriptions[title] || description
+
   return (
     <button
       type="button"
       onClick={onClick}
-      className="nutricore-shortcut group rounded-[1.65rem] p-4 text-left transition duration-200 hover:-translate-y-1 active:scale-[0.98]"
+      className="nutricore-shortcut group min-h-40 rounded-[1.7rem] p-4 text-left transition duration-200 hover:-translate-y-1 active:scale-[0.98]"
     >
       <div className="flex items-start justify-between gap-3">
         <span className={cx('nutricore-icon-bubble', tone === 'cyan' && 'nutricore-icon-cyan', tone === 'amber' && 'nutricore-icon-amber')}>
@@ -154,7 +162,7 @@ function AppShortcutCard({ title, description, Icon, indicator, onClick, tone = 
         {indicator && <span className="nutricore-pill text-[11px] font-black">{indicator}</span>}
       </div>
       <h3 className="mt-4 text-lg font-black text-[var(--nc-text)]">{title}</h3>
-      <p className="mt-1 text-sm leading-5 text-[var(--nc-muted)]">{description}</p>
+      <p className="mt-1 text-sm leading-5 text-[var(--nc-muted)]">{displayDescription}</p>
     </button>
   )
 }
@@ -313,14 +321,14 @@ function UserDashboard({ user, mealPlan, workoutPlan, logs, onNavigate }) {
         </div>
       </Card>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3">
         {metrics.map(([label, value, Icon, tone]) => (
           <MetricCard key={label} label={label} value={value} Icon={Icon} tone={tone} />
         ))}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-        {shortcuts.map(([title, description, Icon, indicator, target, tone]) => (
+      <div className="grid grid-cols-2 gap-3 max-[380px]:grid-cols-1">
+        {shortcuts.slice(0, 4).map(([title, description, Icon, indicator, target, tone]) => (
           <AppShortcutCard
             key={title}
             title={title}
@@ -422,6 +430,32 @@ function ProgressView({ logs }) {
           {logs.map((log) => <p key={`${log.date}-${log.weight}`} className="rounded-xl bg-slate-950/35 px-3 py-2 text-sm text-slate-300">{log.date} · {log.weight} kg</p>)}
         </div>
       </Card>
+    </div>
+  )
+}
+
+function UserSectionHeader({ activeTab, user, onHome }) {
+  const Icon = userTabMeta[activeTab]?.icon || Home
+
+  return (
+    <div className="nutricore-section-header mb-4 flex items-center justify-between gap-3 rounded-[1.6rem] p-3">
+      <button
+        type="button"
+        onClick={onHome}
+        className="nutricore-home-button inline-flex min-h-11 items-center gap-2 rounded-2xl px-3 text-sm font-black transition active:scale-95"
+      >
+        <Home size={17} />
+        Home
+      </button>
+      <div className="flex items-center gap-3 text-right">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--nc-muted)]">{activeTab === 'Dashboard' ? 'NutriCore' : activeTab}</p>
+          <p className="text-sm font-black text-[var(--nc-text)]">{getFirstName(user.name)}</p>
+        </div>
+        <span className="nutricore-mini-icon">
+          <Icon size={18} />
+        </span>
+      </div>
     </div>
   )
 }
@@ -815,24 +849,44 @@ function NutriCore() {
 
   const tabs = role === 'user' ? userTabs : adminTabs
   const tabMeta = role === 'user' ? userTabMeta : adminTabMeta
+  const isUserView = role === 'user'
 
   return (
     <main data-theme={theme} className="nutricore-app min-h-screen text-[var(--nc-text)]">
-      <div className="mx-auto flex min-h-screen max-w-[96rem] flex-col px-4 py-5 sm:px-6">
-        <header className="nutricore-topbar grid gap-4 rounded-[2rem] p-5 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div className={cx('mx-auto flex min-h-screen flex-col px-4 py-5 sm:px-6', isUserView ? 'nutricore-app-shell max-w-[34rem]' : 'max-w-[96rem]')}>
+        <header className={cx('nutricore-topbar grid gap-4 rounded-[2rem] p-5 lg:items-center', isUserView ? 'nutricore-user-topbar' : 'lg:grid-cols-[1fr_auto]')}>
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.28em] text-[var(--nc-accent)]">Nutrition & Training SaaS Demo</p>
-            <h1 className="mt-2 text-4xl font-black tracking-tight text-[var(--nc-text)] sm:text-5xl">NutriCore</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--nc-muted)]">Personalized nutrition and training platform with user and admin views, structured meal plans, flexible workout days and localStorage persistence.</p>
+            <div className="flex items-center justify-between gap-4">
+              <button
+                type="button"
+                onClick={() => setActiveTab(role === 'user' ? 'Dashboard' : 'Admin Dashboard')}
+                className="nutricore-home-button inline-flex min-h-11 items-center gap-2 rounded-2xl px-3 text-sm font-black transition active:scale-95"
+              >
+                <Home size={17} />
+                Home
+              </button>
+              {isUserView && (
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-400 text-lg font-black text-emerald-950">
+                  {getFirstName(selectedUser.name).slice(0, 1)}
+                </div>
+              )}
+            </div>
+            <p className="mt-4 text-xs font-black uppercase tracking-[0.28em] text-[var(--nc-accent)]">{isUserView ? 'Mobile app demo' : 'Nutrition & Training Admin'}</p>
+            <h1 className={cx('mt-2 font-black tracking-tight text-[var(--nc-text)]', isUserView ? 'text-3xl' : 'text-4xl sm:text-5xl')}>NutriCore</h1>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--nc-muted)]">
+              {isUserView ? `${selectedUser.weight} kg · ${selectedUser.goal}` : 'Personalized nutrition and training platform with user and admin views, structured meal plans, flexible workout days and localStorage persistence.'}
+            </p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] lg:min-w-[32rem]">
+          <div className={cx('grid gap-3', isUserView ? 'sm:grid-cols-[1fr_auto_auto]' : 'sm:grid-cols-[1fr_1fr_auto] lg:min-w-[32rem]')}>
             <SelectField label="Demo user" value={selectedUserId} onChange={setSelectedUserId}>
               {state.users.map((user) => <option key={user.id} value={user.id}>{user.name}</option>)}
             </SelectField>
-            <SelectField label="Role view" value={role} onChange={(value) => { setRole(value); setActiveTab(value === 'user' ? 'Dashboard' : 'Admin Dashboard') }}>
-              <option value="user">Vista usuario</option>
-              <option value="admin">Vista administrador</option>
-            </SelectField>
+            {!isUserView && (
+              <SelectField label="Role view" value={role} onChange={(value) => { setRole(value); setActiveTab(value === 'user' ? 'Dashboard' : 'Admin Dashboard') }}>
+                <option value="user">Vista usuario</option>
+                <option value="admin">Vista administrador</option>
+              </SelectField>
+            )}
             <button
               type="button"
               onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
@@ -841,11 +895,20 @@ function NutriCore() {
               {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
               {theme === 'dark' ? 'Light' : 'Dark'}
             </button>
+            {isUserView && (
+              <button
+                type="button"
+                onClick={() => { setRole('admin'); setActiveTab('Admin Dashboard') }}
+                className="nutricore-ghost-button inline-flex min-h-11 items-center justify-center rounded-xl px-3 text-sm font-black"
+              >
+                Admin
+              </button>
+            )}
           </div>
         </header>
 
-        <div className="mt-5 grid flex-1 gap-5 lg:grid-cols-[16rem_minmax(0,1fr)]">
-          <aside className="nutricore-sidebar hidden rounded-[2rem] p-4 lg:block">
+        <div className={cx('mt-5 grid flex-1 gap-5', isUserView ? '' : 'lg:grid-cols-[16rem_minmax(0,1fr)]')}>
+          <aside className={cx('nutricore-sidebar hidden rounded-[2rem] p-4', !isUserView && 'lg:block')}>
             <nav className="grid gap-2">
               {tabs.map((tab) => {
                 const Icon = tabMeta[tab]?.icon || Sparkles
@@ -863,6 +926,9 @@ function NutriCore() {
 
           <section className="min-w-0 pb-24 lg:pb-0">
             {toast && <p className="nutricore-toast mb-4 rounded-2xl px-4 py-3 text-sm font-bold">{toast}</p>}
+            {isUserView && activeTab !== 'Dashboard' && (
+              <UserSectionHeader activeTab={activeTab} user={selectedUser} onHome={() => setActiveTab('Dashboard')} />
+            )}
             {role === 'user' ? renderUserView() : renderAdminView()}
           </section>
         </div>
