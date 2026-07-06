@@ -188,9 +188,37 @@ function AIOpsPreview({ project }) {
   )
 }
 
+function AISupportPreview({ project }) {
+  return (
+    <WindowChrome project={project} label="AI Support Intelligence">
+      <div className="grid gap-3 sm:grid-cols-[0.85fr_1.15fr]">
+        <div className="space-y-3">
+          <MiniMetric label="Tickets" value="24" project={project} />
+          <MiniMetric label="Privacy" value="96%" project={project} />
+          <MiniMetric label="Safety" value="87%" project={project} />
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-slate-950 p-4">
+          <div className="mb-3 flex items-center justify-between gap-2 text-xs font-bold text-slate-300">
+            <span>Agent workflow</span>
+            <span className="rounded-full bg-emerald-400/15 px-2 py-1 text-emerald-200">reviewed</span>
+          </div>
+          {['maskPII()', 'classifyTicket()', 'validateOutput()'].map((item, index) => (
+            <div key={item} className="mb-2 flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 text-xs text-slate-200">
+              <span className="h-2 w-2 rounded-full bg-cyan-300" />
+              <span className="font-mono">{item}</span>
+              <span className="ml-auto text-slate-500">{index + 1}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </WindowChrome>
+  )
+}
+
 function ProjectPreviewFrame({ project }) {
   const key = project.demoComponentKey
 
+  if (key === 'ai-support-intelligence') return <AISupportPreview project={project} />
   if (key === 'ai-operations-studio') return <AIOpsPreview project={project} />
   if (key === 'nutricore') return <NutriCorePreview project={project} />
   if (key === 'sql') return <SQLPreview project={project} />

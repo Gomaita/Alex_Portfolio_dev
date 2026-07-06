@@ -9,6 +9,7 @@ function getDemoTarget(project) {
   if (project.demoComponentKey === 'nutricore') return '/nutricore'
   if (project.demoComponentKey === 'nova-ai-chat') return '/ai-chat'
   if (project.demoComponentKey === 'ai-operations-studio') return '/ai-operations-studio'
+  if (project.demoComponentKey === 'ai-support-intelligence') return '/ai-support-intelligence'
   if (project.demoComponentKey === 'cheatsheets') return '/cheatsheets'
   return '#demo'
 }

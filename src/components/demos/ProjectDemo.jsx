@@ -77,6 +77,19 @@ function ProjectDemo({ project }) {
     )
   }
 
+  if (project.demoComponentKey === 'ai-support-intelligence') {
+    return (
+      <DemoContainer note="AI Support Intelligence Platform opens as a full standalone enterprise-style demo with its own app shell and workflow navigation.">
+        <Link
+          to="/ai-support-intelligence"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white"
+        >
+          Open AI Support Intelligence Platform
+        </Link>
+      </DemoContainer>
+    )
+  }
+
   return demos[project.demoComponentKey] ? (
     <DemoContainer>{demos[project.demoComponentKey]}</DemoContainer>
   ) : null
