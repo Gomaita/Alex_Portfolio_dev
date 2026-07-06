@@ -165,9 +165,33 @@ function ChatPreview({ project }) {
   )
 }
 
+function AIOpsPreview({ project }) {
+  return (
+    <WindowChrome project={project} label="AI Operations Studio">
+      <div className="grid gap-3 sm:grid-cols-[0.8fr_1.2fr]">
+        <div className="space-y-3">
+          <MiniMetric label="Processed" value="10" project={project} />
+          <MiniMetric label="Accuracy" value="76%" project={project} />
+          <MiniMetric label="Automation" value="87%" project={project} />
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-slate-950 p-4 text-xs text-slate-200">
+          <div className="mb-3 flex items-center gap-2 text-cyan-200">
+            <span className="h-2 w-2 rounded-full bg-cyan-300" />
+            Agent trace
+          </div>
+          {['cleanTickets()', 'classifyIssues()', 'runEvaluation()'].map((item) => (
+            <p key={item} className="mb-2 rounded-lg bg-white/10 px-2 py-1 font-mono">{item}</p>
+          ))}
+        </div>
+      </div>
+    </WindowChrome>
+  )
+}
+
 function ProjectPreviewFrame({ project }) {
   const key = project.demoComponentKey
 
+  if (key === 'ai-operations-studio') return <AIOpsPreview project={project} />
   if (key === 'nutricore') return <NutriCorePreview project={project} />
   if (key === 'sql') return <SQLPreview project={project} />
   if (key === 'secure-users' || key === 'auth-flow') return <SecurityPreview project={project} />

@@ -13,6 +13,56 @@ export const projectCategories = [
 
 export const projects = [
   {
+    id: 'ai-operations-studio',
+    slug: 'ai-operations-studio',
+    title: 'AI Operations Studio',
+    subtitle: 'Data Processing, AI Agents & Model Evaluation Platform',
+    summary:
+      'Interactive platform for processing business data, running AI agents, classifying support tickets and validating AI model outputs.',
+    description:
+      'A full interactive demo that simulates how AI can be integrated into business workflows. The platform processes support tickets, cleans and transforms data, classifies issues, runs an AI-style agent, answers questions from internal knowledge documents and validates model responses through an evaluation dashboard.',
+    type: 'AI Operations SaaS Demo',
+    status: 'Completed',
+    technologies: [
+      'React',
+      'JavaScript',
+      'Python-ready architecture',
+      'FastAPI-ready architecture',
+      'Pandas concepts',
+      'AI Agents',
+      'RAG',
+      'Data Cleaning',
+      'Model Evaluation',
+      'Docker concepts',
+      'Recharts',
+      'Tailwind CSS',
+    ],
+    featured: true,
+    category: 'AI',
+    skillsDemonstrated: [
+      'Business data processing workflow',
+      'Rule-based local AI fallback',
+      'AI agent task runner',
+      'RAG-style knowledge assistant',
+      'Support ticket classification',
+      'Model output evaluation',
+      'Technical documentation',
+      'Report generation',
+    ],
+    technicalNotes:
+      'The demo runs completely locally with mock support tickets and local engines. The code separates data cleaning, classification, agent execution, knowledge retrieval, evaluation and reporting so a future backend can replace the rule-based engines with real Python/FastAPI services or external AI providers.',
+    improvements: [
+      'Connect a real Python FastAPI backend',
+      'Add CSV upload and schema validation',
+      'Add embeddings and vector search for RAG',
+      'Add streaming agent traces',
+      'Persist runs and reports in a database',
+      'Add automated evaluation history',
+    ],
+    demoComponentKey: 'ai-operations-studio',
+    githubUrl: '',
+  },
+  {
     id: 'nova-ai-chat',
     slug: 'ai-chatbot',
     title: 'Nova AI Chat',

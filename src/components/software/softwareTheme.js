@@ -38,6 +38,7 @@ export const accentStyles = {
 
 const projectAccentByKey = {
   nutricore: 'green',
+  'ai-operations-studio': 'cyan',
   'ai-chatbot': 'violet',
   'sql-query-playground': 'cyan',
   'secure-users-roles-demo': 'violet',

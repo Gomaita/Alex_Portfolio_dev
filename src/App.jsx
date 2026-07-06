@@ -1,4 +1,5 @@
 import { Route, Routes, useLocation } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
 import About from './pages/About'
@@ -18,6 +19,16 @@ import ThreeDContact from './pages/three-d/ThreeDContact'
 import ThreeDHome from './pages/three-d/ThreeDHome'
 import ThreeDProjectDetail from './pages/three-d/ThreeDProjectDetail'
 import ThreeDProjects from './pages/three-d/ThreeDProjects'
+
+const AIOperationsStudioPage = lazy(() => import('./demos/ai-operations-studio/AIOperationsStudioPage'))
+
+function RouteLoader() {
+  return (
+    <div className="min-h-[calc(100svh-4rem)] bg-slate-950 px-6 py-20 text-center text-sm font-bold text-slate-300">
+      Loading demo...
+    </div>
+  )
+}
 
 function App() {
   const location = useLocation()
@@ -50,6 +61,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/portfolio/:slug" element={<ProjectDetail />} />
+          <Route path="/ai-operations-studio" element={<Suspense fallback={<RouteLoader />}><AIOperationsStudioPage /></Suspense>} />
           <Route path="/ai-chat" element={<NovaAIChat />} />
           <Route path="/nutricore" element={<NutriCore />} />
           <Route path="/security-lab" element={<SecurityLab />} />
