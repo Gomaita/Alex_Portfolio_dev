@@ -25,6 +25,9 @@ const demos = {
 }
 
 function ProjectDemo({ project }) {
+  if (project.demoComponentKey === 'ai-message-processor') {
+    return <DemoContainer note="InboxFlow AI processes a single message into structured actions and JSON."><Link to="/ai-message-processor" className="inline-flex min-h-11 items-center justify-center rounded-lg bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-600">Open InboxFlow AI</Link></DemoContainer>
+  }
   if (project.demoComponentKey === 'cheatsheets') {
     return (
       <DemoContainer note="This project lives as its own reference area with dynamic routes and copyable snippets.">

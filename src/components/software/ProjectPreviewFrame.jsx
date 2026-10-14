@@ -218,6 +218,15 @@ function AISupportPreview({ project }) {
 function ProjectPreviewFrame({ project }) {
   const key = project.demoComponentKey
 
+  if (key === 'ai-message-processor') return (
+    <WindowChrome project={project} label="InboxFlow AI">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-950"><p className="mb-3 text-xs font-bold uppercase">Incoming request</p><p>Could you send the website quote tomorrow?</p></div>
+        <pre className="whitespace-pre-wrap break-words rounded-lg bg-zinc-900 p-4 text-xs leading-6 text-emerald-200">{'{\n  "category": "Project inquiry",\n  "priority": "high",\n  "deadline": "tomorrow"\n}'}</pre>
+      </div>
+    </WindowChrome>
+  )
+
   if (key === 'ai-support-intelligence') return <AISupportPreview project={project} />
   if (key === 'ai-operations-studio') return <AIOpsPreview project={project} />
   if (key === 'nutricore') return <NutriCorePreview project={project} />

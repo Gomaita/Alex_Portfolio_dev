@@ -22,6 +22,7 @@ import ThreeDProjects from './pages/three-d/ThreeDProjects'
 
 const AIOperationsStudioPage = lazy(() => import('./demos/ai-operations-studio/AIOperationsStudioPage'))
 const AISupportIntelligencePage = lazy(() => import('./demos/ai-support-intelligence/AISupportIntelligencePage'))
+const InboxFlowAI = lazy(() => import('./pages/InboxFlowAI'))
 
 function RouteLoader() {
   return (
@@ -65,6 +66,7 @@ function App() {
           <Route path="/ai-operations-studio" element={<Suspense fallback={<RouteLoader />}><AIOperationsStudioPage /></Suspense>} />
           <Route path="/ai-support-intelligence" element={<Suspense fallback={<RouteLoader />}><AISupportIntelligencePage /></Suspense>} />
           <Route path="/ai-chat" element={<NovaAIChat />} />
+          <Route path="/ai-message-processor" element={<Suspense fallback={<RouteLoader />}><InboxFlowAI /></Suspense>} />
           <Route path="/nutricore" element={<NutriCore />} />
           <Route path="/security-lab" element={<SecurityLab />} />
           <Route path="/blockchain-lab" element={<BlockchainLab />} />

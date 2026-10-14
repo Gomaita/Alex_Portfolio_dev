@@ -7,6 +7,7 @@ import StackBadge from './StackBadge'
 import { getProjectAccent } from './softwareTheme'
 
 function getDemoTarget(project) {
+  if (project.demoComponentKey === 'ai-message-processor') return '/ai-message-processor'
   if (project.demoComponentKey === 'nutricore') return '/nutricore'
   if (project.demoComponentKey === 'nova-ai-chat') return '/ai-chat'
   if (project.demoComponentKey === 'cheatsheets') return '/cheatsheets'

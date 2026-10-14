@@ -3,7 +3,12 @@ import { getProjectAccent } from './softwareTheme'
 
 function ArchitecturePanel({ project }) {
   const accent = getProjectAccent(project)
-  const steps = [
+  const steps = project.demoComponentKey === 'ai-message-processor' ? [
+    ['Message intake', 'A single message and type hint, submitted through a React form.', MonitorSmartphone],
+    ['Secure API', 'Pages Function validates input; credentials stay on the server.', ServerCog],
+    ['Structured analysis', 'OpenAI schema output or rule-based fallback, validated before rendering.', Boxes],
+    ['Result delivery', 'JSON and suggested reply returned without application persistence.', Database],
+  ] : [
     ['Interface', 'Reusable React views, forms, filters and responsive states.', MonitorSmartphone],
     ['State and services', 'Local state, service helpers and normalized data shapes.', Boxes],
     ['Persistence layer', project.demoComponentKey?.includes('api') || project.technologies?.some((item) => /cloudflare|api|d1/i.test(item)) ? 'Cloudflare Functions, API routes or D1-backed responses.' : 'Demo-safe localStorage or static data persistence.', Database],
