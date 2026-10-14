@@ -10,7 +10,7 @@ InboxFlow processes a single message; it has no conversation history. The existi
 
 Send JSON with a `message` string (5-4000 characters after validation) and optional `messageType`. Supported input values: `auto`, `email`, `chat`, `support_ticket`, `client_request`, `recruiter_message`, `internal_task`.
 
-The successful response contains `ok`, `demoMode`, `provider` and `result`. Result fields: `messageType`, `category`, `priority`, `sentiment`, `summary`, nullable `deadline`, `tasks`, `suggestedReply`, `confidence`, `requiresFollowUp`. Tasks have `title`, nullable `owner` and nullable `dueDate`. Raw JSON displays the full API response.
+The successful response contains `ok`, `demoMode`, `provider`, `model`, nullable `warning` and `result`. Result fields: `messageType`, `category`, `priority`, `sentiment`, `summary`, nullable `deadline`, `tasks`, `suggestedReply`, `confidence`, `requiresFollowUp`. Tasks have `title`, nullable `owner` and nullable `dueDate`. Raw JSON displays the full API response.
 
 Output priorities: low, medium, high, urgent. Sentiments: positive, neutral, negative, mixed. Output message types: email, chat_message, support_ticket, client_request, recruiter_message, internal_task, unknown.
 
@@ -18,21 +18,24 @@ Output priorities: low, medium, high, urgent. Sentiments: positive, neutral, neg
 
 Set server-side Cloudflare Pages environment variables:
 
-- `AI_PROVIDER`: `openai` or `demo`. Missing provider uses demo.
-- `AI_API_KEY`: provider secret, never a frontend/VITE variable.
-- `AI_MODEL`: optional compatible structured-output model. Default `gpt-4o-mini`.
+- `GROQ_API_KEY`: secret used only by the Pages Function. Configure it in Cloudflare, never in the repository or frontend.
+- `GROQ_MODEL`: optional model name; default `llama-3.3-70b-versatile`.
 
-No secrets are supplied by this project. Variables are shared with Nova, but its endpoint and behavior are unchanged. InboxFlow currently implements only the OpenAI adapter and demo mode; other provider values return a JSON error.
+No secrets are supplied by this project. Configure the secret in the appropriate Cloudflare Pages production/preview environment and redeploy to apply it. InboxFlow now uses Groq whenever its secret is configured. It ignores `AI_PROVIDER`, `AI_API_KEY` and `AI_MODEL`, so Nova's configuration and endpoint remain independent and unchanged. No VITE-prefixed private variables are used.
 
-Real analysis uses the OpenAI Chat Completions API with `response_format: json_schema`, strict schema validation and `store: false`. Adapter code is isolated in `requestAnalysis` for future provider expansion.
+Real analysis uses native fetch to `https://api.groq.com/openai/v1/chat/completions` with server-side Bearer authentication, temperature 0.2, max_tokens 1200 and streaming disabled. The system prompt contains the required JSON schema, output enums and instructions not to invent facts. The user prompt contains the selected message type and raw message.
 
-References: [OpenAI Chat API](https://developers.openai.com/api/reference/resources/chat), [Pages Functions routing](https://developers.cloudflare.com/pages/functions/routing/).
+`llama-3.3-70b-versatile` supports JSON Object Mode, not strict JSON Schema decoding. The request uses `response_format: { type: 'json_object' }`; schema adherence is validated in application code. References: [Groq JSON output modes](https://console.groq.com/docs/structured-outputs), [Groq Llama 3.3 model](https://console.groq.com/docs/model/llama-3.3-70b-versatile), [Pages Functions routing](https://developers.cloudflare.com/pages/functions/routing/).
 
 ## Demo and fallback
 
-Without a key or provider, a deterministic rule-based engine detects common requests, approximate priority and sentiment, explicit task phrases and deadline expressions. Unknown owners and deadlines stay null. Relative deadlines are preserved as text; the demo does not resolve dates. The demo summary is an excerpt, not a generated semantic summary. Demo confidence is illustrative, not calibrated.
+Without `GROQ_API_KEY`, a deterministic rule-based engine detects common requests, approximate priority and sentiment, explicit task phrases and deadline expressions. The response uses `demoMode: true`, `provider: 'demo'`, `model: 'local-demo-rules'`, `warning: null`. Unknown owners and deadlines stay null. Relative deadlines are preserved as text; the demo does not resolve dates. The demo summary is an excerpt, not a generated semantic summary. Demo confidence is illustrative, not calibrated.
 
-If the real provider fails, times out or returns invalid output, the same demo engine supplies a result with `demoReason: provider-fallback` and a visible warning. The UI never labels fallback output as real AI. Markdown JSON fences are stripped before parsing, but malformed JSON is not guessed or executed.
+Successful Groq analysis uses `demoMode: false`, `provider: 'groq'`, the configured model and `warning: null`. The UI displays Groq AI enabled and the model only after receiving a successful analysis.
+
+Markdown fences are stripped; accidental text around a balanced JSON object is ignored while respecting quoted braces and escape characters. Case variants and chat aliases are normalized. Unknown priority/sentiment/type values default to medium/neutral/unknown; numeric confidence is clamped to 0-1 (missing or invalid confidence becomes 0). Missing nullable text becomes null, missing tasks becomes an empty array, and boolean true/string 'true' is recognized for follow-up. Required category, summary, reply and task titles must still pass validation; malformed task structures are rejected, not guessed. Unexpected fields are removed.
+
+If JSON parsing or validation fails, demo output uses `demoReason: 'invalid-output'` with warning `AI response could not be parsed as JSON, fallback parser used.` If Groq fails or times out, it uses `demoReason: 'provider-fallback'` with warning `Groq API request failed, demo fallback was used.` Both return `demoMode: true`, demo provider/model and a visible warning; the UI never labels fallback output as Groq AI.
 
 ## Security and errors
 
@@ -41,7 +44,7 @@ If the real provider fails, times out or returns invalid output, the same demo e
 - Provider timeout: 20 seconds; frontend timeout: 25 seconds. Navigation aborts the frontend request.
 - JSON responses for all methods and errors; response caching disabled.
 - No HTML injection, application persistence, conversation logging, D1, R2 or Resend use.
-- In real AI mode the message is transmitted to the configured provider. `store: false` is not a promise of zero provider retention. Do not enter sensitive data.
+- In real AI mode the message is transmitted to Groq. Application non-storage is not a promise about provider retention. Do not enter sensitive data.
 - Provider error bodies and stack traces are never sent to the client.
 - No authentication or rate limiting yet. Configure provider budget limits and access/rate controls before exposing a paid key to public traffic.
 - Classifications and replies require human review. Prompt instructions reduce instruction injection risk but do not guarantee factual correctness.
@@ -50,13 +53,13 @@ If the real provider fails, times out or returns invalid output, the same demo e
 
 1. Open the demo and load each of the four examples. Analyze and check summary, signals, tasks, deadline and reply.
 2. With no configuration, confirm Demo mode and valid raw JSON. Copy reply/JSON and check clipboard success or error feedback.
-3. Edit the message after analysis: stale results clear. Test whitespace, 4-character input, overlong direct API payloads, invalid type, malformed JSON, wrong methods and unsupported provider.
-4. Configure OpenAI server-side and check AI enabled. Simulate provider failure or invalid output and confirm the fallback warning.
+3. Edit the message after analysis: stale results clear. Test whitespace, 4-character input, overlong direct API payloads, invalid type, malformed JSON and wrong methods.
+4. Configure `GROQ_API_KEY` server-side and check Groq AI enabled with `llama-3.3-70b-versatile`. Configure `GROQ_MODEL` to verify the override. Simulate provider failure or invalid output and confirm Demo mode with the appropriate warning.
 5. Test missing backend, HTML response, offline mode and timeouts. Errors should be readable and input retained.
 6. Test 320px, tablet and desktop, light/dark, keyboard focus and reduced motion. Check project card and both demo links.
 
-The implementation was added without running npm, node, wrangler, development server or build, as requested. The helper functions were exercised in the tool's V8 isolate with all four examples, schema rejection and fenced JSON parsing. Fifteen additional endpoint checks used mocked request/response/provider adapters to cover validation, size limits, configuration and fallback. Browser rendering, Cloudflare runtime and deployed-provider verification remain required.
+Verification used JavaScript in the tool's V8 isolate with mocked Web APIs, without npm, node, wrangler, a development server or build. 69 parser/backend checks and 11 frontend service checks passed, covering Groq request parameters, model overrides, fallback metadata, validation and error handling. These check logic and contracts, not actual Cloudflare execution, browser layout or live Groq responses. Those require manual verification after configuration and deployment.
 
 ## Future work
 
-Persistent workflows, email/Slack integrations, authentication, webhook actions, real task creation, rate limiting and analytics.
+Rate limiting, authentication, persistent workflows, webhook actions, real task creation, integrations with email/Slack/Trello and analytics.

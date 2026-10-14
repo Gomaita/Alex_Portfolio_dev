@@ -12,6 +12,14 @@
 .inboxflow-brand, .inboxflow-empty-icon { display: grid; place-items: center; background: var(--if-accent-soft); color: var(--if-accent); border-radius: 8px; }
 .inboxflow-brand { width: 48px; height: 48px; flex: 0 0 auto; }
 .inboxflow-mode { margin-left: auto; padding: 5px 10px; border: 1px solid var(--if-line); border-radius: 6px; font-size: 12px; white-space: nowrap; background: var(--if-surface); }
+.inboxflow-provider { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 5px; max-width: 260px; }
+.inboxflow-model { font-size: 11px; color: var(--if-muted); font-family: monospace; overflow-wrap: anywhere; text-align: right; }
+.inboxflow-sentiment { display: inline-flex; padding: 2px 7px; border-radius: 4px; font-size: 12px; }
+.inboxflow-sentiment--positive { background: #dff3e5; color: #225f3a; }
+.inboxflow-sentiment--neutral { background: #e5e7eb; color: #374151; }
+.inboxflow-sentiment--negative { background: #ffe2df; color: #962e26; }
+.inboxflow-sentiment--mixed { background: #fff0cd; color: #785004; }
+@media (max-width: 480px) { .inboxflow-provider { margin-left: 0; align-items: flex-start; max-width: 100%; } .inboxflow-model { text-align: left; } }
 .inboxflow-workspace { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); border: 1px solid var(--if-line); background: var(--if-surface); border-radius: 8px; }
 .inboxflow-input-panel, .inboxflow-output-panel { padding: 24px; }
 .inboxflow-input-panel { border-right: 1px solid var(--if-line); }

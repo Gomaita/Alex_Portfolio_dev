@@ -43,7 +43,54 @@ export function validateResult(value) {
 export function parseModelResult(content) {
   if (typeof content !== 'string' || content.length > 20000) throw new Error('Invalid model output')
   const cleaned = content.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
-  return validateResult(JSON.parse(cleaned))
+  let value
+  try { value = JSON.parse(cleaned) } catch {
+    // Find a balanced JSON object without mistaking braces inside quoted text for delimiters.
+    const start = cleaned.indexOf('{')
+    if (start < 0) throw new Error('Missing JSON object')
+    let depth = 0
+    let quoted = false
+    let escaped = false
+    let end = -1
+    for (let index = start; index < cleaned.length; index++) {
+      const character = cleaned[index]
+      if (quoted) {
+        if (escaped) escaped = false
+        else if (character === '\\') escaped = true
+        else if (character === '"') quoted = false
+      } else if (character === '"') quoted = true
+      else if (character === '{') depth++
+      else if (character === '}' && --depth === 0) { end = index + 1; break }
+    }
+    if (end < 0) throw new Error('Incomplete JSON object')
+    value = JSON.parse(cleaned.slice(start, end))
+  }
+  return normalizeModelResult(value)
+}
+
+function normalizeModelResult(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid result')
+  const text = (item) => typeof item === 'string' ? item.trim() : ''
+  const optionalText = (item) => text(item) || null
+  const enumValue = (item, allowed, fallback) => allowed.includes(text(item).toLowerCase()) ? text(item).toLowerCase() : fallback
+  const type = text(value.messageType).toLowerCase().replace(/[\s-]+/g, '_')
+  const confidence = typeof value.confidence === 'number' ? value.confidence
+    : typeof value.confidence === 'string' && value.confidence.trim() ? Number(value.confidence) : NaN
+  const followUp = value.requiresFollowUp === true || value.requiresFollowUp === 'true'
+  // Only structural defaults are supplied; essential summaries and replies must exist.
+  return validateResult({
+    messageType: enumValue(type === 'chat' ? 'chat_message' : type, messageTypes, 'unknown'),
+    category: text(value.category),
+    priority: enumValue(value.priority, ['low', 'medium', 'high', 'urgent'], 'medium'),
+    sentiment: enumValue(value.sentiment, ['positive', 'neutral', 'negative', 'mixed'], 'neutral'),
+    summary: text(value.summary), deadline: optionalText(value.deadline),
+    tasks: value.tasks == null ? [] : Array.isArray(value.tasks) ? value.tasks.map((task) => ({
+      title: text(task?.title), owner: optionalText(task?.owner), dueDate: optionalText(task?.dueDate),
+    })) : value.tasks,
+    suggestedReply: text(value.suggestedReply),
+    confidence: Number.isFinite(confidence) ? Math.max(0, Math.min(1, confidence)) : 0,
+    requiresFollowUp: followUp,
+  })
 }
 
 export function createDemoResult(message, selectedType = 'auto') {

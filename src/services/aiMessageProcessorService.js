@@ -15,7 +15,11 @@ export async function analyzeMessage({ message, messageType = 'auto', signal }) 
     const data = await response.json().catch(() => null)
     if (!response.ok || data?.ok !== true) throw new Error(data?.error || 'The message could not be analyzed. Please try again.')
     const result = data.result
-    if (!result || typeof data.demoMode !== 'boolean' || typeof result.summary !== 'string' || !result.summary.trim() || typeof result.suggestedReply !== 'string'
+    if (!result || typeof data.demoMode !== 'boolean'
+      || !['groq', 'demo'].includes(data.provider) || typeof data.model !== 'string' || !data.model.trim()
+      || !(data.warning == null || typeof data.warning === 'string')
+      || (data.demoMode ? data.provider !== 'demo' : data.provider !== 'groq')
+      || typeof result.summary !== 'string' || !result.summary.trim() || typeof result.suggestedReply !== 'string'
       || typeof result.category !== 'string' || typeof result.confidence !== 'number'
       || !Number.isFinite(result.confidence) || result.confidence < 0 || result.confidence > 1
       || !['email', 'chat_message', 'support_ticket', 'client_request', 'recruiter_message', 'internal_task', 'unknown'].includes(result.messageType)

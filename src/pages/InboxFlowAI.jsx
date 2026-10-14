@@ -36,7 +36,7 @@ function AnalysisResult({ result }) {
     <dl className="inboxflow-signals">
       <div><dt>Category</dt><dd>{result.category}</dd></div>
       <div><dt>Priority</dt><dd><span className={`inboxflow-priority inboxflow-priority--${result.priority}`}>{result.priority}</span></dd></div>
-      <div><dt>Sentiment</dt><dd>{result.sentiment}</dd></div>
+      <div><dt>Sentiment</dt><dd><span className={`inboxflow-sentiment inboxflow-sentiment--${result.sentiment}`}>{result.sentiment}</span></dd></div>
       <div><dt>Confidence</dt><dd>{Math.round(result.confidence * 100)}%<progress value={result.confidence} max="1" aria-label="Analysis confidence" /></dd></div>
     </dl>
     <div className="inboxflow-deadline"><span>Deadline</span><strong>{result.deadline || 'No deadline detected'}</strong></div>
@@ -76,7 +76,7 @@ export default function InboxFlowAI() {
   return <div className="inboxflow">
     <div className="inboxflow-app">
       <header className="inboxflow-topbar"><Link to="/portfolio"><ArrowLeft size={16} /> Portfolio</Link><span><ShieldCheck size={15} /> Single-message processing</span></header>
-      <div className="inboxflow-heading"><div className="inboxflow-brand"><Inbox size={25} /></div><div><h1>InboxFlow AI</h1><p>Turn messy messages into structured actions.</p></div><span className="inboxflow-mode">{loading ? 'Analyzing' : analysis ? analysis.demoMode ? 'Demo mode' : 'AI enabled' : 'Ready to analyze'}</span></div>
+      <div className="inboxflow-heading"><div className="inboxflow-brand"><Inbox size={25} /></div><div><h1>InboxFlow AI</h1><p>Turn messy messages into structured actions.</p></div><div className="inboxflow-provider"><span className="inboxflow-mode">{loading ? 'Analyzing' : analysis ? analysis.demoMode ? 'Demo mode' : analysis.provider === 'groq' ? 'Groq AI enabled' : 'AI enabled' : 'Ready to analyze'}</span>{analysis && <span className="inboxflow-model">{analysis.model}</span>}</div></div>
       <div className="inboxflow-workspace">
         <form className="inboxflow-input-panel" onSubmit={submit}>
           <div className="inboxflow-panel-heading"><span className="inboxflow-step">01</span><h2>Message intake</h2><ScanText size={20} /></div>
@@ -91,7 +91,7 @@ export default function InboxFlowAI() {
         <section className="inboxflow-output-panel" aria-label="Structured analysis" aria-busy={loading}>
           <div className="inboxflow-panel-heading"><span className="inboxflow-step">02</span><h2>Structured output</h2><FileJson size={20} /></div>
           {error && <div className="inboxflow-error" role="alert">{error}</div>}
-          {analysis?.demoMode && <div className="inboxflow-notice" role="status">{analysis.demoReason === 'provider-fallback' ? analysis.warning : 'Demo mode is active because no AI API key is configured or demo mode is selected.'} <span>Rule-based results; confidence is illustrative.</span></div>}
+          {(analysis?.warning || analysis?.demoMode) && <div className="inboxflow-notice" role="status">{analysis.warning || 'Demo mode is active because Groq is not configured.'}{analysis.demoMode && <span>Rule-based results; confidence is illustrative.</span>}</div>}
           {loading ? <div className="inboxflow-empty" role="status"><LoaderCircle size={30} className="inboxflow-spin" /><h3>Extracting the signal</h3><p>Classifying the message and checking structured output.</p></div>
             : analysis ? <AnalysisResult result={analysis.result} /> : <div className="inboxflow-empty"><div className="inboxflow-empty-icon"><FileJson size={32} /></div><h3>From inbox noise to next steps</h3><p>Your summary, signals, tasks and suggested reply will appear here.</p><div className="inboxflow-empty-flow"><span>Message</span><ArrowRight size={16} /><span>Analysis</span><ArrowRight size={16} /><span>JSON</span></div></div>}
         </section>
