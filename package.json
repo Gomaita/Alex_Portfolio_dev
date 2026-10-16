@@ -7,12 +7,20 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "devpulse:fixture": "node src/features/devpulse/scripts/snapshot.mjs",
+    "devpulse:fixture:check": "node src/features/devpulse/scripts/snapshot.mjs --check",
+    "typecheck:devpulse": "tsc -p tsconfig.devpulse.json",
+    "lint:devpulse": "eslint src/features/devpulse src/App.jsx functions/_middleware.js",
+    "test:devpulse": "vitest run --config src/features/devpulse/vitest.config.ts",
+    "test:devpulse:e2e": "playwright test --config src/features/devpulse/playwright.config.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",
+    "@xyflow/react": "^12.12.0",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.16.0",
+    "prismjs": "^1.30.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.1",
@@ -20,7 +28,11 @@
     "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "@types/prismjs": "^1.26.6",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
@@ -28,6 +40,10 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
-    "vite": "^8.0.12"
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2",
+    "vite": "^8.0.12",
+    "vitest": "^5.0.5"
   }
 }

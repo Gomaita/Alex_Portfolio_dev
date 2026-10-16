@@ -1,0 +1,9 @@
+{
+  "app.ts": { "layer": "Entry", "description": "Composes the store, service and command router into a single application.", "position": { "x": 0, "y": 190 } },
+  "api/router.ts": { "layer": "Transport", "description": "Exposes three transport-independent task commands. No HTTP server is running.", "position": { "x": 270, "y": 50 } },
+  "services/taskService.ts": { "layer": "Service", "description": "Coordinates title validation, task storage and domain transitions.", "position": { "x": 540, "y": 50 } },
+  "data/taskStore.ts": { "layer": "Data", "description": "Provides an in-memory store through a small get, save and list interface.", "position": { "x": 540, "y": 310 } },
+  "domain/task.ts": { "layer": "Domain", "description": "Defines the task contract and the immutable completion transition.", "position": { "x": 810, "y": 310 } },
+  "lib/validation.ts": { "layer": "Utility", "description": "Checks and normalizes an unknown title using the configured length limit.", "position": { "x": 810, "y": 50 } },
+  "config.ts": { "layer": "Config", "description": "Declares the application name and the shared title-length limit.", "position": { "x": 1080, "y": 190 } }
+}

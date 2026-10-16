@@ -11,3 +11,5 @@ dist
 PortableGit/
 PortableGit-*.exe
 /Alex_Gomez_CV.pdf
+test-results/
+playwright-report/

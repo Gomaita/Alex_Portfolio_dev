@@ -23,6 +23,7 @@ import ThreeDProjects from './pages/three-d/ThreeDProjects'
 const AIOperationsStudioPage = lazy(() => import('./demos/ai-operations-studio/AIOperationsStudioPage'))
 const AISupportIntelligencePage = lazy(() => import('./demos/ai-support-intelligence/AISupportIntelligencePage'))
 const InboxFlowAI = lazy(() => import('./pages/InboxFlowAI'))
+const DevPulseApp = lazy(() => import('./features/devpulse/DevPulseApp'))
 
 function RouteLoader() {
   return (
@@ -35,6 +36,20 @@ function RouteLoader() {
 function App() {
   const location = useLocation()
   const isThreeDRoute = location.pathname === '/3d' || location.pathname.startsWith('/3d/')
+
+  if (location.pathname === '/devpulse' || location.pathname.startsWith('/devpulse/')) {
+    return (
+      <Routes>
+        <Route path="/devpulse/*" element={
+          <Suspense fallback={
+            <div role="status" className="min-h-screen bg-[#101215] p-8 text-white">Loading DevPulse…</div>
+          }>
+            <DevPulseApp />
+          </Suspense>
+        } />
+      </Routes>
+    )
+  }
 
   if (isThreeDRoute) {
     return (

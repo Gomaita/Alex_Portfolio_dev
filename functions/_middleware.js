@@ -1,3 +1,5 @@
+import { metadataFor } from '../src/features/devpulse/metadata.ts'
+
 const SITE_ORIGIN = 'https://alexgl.dev'
 const FALLBACK_OG_IMAGE = '/og-image.svg'
 
@@ -40,6 +42,9 @@ function absoluteUrl(path) {
 }
 
 function getMetadataForPath(pathname) {
+  if (pathname === '/devpulse' || pathname.startsWith('/devpulse/')) {
+    return { ...metadataFor(pathname), image: '/devpulse-og.svg', imageAlt: 'DevPulse AI — Understand your code. Improve what matters.' }
+  }
   if (pathname === '/3d' || pathname.startsWith('/3d/')) {
     return routeMetadata.threeD
   }
@@ -68,6 +73,7 @@ function applyMetadata(html, metadata) {
 
   let output = html
   output = replaceOrInsertHeadTag(output, /<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`)
+  if (metadata.robots) output = replaceOrInsertHeadTag(output, /<meta\s+name="robots"\s+content="[^"]*"\s*\/?>/i, `<meta name="robots" content="${escapeHtml(metadata.robots)}" />`)
   output = replaceOrInsertHeadTag(output, /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${description}" />`)
   output = replaceOrInsertHeadTag(output, /<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i, `<link rel="canonical" href="${pageUrl}" />`)
   output = replaceOrInsertHeadTag(output, /<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/i, '<meta property="og:type" content="website" />')
