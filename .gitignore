@@ -11,3 +11,12 @@ dist
 PortableGit/
 PortableGit-*.exe
 /Alex_Gomez_CV.pdf
+test-results/
+playwright-report/
+.devpulse-tools/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.coverage

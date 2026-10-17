@@ -2,6 +2,35 @@
 
 Live site: https://alexgl.dev
 
+## DevPulse AI — local Phase 1 frontend
+
+DevPulse is integrated into the existing app at `/devpulse`, `/devpulse/explore` and `/devpulse/explore/architecture`. It explores a clearly labeled, first-party TypeScript fixture; no live repository import, AI analysis or backend is enabled yet. No API key is required.
+
+Use Node 24 and the existing npm workflow:
+
+```bash
+npm ci
+npm run dev
+```
+
+Open the printed local Vite URL followed by `/devpulse`. Production deployment has not been performed as part of Phase 1.
+
+```bash
+npm run devpulse:fixture:check
+npm run typecheck:devpulse
+npm run lint:devpulse
+npm run test:devpulse
+npm run build
+npx playwright install chromium
+npm run test:devpulse:e2e
+```
+
+Playwright starts Vite on `127.0.0.1:4173` when needed. Browser screenshots/traces are written to ignored `test-results/devpulse/`. The targeted lint gate includes DevPulse and the two existing integration files; global `npm run lint` still reports pre-existing portfolio errors. CI configuration performs checks only and does not deploy.
+
+To reproduce local synthetic performance measurements, run `npm run build`, then `npm run preview -- --host 127.0.0.1 --port 4174` in one terminal and `node src/features/devpulse/scripts/performance.mjs` in another. These are Chromium lab observations, not Lighthouse or production Web Vitals.
+
+Implementation details and known limitations: [DevPulse progress](docs/devpulse/PROGRESS.md).
+
 ## Overview
 
 This is my personal portfolio as a Junior Software Developer with a background in Multimedia Engineering, 3D and VR.
@@ -208,6 +237,8 @@ db/
 ```
 
 ## Repository Notes
+
+DevPulse Phase 2 adds an independent Python API/worker under `services/devpulse` and a private project dashboard under `/devpulse/projects`. The public sample remains independent of the backend. See [local setup and identity configuration](docs/devpulse/LOCAL_DEVELOPMENT.md) and [actual verification/limitations](docs/devpulse/PROGRESS.md). No deployment or production configuration is included. Backend integration tests require real isolated PostgreSQL/Redis; skipped tests are not passing infrastructure checks.
 
 This repository does not include private environment variables or production secrets.
 Use `.env.example` as a reference and create a local `.env` file only when needed.

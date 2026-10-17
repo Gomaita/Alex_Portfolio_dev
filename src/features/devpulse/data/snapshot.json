@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "repository": {
+    "name": "dispatch",
+    "version": "1.0.0",
+    "provenance": "First-party local fixture · not an external GitHub repository",
+    "description": "A small task application with explicit boundaries between routing, services, domain and storage."
+  },
+  "snapshotHash": "50eb119e4d3e76029ef8b72897e0493256a77fd8aa3dbafe697ea26e9d184715",
+  "status": "local-fixture",
+  "files": [
+    {
+      "id": "app.ts",
+      "path": "app.ts",
+      "language": "TypeScript",
+      "layer": "Entry",
+      "description": "Composes the store, service and command router into a single application.",
+      "position": {
+        "x": 0,
+        "y": 190
+      },
+      "source": "import { createRouter } from './api/router'\nimport { createTaskStore } from './data/taskStore'\nimport { createTaskService } from './services/taskService'\nimport { config } from './config'\n\nexport function createApp() {\n  const store = createTaskStore()\n  const service = createTaskService(store)\n  return { name: config.projectName, router: createRouter(service) }\n}\n",
+      "sha256": "ceaaccafe63b8a589c16e8e3695e4badc74b2ff42988e86615673307ecc8a236",
+      "lines": 10,
+      "symbols": [
+        {
+          "name": "createApp",
+          "kind": "FunctionDeclaration",
+          "startLine": 6,
+          "endLine": 10
+        }
+      ]
+    },
+    {
+      "id": "api/router.ts",
+      "path": "api/router.ts",
+      "language": "TypeScript",
+      "layer": "Transport",
+      "description": "Exposes three transport-independent task commands. No HTTP server is running.",
+      "position": {
+        "x": 270,
+        "y": 50
+      },
+      "source": "import { createTaskService } from '../services/taskService'\n\n// Transport-independent commands; this is not a running HTTP API.\nexport function createRouter(service: ReturnType<typeof createTaskService>) {\n  return {\n    list: () => service.list(),\n    create: (id: string, title: unknown) => service.create(id, title),\n    complete: (id: string) => service.complete(id),\n  }\n}\n",
+      "sha256": "b3556a0d59f1fc5c48b9fb3c659c6e61b69704f9dc6efee3accba9b61f84e91e",
+      "lines": 10,
+      "symbols": [
+        {
+          "name": "createRouter",
+          "kind": "FunctionDeclaration",
+          "startLine": 4,
+          "endLine": 10
+        }
+      ]
+    },
+    {
+      "id": "services/taskService.ts",
+      "path": "services/taskService.ts",
+      "language": "TypeScript",
+      "layer": "Service",
+      "description": "Coordinates title validation, task storage and domain transitions.",
+      "position": {
+        "x": 540,
+        "y": 50
+      },
+      "source": "import { completeTask, type Task } from '../domain/task'\nimport { createTaskStore } from '../data/taskStore'\nimport { parseTitle } from '../lib/validation'\n\nexport function createTaskService(store: ReturnType<typeof createTaskStore>) {\n  return {\n    create(id: string, input: unknown): Task {\n      return store.save({ id, title: parseTitle(input), status: 'open' })\n    },\n    complete(id: string): Task {\n      const task = store.get(id)\n      if (!task) throw new Error('Task not found')\n      return store.save(completeTask(task))\n    },\n    list: store.list,\n  }\n}\n",
+      "sha256": "0d0b07fa94434b9ea86939a3bf3f9c0967a1a2e32c50ed32def3701bc5a87ffa",
+      "lines": 17,
+      "symbols": [
+        {
+          "name": "createTaskService",
+          "kind": "FunctionDeclaration",
+          "startLine": 5,
+          "endLine": 17
+        }
+      ]
+    },
+    {
+      "id": "data/taskStore.ts",
+      "path": "data/taskStore.ts",
+      "language": "TypeScript",
+      "layer": "Data",
+      "description": "Provides an in-memory store through a small get, save and list interface.",
+      "position": {
+        "x": 540,
+        "y": 310
+      },
+      "source": "import type { Task } from '../domain/task'\n\n// An in-memory adapter for this first-party sample only.\nexport function createTaskStore() {\n  const tasks = new Map<string, Task>()\n  return {\n    get: (id: string) => tasks.get(id),\n    save: (task: Task) => {\n      tasks.set(task.id, task)\n      return task\n    },\n    list: () => [...tasks.values()],\n  }\n}\n",
+      "sha256": "75b302a87f9f851762273baf412f52efe04991be05a6c26f6e3bad4a9a9f9c49",
+      "lines": 14,
+      "symbols": [
+        {
+          "name": "createTaskStore",
+          "kind": "FunctionDeclaration",
+          "startLine": 4,
+          "endLine": 14
+        }
+      ]
+    },
+    {
+      "id": "domain/task.ts",
+      "path": "domain/task.ts",
+      "language": "TypeScript",
+      "layer": "Domain",
+      "description": "Defines the task contract and the immutable completion transition.",
+      "position": {
+        "x": 810,
+        "y": 310
+      },
+      "source": "export type TaskStatus = 'open' | 'done'\n\nexport interface Task {\n  id: string\n  title: string\n  status: TaskStatus\n}\n\nexport function completeTask(task: Task): Task {\n  return { ...task, status: 'done' }\n}\n",
+      "sha256": "6f1bc332ade377d70ba4f2a197889a8974a71b3154236de6d9be80e9d6b4b354",
+      "lines": 11,
+      "symbols": [
+        {
+          "name": "TaskStatus",
+          "kind": "TypeAliasDeclaration",
+          "startLine": 1,
+          "endLine": 1
+        },
+        {
+          "name": "Task",
+          "kind": "InterfaceDeclaration",
+          "startLine": 3,
+          "endLine": 7
+        },
+        {
+          "name": "completeTask",
+          "kind": "FunctionDeclaration",
+          "startLine": 9,
+          "endLine": 11
+        }
+      ]
+    },
+    {
+      "id": "lib/validation.ts",
+      "path": "lib/validation.ts",
+      "language": "TypeScript",
+      "layer": "Utility",
+      "description": "Checks and normalizes an unknown title using the configured length limit.",
+      "position": {
+        "x": 810,
+        "y": 50
+      },
+      "source": "import { config } from '../config'\n\nexport function parseTitle(input: unknown): string {\n  if (typeof input !== 'string') {\n    throw new Error('A title is required')\n  }\n  const title = input.trim()\n  if (!title || title.length > config.maxTitleLength) {\n    throw new Error('Title length is outside the allowed range')\n  }\n  return title\n}\n",
+      "sha256": "0c6c672bf0e8bb04a597fa687496fcd1c89efd23bf1c634878fe8f315ac75248",
+      "lines": 12,
+      "symbols": [
+        {
+          "name": "parseTitle",
+          "kind": "FunctionDeclaration",
+          "startLine": 3,
+          "endLine": 12
+        }
+      ]
+    },
+    {
+      "id": "config.ts",
+      "path": "config.ts",
+      "language": "TypeScript",
+      "layer": "Config",
+      "description": "Declares the application name and the shared title-length limit.",
+      "position": {
+        "x": 1080,
+        "y": 190
+      },
+      "source": "export const config = {\n  maxTitleLength: 120,\n  projectName: 'Dispatch',\n} as const\n",
+      "sha256": "19c6e389369b716992b82d3ddd7aff50a59e399933a519ff9642a1574947d1f3",
+      "lines": 4,
+      "symbols": [
+        {
+          "name": "config",
+          "kind": "Variable",
+          "startLine": 1,
+          "endLine": 4
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "app.ts:api/router.ts",
+      "source": "app.ts",
+      "target": "api/router.ts",
+      "line": 1,
+      "kind": "import"
+    },
+    {
+      "id": "app.ts:data/taskStore.ts",
+      "source": "app.ts",
+      "target": "data/taskStore.ts",
+      "line": 2,
+      "kind": "import"
+    },
+    {
+      "id": "app.ts:services/taskService.ts",
+      "source": "app.ts",
+      "target": "services/taskService.ts",
+      "line": 3,
+      "kind": "import"
+    },
+    {
+      "id": "app.ts:config.ts",
+      "source": "app.ts",
+      "target": "config.ts",
+      "line": 4,
+      "kind": "import"
+    },
+    {
+      "id": "api/router.ts:services/taskService.ts",
+      "source": "api/router.ts",
+      "target": "services/taskService.ts",
+      "line": 1,
+      "kind": "import"
+    },
+    {
+      "id": "services/taskService.ts:domain/task.ts",
+      "source": "services/taskService.ts",
+      "target": "domain/task.ts",
+      "line": 1,
+      "kind": "import"
+    },
+    {
+      "id": "services/taskService.ts:data/taskStore.ts",
+      "source": "services/taskService.ts",
+      "target": "data/taskStore.ts",
+      "line": 2,
+      "kind": "import"
+    },
+    {
+      "id": "services/taskService.ts:lib/validation.ts",
+      "source": "services/taskService.ts",
+      "target": "lib/validation.ts",
+      "line": 3,
+      "kind": "import"
+    },
+    {
+      "id": "data/taskStore.ts:domain/task.ts",
+      "source": "data/taskStore.ts",
+      "target": "domain/task.ts",
+      "line": 1,
+      "kind": "type-import"
+    },
+    {
+      "id": "lib/validation.ts:config.ts",
+      "source": "lib/validation.ts",
+      "target": "config.ts",
+      "line": 1,
+      "kind": "import"
+    }
+  ]
+}

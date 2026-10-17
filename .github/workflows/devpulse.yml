@@ -1,0 +1,66 @@
+name: DevPulse checks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/devpulse
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_USER: devpulse
+          POSTGRES_PASSWORD: isolated-ci-only
+          POSTGRES_DB: devpulse_test_ci
+        ports: ['5433:5432']
+        options: >-
+          --health-cmd "pg_isready -U devpulse -d devpulse_test_ci"
+          --health-interval 5s --health-timeout 3s --health-retries 15
+      redis:
+        image: redis:7.4-alpine
+        ports: ['6380:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s --health-timeout 3s --health-retries 15
+    env:
+      DEVPULSE_ENVIRONMENT: test
+      DEVPULSE_TEST_DATABASE_URL: postgresql+psycopg://devpulse:isolated-ci-only@127.0.0.1:5433/devpulse_test_ci
+      DEVPULSE_TEST_REDIS_URL: redis://127.0.0.1:6380/15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.13.1'
+          python-version: '3.12'
+      - run: uv sync --frozen
+      - run: uv run ruff check app tests alembic export_contract.py
+      - run: uv run ruff format --check app tests alembic export_contract.py
+      - run: uv run pytest -q
+      - run: uv run python export_contract.py
+      - run: git diff --exit-code -- openapi.json ../../src/features/devpulse/api/contracts.ts
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run devpulse:fixture:check
+      - run: npm run typecheck:devpulse
+      - run: npm run lint:devpulse
+      - run: npm run test:devpulse
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:devpulse:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: devpulse-browser-results
+          path: test-results/devpulse
