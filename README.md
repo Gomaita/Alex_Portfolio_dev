@@ -238,6 +238,8 @@ db/
 
 ## Repository Notes
 
+DevPulse Phase 2 adds an independent Python API/worker under `services/devpulse` and a private project dashboard under `/devpulse/projects`. The public sample remains independent of the backend. See [local setup and identity configuration](docs/devpulse/LOCAL_DEVELOPMENT.md) and [actual verification/limitations](docs/devpulse/PROGRESS.md). No deployment or production configuration is included. Backend integration tests require real isolated PostgreSQL/Redis; skipped tests are not passing infrastructure checks.
+
 This repository does not include private environment variables or production secrets.
 Use `.env.example` as a reference and create a local `.env` file only when needed.
 

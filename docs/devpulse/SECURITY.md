@@ -1,6 +1,18 @@
 # DevPulse AI — threat model and security plan
 
-Status: requirements, not verified guarantees. Phase 0 introduces no runtime controls. Security foundation is required before accepting real repositories; Phase 8 extends it, not postpones it.
+Status: Phase 2 controls below are implemented; infrastructure-dependent checks remain pending. The remaining ingestion/AI requirements are future gates, not verified guarantees.
+
+## Phase 2 controls and limits
+
+- Fixed configured OIDC issuer, authorization-code PKCE S256, browser-bound one-use state with five-minute expiry, random nonce, RS256 signature/issuer/audience/exp/iat/authorized-party checks. No arbitrary identity supplied by the frontend, password store or development authentication bypass.
+- Database-backed opaque sessions store only token/CSRF hashes. HttpOnly, host-only, SameSite=Lax; Secure plus `__Host-` cookie over HTTPS. Sessions expire (default eight hours); logout revokes DevPulse only, not the upstream IdP session. No access/refresh token persists. Email is optional verified metadata, never the security identity.
+- Every resource lookup checks session user/owner and deletion state; missing and unauthorized projects/jobs share 404. Membership roles are future schema preparation and do not confer unimplemented team access. All projects are private.
+- Mutations require exact Origin and session-bound CSRF. Redis-backed atomic rate limits fail closed; diagnostic task allowlist, two active jobs/project, bounded attempts/leases/deadline. No arbitrary worker command or repository execution exists.
+- Strict Pydantic input/extra-field validation, 16 KiB streamed body limit, request-body timeout, bounded SQL pool/query timeouts, pagination/search limits, safe structured errors/request IDs, no request bodies/query strings/tokens in application logs. Unhandled error text is suppressed from API traceback logging. Hosting access logs require separate redaction configuration.
+- Runtime secrets are server-only; only API URL is public Vite configuration. HTTPS/IdP are mandatory in production settings. No wildcard credentialed CORS or shared portfolio admin authentication. Separate API origin preserves existing Functions/D1/R2.
+- Deletion is logical and immediately blocks access/cancels jobs. It does not physically purge records/backups. Retention scheduler, backup restore, IdP provisioning, live cookies/CORS and deployment verification remain production prerequisites.
+
+Executed tests cover real locally signed JWT acceptance/rejection, production configuration, CORS, unauthenticated requests, input validation, payload limits, cancellation state and sanitized failures. PostgreSQL ownership/session/CSRF/OIDC-callback tests and real Redis worker execution are provided but skipped locally without infrastructure. Browser API doubles validate UX only. This is not a penetration-test or security certification claim. See PROGRESS and LOCAL_DEVELOPMENT for actual commands/results.
 
 ## Assets and trust boundaries
 
@@ -48,3 +60,5 @@ Remote write remains unavailable unless a later explicit scope adds it. Such an 
 ## Security acceptance and release gates
 
 Required tests: IDOR/cross-project search, CSRF/CORS, session expiry, malicious redirects/DNS/IPs, ZIP traversal/links/bombs/collisions, resource exhaustion, cancellation, secret leakage, prompt injection, output rendering, webhook signatures, stale-patch validation and deletion propagation. Use safe local adversarial fixtures, not active attacks on production. Pin trusted rules/dependencies and review licenses/SBOM before release. Keep unresolved risks documented; no claim of penetration testing or security certification without actual work.
+
+Production transport validation: settings require PostgreSQL `sslmode=verify-full` and a `rediss://` Redis URL, in addition to HTTPS origins/OIDC. Configure the database CA/root certificate and Redis authentication/certificate trust at the host; development Compose remains loopback/private local networking.

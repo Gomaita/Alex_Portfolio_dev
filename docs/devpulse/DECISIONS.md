@@ -1,5 +1,17 @@
 # DevPulse AI — decision log
 
+## Phase 2 implementation decisions — 2026-10-17
+
+- D24: Dramatiq/Redis replaces proposed RQ (D04) because Phase 2 explicitly prefers Celery or Dramatiq. One allowlisted actor and a lightweight worker fit the modular monolith; Celery's larger workflow surface is not needed. PostgreSQL, not broker acknowledgements, owns lifecycle/retry state. [Dramatiq guide](https://dramatiq.io/guide.html).
+- D25: A job row also serves as its transactional dispatch ledger. Publish/commit races allow duplicate delivery, fenced by row locks and lease tokens. No separate outbox table for a single immutable task payload. Three attempts, 30-second leases, five-minute queue age, 10-second soft actor limit plus blocking-I/O timeouts. Extend before ingestion.
+- D26: Retain D14's OIDC + server sessions. Provider-neutral authorization-code adapter uses PKCE/state/nonce and PyJWT/cryptography RS256 verification. Provider tokens are discarded; no JS credential store or dev bypass. Hosted provider/client selection remains owner configuration. Tests sign local identities; callback integration needs PostgreSQL. [PyJWT usage](https://pyjwt.readthedocs.io/en/latest/usage.html).
+- D27: Sync SQLAlchemy/psycopg in FastAPI sync handlers/dependencies, which run in the thread pool. This avoids async database calls inside a sync worker and keeps transaction semantics shared. No blocking DB call inside async endpoints. Bounded pools/timeouts are explicit. [SQLAlchemy sessions](https://docs.sqlalchemy.org/en/20/orm/session_basics.html).
+- D28: Owner-only private projects, prepared membership schema, soft deletion with atomic job cancellation/audit. No team invitations or public sharing. Physical purge/retention is an explicit later production gate, not a claim implied by Delete.
+- D29: Offset pagination capped at 10,000 and page size 100 replaces proposed cursors for Phase 2's small library. Stable creation/UUID ordering, literal search. New concurrent inserts may shift pages; adopt cursors for larger immutable histories later.
+- D30: Generate DTO TypeScript and committed OpenAPI from Pydantic with a strict small JSON Schema exporter. `openapi-typescript@7.13.0` was considered but npm rejected its TypeScript 5 peer against the existing TypeScript 6.0.3. No forced install or frontend dependency change; unsupported schema constructs fail export.
+- D31: Direct separate API origin with exact CORS and same-site HTTPS session cookies. No production Cloudflare proxy or changes to existing API/D1/R2. Cross-site pages.dev previews must remain sample-only or use isolated same-site preview infrastructure.
+- D32: No claim of complete Phase 2 acceptance without PostgreSQL/pgvector/Redis/worker/Compose execution. Local Docker CLI is absent; WSL docker-desktop supplies only a rejecting placeholder. Local Python checks and browser API-double tests do not substitute for integration. CI defines the real PostgreSQL/Redis suite but has not been run remotely.
+
 ## Phase 1 implementation decisions — 2026-10-16
 
 - D16: Use React Flow 12.12.0 for the full explorer. The Phase 1 user brief explicitly requires pan, zoom and fit; a lazy custom-node graph provides tested viewport behavior without implementing another graph engine. The landing keeps its smaller SVG/HTML graph. This supersedes the Phase 0 suggestion to defer React Flow.

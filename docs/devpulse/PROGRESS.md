@@ -1,5 +1,55 @@
 # DevPulse AI — progress
 
+## Phase 2 implemented; infrastructure acceptance pending — 2026-10-17
+
+Branch `codex/devpulse-phase-2`, based on clean `codex/devpulse-phase-1` at `feaa41da630b8dab1e8df1ad7dab1fbfba64880b`. The prior Phase 0/1 push was already complete. No unrelated uncommitted changes existed at audit. Phase 2 has not been committed, pushed, merged or deployed; no production/DNS/paid infrastructure changes. Stop before Phase 3.
+
+### Delivered code
+
+- Independent `services/devpulse` modular Python API/worker, locked dependencies, FastAPI factory/lifecycle, DI sessions, typed settings/DTOs, OpenAPI, structured safe errors/logging, request IDs, liveness/readiness, body/connection/query limits.
+- Frozen reversible Alembic foundation for users, opaque sessions, OIDC attempts, projects, memberships, jobs, future runs and audit events; pgvector extension initialization without fake embeddings or guessed dimension. No startup create_all.
+- Provider-neutral OIDC code/PKCE/state/nonce + RS256 identity verification, HttpOnly sessions, exact Origin/CSRF protection and explicit CORS. No development bypass, custom password auth or reuse of portfolio admin credentials.
+- Authenticated owner-only project CRUD, literal search/pagination, soft deletion, audit records, private visibility, strict stored GitHub URL references (no fetch).
+- Redis/Dramatiq diagnostic actor, durable job dispatch ledger, row locks, idempotency, leases/fencing, three-attempt retry policy, cancellation, heartbeat and bounded infrastructure checks. No AnalysisRun/AI/security findings invented by diagnostics.
+- Lazy private routes `/devpulse/projects`, `/devpulse/projects/new`, `/devpulse/projects/:projectId`; session gate, list/search/pagination, create/edit/delete confirmation, metadata, actual API client and job history/submission/cancellation. Requests support cancellation/timeouts, one delayed GET retry, no automatic project-write retry and bounded polling. No sample fallback for private data.
+- Compose with PostgreSQL/pgvector, Redis, migration task, API and worker; health checks, non-root app, read-only root FS, local ports/volumes/resource bounds. Defined, not executed locally.
+- Python unit/integration suite, frontend API tests, private browser flows/axe/responsiveness, generated OpenAPI/TypeScript drift gate and PostgreSQL/Redis CI job. Remote CI not executed.
+- Documentation: API, DATABASE, LOCAL_DEVELOPMENT, DEPLOYMENT_PLAN; updated architecture/security/decisions/roadmap/guidance. Full inventory: PHASE_2_FILES.md.
+
+### Verification and limits
+
+| Check actually executed | Result |
+| --- | --- |
+| Initial Phase 1 Vitest regression | 16 passed before implementation |
+| `npm run devpulse:fixture:check` | PASS; sample sources/imports/symbols/hashes unchanged |
+| Scoped TypeScript and ESLint | PASS |
+| `npm run test:devpulse` | 22 passed across 3 files |
+| Python Ruff check + format check | PASS |
+| `pytest -q -rs` | 22 passed, 8 integration tests explicitly skipped |
+| Real Uvicorn process + HTTP request | PASS: `/api/v1/health` returned 200 and version 0.2.0; process stopped afterwards |
+| Alembic offline SQL rendering | PASS; not proof of migration execution or extension availability |
+| OpenAPI + TypeScript export | PASS; no infrastructure/credentials required |
+| Browser verification | PASS: final combined suite 11/11, including visitor/legacy regressions, private CRUD/session/job interactions and axe/reflow checks |
+| `npm run build` | PASS with existing oversized-entry warning |
+| Docker/Compose, actual PostgreSQL migrations/CRUD/pgvector, real Redis worker | NOT RUN: no operational Docker CLI/engine, PostgreSQL or Redis available locally |
+| Hosted OIDC and real full-stack browser persistence | NOT RUN: provider configuration and infrastructure absent |
+
+The eight skipped cases cover migration/pgvector/schema drift, persisted CRUD/deletion/pagination/audit, owner isolation, session/CSRF/logout, idempotency/cancellation/limits, real worker subprocess completion, expired leases and real signed OIDC callback exchange against mocked provider HTTP. They are supplied for isolated infrastructure/CI, **not counted as passing**. No SQLite substitute was used. Python reports one upstream Starlette TestClient/httpx deprecation warning; it does not fail tests. No new npm dependency installed: the considered OpenAPI generator had an incompatible TS peer and was rejected without forcing.
+
+Browser API responses are test doubles only, never product fixture/live results. Captures at 360/390/768/1024/1440/1920 cover private list/new pages; detail and sign-in at representative sizes. Automated axe checks private views and existing public routes, keyboard/reduced-motion checks and 14 legacy route-family mounts. Visually inspected desktop/mobile new-project forms, mobile sign-in and detail captures; no horizontal clipping found. Screenshot test data is not proof of backend persistence. Captures remain ignored under `test-results/devpulse`.
+
+Final measured build: lazy Projects JS 20.56 kB / **6.37 kB gzip**, Projects CSS 13.07 / **2.64 kB gzip**. Main entry 1,323.45 / **378.33 kB gzip**, versus Phase 1 378.29 (+0.04 kB); shell 3.18 kB gzip. Existing large-entry debt remains. No new Lighthouse/LCP/INP score claimed. Existing global lint debt was not modified; scoped checks are the Phase 2 gate.
+
+### Acceptance and next actions
+
+Phase 2 acceptance is **partial**, not complete: code and locally feasible checks are delivered, but criteria requiring real database/vector/worker/Compose and end-to-end provider-backed persistence are unverified. Run the commands in LOCAL_DEVELOPMENT with Docker, a dedicated `devpulse_test*` database/Redis DB 15, and a configured OIDC client; fix any resulting failures before marking the phase complete. No runtime bypass should be introduced to skip that gate.
+
+User configuration: local generated database password, server DB/Redis URLs, exact frontend/API origins, OIDC issuer/client ID and optional client secret, public `VITE_DEVPULSE_API_BASE_URL`. Credentials never go in Vite. Production additionally needs approved container hosting, same-site API domain/TLS, private databases, migration role, backups, physical retention/purge policy and real routing/CORS verification. Nothing provisioned here.
+
+Recommended Phase 3 after those gates and explicit authorization: constrained public GitHub import, immutable source snapshots, secret filtering, isolated parsing/static tools, genuine module graph/findings/history APIs. No Phase 3 implementation started.
+
+The sections below retain historical Phase 0/1 reports and their then-current authorization/status.
+
 ## Delivery authorization
 
 After Phase 1 verification, the owner explicitly requested `push`. This authorizes committing the Phase 0/1 work and publishing `codex/devpulse-phase-1` to `origin`. It does not authorize merging, changing production configuration or manually deploying. Historical phase-closeout statements below describe the state before this request.
@@ -125,3 +175,8 @@ None now. Before deployment confirm Pages/Workers setup. Later approve/select ba
 ### Next recommended phase
 
 Phase 1 only when requested: isolated TypeScript design system and lazy routes, landing and clearly labeled source-backed sample overview/architecture, responsive shell, accessible motion, narrowly scoped metadata integration and meaningful tests. No backend, live import, AI chat, audits or patches in that phase. Full boundary and exit criteria: ROADMAP.md and EVALUATION_PLAN.md.
+## Publication verification — 2026-10-17
+
+The owner requested checking the live portfolio and fixing missing publication. This authorizes publishing the tested DevPulse frontend through the existing Git/Cloudflare deployment workflow. Backend hosting, paid infrastructure and identity provisioning remain unconfigured; no claim of live private project functionality is made.
+
+Observed live `/devpulse`, `/devpulse/explore`, `/devpulse/explore/architecture` and `/devpulse/projects`: HTTP 200 SPA fallback but application heading “Page not found”. GitHub checks confirm Cloudflare **Pages**, project `alex-portfolio-dev`, production commit `27ccf5d`; Phase 1 exists only on the successful branch preview `ae97e48c.alex-portfolio-dev.pages.dev`. Preview landing/architecture render correctly in Chromium. Wrangler authentication has expired; use the existing Git integration instead of modifying Cloudflare credentials or settings. Publication and production QA results will be recorded after successful verification.

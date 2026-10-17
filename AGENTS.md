@@ -12,7 +12,7 @@
 - Read `docs/devpulse/PROGRESS.md`, `DECISIONS.md` and `ROADMAP.md` before continuing. They distinguish implemented behavior from proposals.
 - Phase 0 is documentation only. Future implementation requires a subsequent user request; stop after the authorized phase.
 - Implemented frontend boundary: `src/features/devpulse/`, lazy mounted at `/devpulse/*` inside the existing BrowserRouter. Keep the Vite base at `/`. Phase 1 is local; do not begin Phase 2 without instruction.
-- Planned backend boundary: `services/devpulse/`, independent Python modular monolith with workers. Do not migrate existing Functions or D1 data into it.
+- Backend boundary: `services/devpulse/`, Python modular monolith with a dedicated Dramatiq worker. Phase 2 code exists; see PROGRESS for infrastructure verification gates. Do not migrate existing Functions or D1 data into it or start Phase 3 without instruction.
 - New DevPulse frontend code uses TypeScript, scoped styles and `devpulse` names for storage/configuration. Do not globally restyle the portfolio.
 - Source repositories are untrusted input. Never run their code, package scripts, ESLint configs, plugins or tests in the API process or on the developer host.
 - Every finding must distinguish tool observation, AI assessment and verification state. Every citation must resolve to the exact snapshot and line range. Sample data must remain visibly labeled.
@@ -24,4 +24,5 @@
 
 - Existing commands: `npm run build`, `npm run lint`. Phase 1 adds `devpulse:fixture:check`, `typecheck:devpulse`, `lint:devpulse`, `test:devpulse`, `test:devpulse:e2e` and a check-only GitHub Actions workflow. See README for setup.
 - Baseline build passes with an oversized entry chunk. Baseline lint fails; see `docs/devpulse/REPOSITORY_AUDIT.md`. Do not mask pre-existing failures or silently broaden scope to repair the whole portfolio.
+- Backend: `uv sync --frozen`, `uv run pytest`, `uv run ruff check app tests alembic export_contract.py` from `services/devpulse`. Database integration requires an isolated `devpulse_test*` database and Redis DB 15; never point integration tests at production. No authentication bypass exists; test sessions/signing keys belong only in tests.
 - No installs, runtime changes or deployment were authorized in Phase 0. Build output in ignored `dist/` may be regenerated for verification.

@@ -1,10 +1,20 @@
-# DevPulse AI — proposed architecture
+# DevPulse AI — architecture
 
-Status: frontend integration implemented in Phase 1; backend topology and APIs remain design only. See REPOSITORY_AUDIT.md for baseline facts and PROGRESS.md for actual checks.
+Status: Phase 1 frontend plus Phase 2 backend/project UI code implemented. PostgreSQL, real worker, hosted OIDC and Docker verification remain blocked locally; see PROGRESS.md. Later ingestion/AI sections remain proposals.
+
+## Implemented Phase 2 boundary
+
+`services/devpulse/app` contains a FastAPI factory, versioned router, Pydantic DTOs/settings, synchronous SQLAlchemy sessions in synchronous thread-pool endpoints, OIDC adapter, owner-scoped project services and Dramatiq runtime. Alembic owns schema changes. Dedicated API/worker processes share one modular monolith. Request bodies, queries, retries, connection pools and diagnostics are bounded.
+
+OIDC authorization code + PKCE S256 establishes a database-backed opaque HttpOnly session after signature/issuer/audience/expiry/nonce verification. The frontend gets identity and a CSRF token; provider access/refresh tokens are discarded. No development bypass exists. Public samples remain independent. Lazy `/devpulse/projects`, `/devpulse/projects/new`, `/devpulse/projects/:projectId` routes use API data and never fall back to samples. `components/live` separates session gate, forms, job history and request states from page composition.
+
+Job rows double as a transactional dispatch ledger; no separate outbox table is needed for the single Phase 2 task. The dispatcher publishes IDs to Redis; actors claim/fence/retry against PostgreSQL. Cancellation/expired leases are explicit. Dramatiq supersedes proposed RQ per the Phase 2 brief. The only actor verifies infrastructure and produces no AnalysisRun or AI output.
+
+Implemented details: [API.md](API.md), [DATABASE.md](DATABASE.md), [LOCAL_DEVELOPMENT.md](LOCAL_DEVELOPMENT.md), [DEPLOYMENT_PLAN.md](DEPLOYMENT_PLAN.md). The broader architecture below retains future context; cursor pagination, artifacts, analysis pipelines, vector tables, LLMs and traces are not Phase 2 capabilities.
 
 ## Implemented frontend boundary
 
-`src/App.jsx` lazy mounts `DevPulseApp` only for `/devpulse/*`. It uses the existing BrowserRouter; nested routes load Landing or Workspace. Workspace lazily loads ArchitectureGraph (React Flow) and Inspector loads CodeViewer (Prism). Shared fixture data comes from a generated JSON snapshot, with strict TypeScript contracts. No HTTP client/backend abstraction pretending to be connected has been added.
+`src/App.jsx` lazy mounts `DevPulseApp` only for `/devpulse/*`. It uses the existing BrowserRouter; nested routes load Landing, Workspace or Projects. Workspace lazily loads ArchitectureGraph (React Flow) and Inspector loads CodeViewer (Prism). Shared fixture data comes from a generated JSON snapshot, with strict TypeScript contracts. The separate Phase 2 API client serves authenticated projects only.
 
 Server metadata is a narrow branch in existing Pages middleware using the same pure metadata function as the client. The SPA fallback, Vite base, Cloudflare settings, D1 schema, auth and other API handlers are unchanged. `.github/workflows/devpulse.yml` defines checks, not deployment. Actual account deployment mode remains an external unknown, so no live DevPulse release is claimed.
 
@@ -33,8 +43,8 @@ flowchart LR
   B[Browser /devpulse] --> P[Existing Cloudflare frontend]
   B --> A[FastAPI API: session and project authorization]
   A --> D[(PostgreSQL + pgvector)]
-  A --> O[Transactional outbox]
-  O --> Q[(Redis / RQ)]
+  A --> O[Job dispatch ledger]
+  O --> Q[(Redis / Dramatiq)]
   Q --> W[Worker from same Python codebase]
   W --> D
   W --> S[Private object storage]
@@ -44,9 +54,9 @@ flowchart LR
   W --> X[Separate isolated test runner: Phase 6 gate]
 ```
 
-FastAPI + Pydantic, SQLAlchemy + Alembic, PostgreSQL as authoritative state. Redis/RQ is the initial proposed queue because bounded Python jobs fit a small deployment; validate cancellation, scheduling and recovery in Phase 2. [RQ documentation](https://python-rq.org/docs/) describes queue/worker jobs; durable application states and idempotency remain our responsibility. API and worker are separate processes/images from one modular monolith, not independently designed microservices.
+FastAPI + Pydantic, SQLAlchemy + Alembic, PostgreSQL as authoritative state. Phase 2 uses Redis/Dramatiq with an application-owned job ledger; see DATABASE.md for implemented dispatch, lease, retry and cancellation behavior and PROGRESS.md for pending real-infrastructure verification. API and worker are separate processes/images from one modular monolith, not independently designed microservices.
 
-Persist jobs plus an outbox in the same DB transaction. Dispatcher sends job IDs, never untrusted serialized objects. Consumers claim leases, check deduplication keys and commit stage results transactionally. Redis delivery is treated as at-least-once; reconcile expired leases. Worker restart cannot mark incomplete work successful.
+Phase 2 persists jobs with dispatch fields as its transactional outbox in the same row. Dispatcher sends job IDs, never untrusted serialized objects. Consumers claim leases, check deduplication keys and commit stage results transactionally. Redis delivery is treated as at-least-once; reconcile expired leases. Worker restart cannot mark incomplete work successful.
 
 Private S3-compatible storage for immutable source snapshots and artifacts; local filesystem adapter for development. Dedicated bucket/credentials, never existing public portfolio media bucket. Download via authorized API or short-lived scoped signed URLs. Initial container hosting choice remains open until quotas, region, private networking, backups, worker lifecycle and sandbox capability are verified. No provider is provisioned by this plan.
 

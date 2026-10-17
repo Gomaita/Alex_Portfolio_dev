@@ -31,6 +31,7 @@ import "./styles.css";
 
 const Landing = lazy(() => import("./pages/Landing"));
 const Workspace = lazy(() => import("./pages/Workspace"));
+const Projects = lazy(() => import("./pages/Projects"));
 
 class FeatureBoundary extends Component<
   { children: ReactNode },
@@ -134,6 +135,9 @@ function Navigation({ close }: { close?: () => void }) {
       <NavLink to="/devpulse/explore/architecture" onClick={close}>
         <GitBranch size={16} />
         Architecture
+      </NavLink>
+      <NavLink to="/devpulse/projects" onClick={close}>
+        Projects
       </NavLink>
     </>
   );
@@ -256,6 +260,7 @@ function Shell() {
                 <Routes>
                   <Route index element={<Landing />} />
                   <Route path="explore" element={<Workspace />} />
+                  <Route path="projects/*" element={<Projects />} />
                   <Route
                     path="explore/architecture"
                     element={<Workspace architecture />}
@@ -296,7 +301,7 @@ function Shell() {
             Alex Gómez <ArrowUpRight size={13} />
           </Link>
         </nav>
-        <span className="dp-footer-status">PHASE 01 · FRONTEND EXPLORER</span>
+        <span className="dp-footer-status">PHASE 02 · PROJECT FOUNDATION</span>
       </footer>
     </div>
   );

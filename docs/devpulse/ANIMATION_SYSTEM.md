@@ -39,3 +39,7 @@ Live stage labels use a polite status region; do not announce every streaming to
 Phase 1: keyboard and pointer select a sample node, rapidly switch nodes, open/close evidence, back/forward navigation, reduced motion and hidden-tab behavior. Confirm no stale updates after unmount and no layout shifts from entrances. Record a browser performance trace for graph interactions; target no animation-caused tasks above 50 ms on documented test hardware. Initial sample graph <=20 nodes, expanded graph later defaults to bounded neighborhoods (around 150 visible nodes), with list mode and aggregation. Large-repository benchmarks belong to Phase 3/9.
 
 No endless fake processing. In sample mode show static provenance, never an animated timeline implying a current backend execution.
+
+## Phase 2
+
+Private routes reuse the shell route transition and reduced-motion policy. Form submission states are driven by actual requests; diagnostic progress uses API stages only. No synthetic progress timers. Library hover uses a short CSS background transition disabled for reduced motion. Job polling is bounded and cancelled on unmount; it does not drive animation frames.

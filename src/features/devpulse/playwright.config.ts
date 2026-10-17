@@ -12,6 +12,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
+    env: { VITE_DEVPULSE_API_BASE_URL: "http://127.0.0.1:8000/api/v1" },
     command: "npm run dev -- --host 127.0.0.1 --port 4173 --strictPort",
     url: "http://127.0.0.1:4173",
     reuseExistingServer: !process.env.CI,

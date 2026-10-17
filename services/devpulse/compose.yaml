@@ -1,0 +1,79 @@
+name: devpulse
+x-app: &app
+  build: .
+  environment: &environment
+    DEVPULSE_ENVIRONMENT: development
+    DEVPULSE_DATABASE_URL: postgresql+psycopg://devpulse:${POSTGRES_PASSWORD:?Set a URL-safe local database password}@postgres:5432/devpulse
+    DEVPULSE_REDIS_URL: redis://redis:6379/0
+    DEVPULSE_FRONTEND_ORIGIN: ${DEVPULSE_FRONTEND_ORIGIN:-http://127.0.0.1:5173}
+    DEVPULSE_API_ORIGIN: ${DEVPULSE_API_ORIGIN:-http://127.0.0.1:8000}
+    DEVPULSE_OIDC_ISSUER: ${DEVPULSE_OIDC_ISSUER:-}
+    DEVPULSE_OIDC_CLIENT_ID: ${DEVPULSE_OIDC_CLIENT_ID:-}
+    DEVPULSE_OIDC_CLIENT_SECRET: ${DEVPULSE_OIDC_CLIENT_SECRET:-}
+  init: true
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  mem_limit: 512m
+  cpus: 1.0
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: devpulse
+      POSTGRES_USER: devpulse
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a local database password}
+    ports: ["127.0.0.1:5433:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U devpulse -d devpulse"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    mem_limit: 512m
+  redis:
+    image: redis:7.4-alpine
+    command: [redis-server, --appendonly, "yes", --maxmemory, 128mb, --maxmemory-policy, noeviction]
+    ports: ["127.0.0.1:6380:6379"]
+    volumes: ["redis_data:/data"]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    mem_limit: 192m
+  migrate:
+    <<: *app
+    command: [alembic, upgrade, head]
+    depends_on:
+      postgres: {condition: service_healthy}
+  api:
+    <<: *app
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/ready', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  worker:
+    <<: *app
+    command: [python, -m, app.workers.runtime]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    stop_grace_period: 25s
+    healthcheck:
+      test: [CMD, python, -c, "import redis; assert redis.Redis(host='redis', socket_timeout=3).get('devpulse:worker:heartbeat')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:

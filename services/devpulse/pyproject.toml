@@ -1,0 +1,27 @@
+[project]
+name = "devpulse"
+version = "0.2.0"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn[standard]>=0.34,<1",
+  "sqlalchemy>=2.0,<2.1", "psycopg[binary]>=3.2,<4",
+  "alembic>=1.15,<2", "pydantic-settings>=2.8,<3",
+  "redis>=5,<7", "dramatiq[redis]>=2.0,<3",
+  "PyJWT[crypto]>=2.10,<3", "httpx>=0.28,<1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.11,<1", "respx>=0.22,<1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["integration: requires isolated PostgreSQL and Redis"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["B008"]

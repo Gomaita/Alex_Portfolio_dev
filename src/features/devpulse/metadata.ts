@@ -1,4 +1,11 @@
 export function metadataFor(path: string) {
+  if (path === "/devpulse/projects" || path.startsWith("/devpulse/projects/"))
+    return {
+      title: "Private projects — DevPulse AI",
+      description: "Your private DevPulse project workspace.",
+      path: "/devpulse/projects",
+      robots: "noindex,nofollow",
+    };
   if (path === "/devpulse" || path === "/devpulse/")
     return {
       title: "DevPulse AI — Understand your code",

@@ -1,12 +1,18 @@
 # DevPulse AI — implementation roadmap
 
-Status: Phase 0 and Phase 1 implemented locally. Phases 2–9 are pending. Phases are dependency gates, not promised dates. Do not advance automatically beyond the phase the user requests.
+Status: Phases 0/1 delivered; Phase 2 code implemented with local unit/browser checks. Phase 2 acceptance remains pending PostgreSQL/pgvector/real worker/Compose/provider integration. Phases 3–9 have not started. Do not advance automatically.
+
+## Phase 2 remaining exit gates
+
+Backend, migrations, OIDC sessions, private project CRUD, Dramatiq dispatch/leases/cancellation, typed client and private dashboard are implemented. Finish the infrastructure verification described in LOCAL_DEVELOPMENT: run Compose, eight real PostgreSQL/Redis integration cases, configured-provider browser sign-in and persistent CRUD/job journey. Address any failures before accepting Phase 2. No source import, analysis or AI behavior is implemented.
+
+After explicit Phase 3 authorization: implement bounded public GitHub ingestion to immutable snapshots, isolated parsing/static tools, provenance/source storage and real graph/findings/history APIs. First close Phase 2's infrastructure gates and establish runner isolation/SSRF/archive controls. Keep exact/structural retrieval before embeddings; no model calls until Phase 4.
 
 ## Phase 1 closeout
 
 The three routes, source fixture, scoped design/motion system, interactive pan/zoom architecture explorer, source inspector, route metadata, targeted quality gates and CI definition are implemented. React Flow was included at the user's explicit Phase 1 request; Prism replaces Monaco for read-only inspection. No API, authentication, import or AI capability was added. See PROGRESS.md for executed checks and limitations; production deployment and the LCP target remain unverified/unmet respectively.
 
-Next: Phase 2 only upon instruction. Implement local FastAPI/Pydantic service, Postgres/SQLAlchemy/Alembic migrations, OIDC/session integration, project ownership/CRUD, Redis/RQ job ledger/outbox and cancellation/recovery tests, plus the typed frontend API contract. Do not add source ingestion or model calls until Phase 3/4 gates. Select identity provider before shipping authentication; local fake identity must be test-only. No provisioning/deployment without explicit approval.
+Historical Phase 1 next step was Phase 2; that implementation is now present, with the remaining verification gates above. The Phase 0 scope below is retained as planning history where superseded by DECISIONS.
 
 ## Dependency order
 
@@ -16,7 +22,7 @@ Next: Phase 2 only upon instruction. Implement local FastAPI/Pydantic service, P
 | --- | --- | --- |
 | 0 — audit and plan | Inspect current repository, routes, deployment evidence; create product/architecture/design/security/evaluation documents | Documentation, clean baseline record, explicit unknowns; no product implementation |
 | 1 — visual foundation | Depends on 0. Scoped TS feature, isolated lazy routes, responsive shell, landing, sample overview/architecture with source inspector, meaningful motion, accessibility; narrowly scoped metadata integration | Visitor completes sample journey, deep links/refresh, old-route regression checks, TS/lint/build/UI tests and bundle measurements; no backend/import/chat/patch claims |
-| 2 — backend foundation | Depends on 1. FastAPI/Pydantic modules, SQLAlchemy/Alembic, Postgres, Redis/RQ, local Docker Compose, OIDC sessions/project roles, typed client/OpenAPI, project CRUD, job/outbox/lease/cancel skeleton | Authenticated create/list/delete project end-to-end; isolation of users, migrations, restart/retry/idempotency tests, safe health; provider choice and dev identity config resolved |
+| 2 — backend foundation | Implemented: FastAPI/Pydantic, SQLAlchemy/Alembic, PostgreSQL/pgvector schema, Redis/Dramatiq, local Compose, OIDC sessions, project CRUD, typed client, dispatch/lease/cancellation | Local unit/browser checks pass; actual PostgreSQL/Redis/worker/Compose and provider-backed end-to-end verification pending |
 | 3 — real ingestion and static analysis | Depends on 2 plus runner isolation. Public GitHub-only fetch/limits, immutable snapshots, secret filtering, Tree-sitter inventory/import graph, Ruff/Semgrep/trusted ESLint, normalized evidence, real history/status UI | Import a permitted fixture repo → tools → findings/source; hostile URL/archive tests, duplicate/retry/cancel tests, clear unsupported coverage; no repository code execution |
 | 4 — retrieval and assistant | Depends on 3, provider consent/budget, first evaluation corpus. Exact+lexical+graph baseline, measured optional embeddings/pgvector, provider abstraction, structured answers/citation validator, bounded LangGraph only if justified | Ask → retrieved context → grounded answer/abstention, missing credentials/errors handled honestly; held-out retrieval/citation results and privacy tests |
 | 5 — AI auditing | Depends on 3 and 4. Correlate static findings, AI maintainability/architecture assessment, source-backed prioritization, deduplication and review feedback | Static observations and AI assessments separately attributed; false-positive rubric, confidence calibration notes, regression fixtures; no verified vulnerability claim without evidence |

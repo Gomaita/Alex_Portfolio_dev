@@ -1,0 +1,68 @@
+# Phase 2 file inventory
+
+Branch: `codex/devpulse-phase-2`. Local, uncommitted delivery; no push/deploy.
+
+Existing files modified and new files created for this phase (generated build, tools, virtual environment and browser artifacts are ignored):
+
+- `.env.example`
+- `.github/workflows/devpulse.yml`
+- `.gitignore`
+- `AGENTS.md`
+- `README.md`
+- `docs/devpulse/ANIMATION_SYSTEM.md`
+- `docs/devpulse/API.md`
+- `docs/devpulse/ARCHITECTURE.md`
+- `docs/devpulse/DATABASE.md`
+- `docs/devpulse/DECISIONS.md`
+- `docs/devpulse/DEPLOYMENT_PLAN.md`
+- `docs/devpulse/DESIGN_SYSTEM.md`
+- `docs/devpulse/LOCAL_DEVELOPMENT.md`
+- `docs/devpulse/PHASE_2_FILES.md`
+- `docs/devpulse/PROGRESS.md`
+- `docs/devpulse/ROADMAP.md`
+- `docs/devpulse/SECURITY.md`
+- `eslint.config.js`
+- `services/devpulse/.dockerignore`
+- `services/devpulse/.env.example`
+- `services/devpulse/Dockerfile`
+- `services/devpulse/README.md`
+- `services/devpulse/alembic.ini`
+- `services/devpulse/alembic/env.py`
+- `services/devpulse/alembic/script.py.mako`
+- `services/devpulse/alembic/versions/0001_foundation.py`
+- `services/devpulse/alembic/versions/0001_schema.sql`
+- `services/devpulse/app/__init__.py`
+- `services/devpulse/app/api/v1/router.py`
+- `services/devpulse/app/core/config.py`
+- `services/devpulse/app/core/errors.py`
+- `services/devpulse/app/core/logging.py`
+- `services/devpulse/app/core/security.py`
+- `services/devpulse/app/db/models.py`
+- `services/devpulse/app/db/session.py`
+- `services/devpulse/app/main.py`
+- `services/devpulse/app/schemas/contracts.py`
+- `services/devpulse/app/services/jobs.py`
+- `services/devpulse/app/services/oidc.py`
+- `services/devpulse/app/services/projects.py`
+- `services/devpulse/app/workers/runtime.py`
+- `services/devpulse/compose.yaml`
+- `services/devpulse/export_contract.py`
+- `services/devpulse/openapi.json`
+- `services/devpulse/pyproject.toml`
+- `services/devpulse/tests/conftest.py`
+- `services/devpulse/tests/test_integration.py`
+- `services/devpulse/tests/test_unit.py`
+- `services/devpulse/uv.lock`
+- `src/features/devpulse/DevPulseApp.tsx`
+- `src/features/devpulse/api/client.ts`
+- `src/features/devpulse/api/contracts.ts`
+- `src/features/devpulse/components/live/JobHistory.tsx`
+- `src/features/devpulse/components/live/ProjectForm.tsx`
+- `src/features/devpulse/components/live/SessionGate.tsx`
+- `src/features/devpulse/components/live/shared.tsx`
+- `src/features/devpulse/e2e/projects.spec.ts`
+- `src/features/devpulse/metadata.ts`
+- `src/features/devpulse/pages/Projects.tsx`
+- `src/features/devpulse/playwright.config.ts`
+- `src/features/devpulse/projects.css`
+- `src/features/devpulse/tests/api.test.ts`

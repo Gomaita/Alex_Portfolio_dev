@@ -6,7 +6,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist', 'PortableGit/**', 'test-results/**', 'playwright-report/**']),
+  globalIgnores(['dist', 'PortableGit/**', '.devpulse-tools/**', 'services/devpulse/.venv/**', 'test-results/**', 'playwright-report/**']),
   {
     files: ['src/features/devpulse/**/*.{ts,tsx}'],
     extends: [tseslint.configs.recommended, reactHooks.configs.flat.recommended],
