@@ -19,6 +19,7 @@ import ThreeDContact from './pages/three-d/ThreeDContact'
 import ThreeDHome from './pages/three-d/ThreeDHome'
 import ThreeDProjectDetail from './pages/three-d/ThreeDProjectDetail'
 import ThreeDProjects from './pages/three-d/ThreeDProjects'
+import PortfolioV2Route from './features/portfolio-v2/PortfolioV2Route'
 
 const AIOperationsStudioPage = lazy(() => import('./demos/ai-operations-studio/AIOperationsStudioPage'))
 const AISupportIntelligencePage = lazy(() => import('./demos/ai-support-intelligence/AISupportIntelligencePage'))
@@ -36,6 +37,10 @@ function RouteLoader() {
 function App() {
   const location = useLocation()
   const isThreeDRoute = location.pathname === '/3d' || location.pathname.startsWith('/3d/')
+
+  if (location.pathname === '/newindex' || location.pathname === '/newindex/') {
+    return <PortfolioV2Route />
+  }
 
   if (location.pathname === '/devpulse' || location.pathname.startsWith('/devpulse/')) {
     return (
