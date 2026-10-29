@@ -25,6 +25,7 @@ const AIOperationsStudioPage = lazy(() => import('./demos/ai-operations-studio/A
 const AISupportIntelligencePage = lazy(() => import('./demos/ai-support-intelligence/AISupportIntelligencePage'))
 const InboxFlowAI = lazy(() => import('./pages/InboxFlowAI'))
 const DevPulseApp = lazy(() => import('./features/devpulse/DevPulseApp'))
+const OrganicPreview = import.meta.env.DEV ? lazy(() => import('./features/portfolio-organic/OrganicPreview')) : null
 
 function RouteLoader() {
   return (
@@ -37,6 +38,11 @@ function RouteLoader() {
 function App() {
   const location = useLocation()
   const isThreeDRoute = location.pathname === '/3d' || location.pathname.startsWith('/3d/')
+
+  // Local design studio only. Vite removes this route from production builds.
+  if (import.meta.env.DEV && (location.pathname === '/preview/organic' || location.pathname.startsWith('/preview/organic/'))) {
+    return <Suspense fallback={<div role="status" style={{ minHeight: '100svh', background: '#faf9f6', color: '#1f1d1a', padding: '3rem' }}>Opening design studio…</div>}><OrganicPreview /></Suspense>
+  }
 
   if (location.pathname === '/newindex' || location.pathname === '/newindex/') {
     return <PortfolioV2Route />
